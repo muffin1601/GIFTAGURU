@@ -246,6 +246,6 @@ export async function POST(request: Request) {
     razorpayOrderId: razorpayOrder.id,
     amount: razorpayOrder.amount,
     currency: razorpayOrder.currency,
-    keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ?? process.env.RAZORPAY_KEY_ID,
+    keyId: process.env.RAZORPAY_KEY_ID,
   });
 }
