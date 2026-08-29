@@ -1,0 +1,131 @@
+- generic [active] [ref=f2e1]:
+  - main [ref=f2e2]:
+    - generic [ref=f2e3]:
+      - complementary [ref=f2e4]:
+        - navigation "Admin navigation" [ref=f2e5]:
+          - link "Gifta Guru" [ref=f2e6] [cursor=pointer]:
+            - /url: /admin
+          - generic [ref=f2e7]:
+            - paragraph [ref=f2e8]: Dashboard
+            - link "Overview" [ref=f2e10] [cursor=pointer]:
+              - /url: /admin
+          - generic [ref=f2e14]:
+            - paragraph [ref=f2e15]: Catalog
+            - generic [ref=f2e16]:
+              - link "Products" [ref=f2e17] [cursor=pointer]:
+                - /url: /admin/products
+              - link "Categories" [ref=f2e21] [cursor=pointer]:
+                - /url: /admin/categories
+              - link "Collections" [ref=f2e27] [cursor=pointer]:
+                - /url: /admin/collections
+              - link "Inventory" [ref=f2e32] [cursor=pointer]:
+                - /url: /admin/inventory
+          - generic [ref=f2e43]:
+            - paragraph [ref=f2e44]: Sales
+            - generic [ref=f2e45]:
+              - link "Orders" [ref=f2e46] [cursor=pointer]:
+                - /url: /admin/orders
+              - link "Payments" [ref=f2e52] [cursor=pointer]:
+                - /url: /admin/payments
+              - link "Coupons" [ref=f2e56] [cursor=pointer]:
+                - /url: /admin/coupons
+          - generic [ref=f2e60]:
+            - paragraph [ref=f2e61]: Customers
+            - link "Customers" [ref=f2e63] [cursor=pointer]:
+              - /url: /admin/customers
+          - generic [ref=f2e68]:
+            - paragraph [ref=f2e69]: Corporate
+            - generic [ref=f2e70]:
+              - link "Bulk Enquiries" [ref=f2e71] [cursor=pointer]:
+                - /url: /admin/bulk-enquiries
+              - link "Leads" [ref=f2e75] [cursor=pointer]:
+                - /url: /admin/leads
+              - link "Customizations" [ref=f2e80] [cursor=pointer]:
+                - /url: /admin/customizations
+          - generic [ref=f2e85]:
+            - paragraph [ref=f2e86]: Marketing
+            - generic [ref=f2e87]:
+              - link "Email Campaigns" [ref=f2e88] [cursor=pointer]:
+                - /url: /admin/email-campaigns
+              - link "Subscribers" [ref=f2e92] [cursor=pointer]:
+                - /url: /admin/subscribers
+          - generic [ref=f2e95]:
+            - paragraph [ref=f2e96]: Content
+            - generic [ref=f2e97]:
+              - link "FAQs" [ref=f2e98] [cursor=pointer]:
+                - /url: /admin/faqs
+              - link "Testimonials" [ref=f2e102] [cursor=pointer]:
+                - /url: /admin/testimonials
+          - generic [ref=f2e107]:
+            - paragraph [ref=f2e108]: System
+            - generic [ref=f2e109]:
+              - link "Store Settings" [ref=f2e110] [cursor=pointer]:
+                - /url: /admin/settings
+              - link "Audit Log" [ref=f2e114] [cursor=pointer]:
+                - /url: /admin/audit-logs
+      - main [ref=f2e119]:
+        - generic [ref=f2e120]:
+          - generic [ref=f2e121]:
+            - paragraph [ref=f2e122]: Catalog
+            - heading "Categories" [level=1] [ref=f2e123]
+            - paragraph [ref=f2e124]: Categories classify products for filtering and reporting. Storefront collections (the curated pages customers browse) are managed separately under Collections.
+          - generic [ref=f2e125]:
+            - heading "New category" [level=2] [ref=f2e126]
+            - generic [ref=f2e127]:
+              - generic [ref=f2e128]:
+                - text: Name
+                - textbox "Name" [ref=f2e129]:
+                  - /placeholder: e.g. Office & Stationery
+              - generic [ref=f2e130]:
+                - text: Slug (optional, auto-generated from name)
+                - textbox "Slug (optional, auto-generated from name)" [ref=f2e131]:
+                  - /placeholder: office-stationery
+              - generic [ref=f2e132]:
+                - text: Description
+                - textbox "Description" [ref=f2e133]
+              - generic [ref=f2e134]:
+                - text: Image URL
+                - textbox "Image URL" [ref=f2e135]:
+                  - /placeholder: /SBanners/...
+              - generic [ref=f2e136]:
+                - text: Display order
+                - spinbutton "Display order" [ref=f2e137]: "6"
+              - button "Create category" [ref=f2e138] [cursor=pointer]
+          - generic [ref=f2e139]:
+            - link [ref=f2e140] [cursor=pointer]:
+              - /url: /admin/categories/4d70176d-9c72-4850-917e-59eb1ec4f00d
+              - heading "Office & Stationery" [level=2] [ref=f2e142]
+              - paragraph [ref=f2e143]: office-stationery
+              - paragraph [ref=f2e144]: Diaries, pens, and desk essentials.
+              - paragraph [ref=f2e145]: 7 products
+            - link [ref=f2e146] [cursor=pointer]:
+              - /url: /admin/categories/13581165-e807-4946-9e60-13bbf681f4ff
+              - heading "Premium Gift Sets" [level=2] [ref=f2e148]
+              - paragraph [ref=f2e149]: premium-gift-sets
+              - paragraph [ref=f2e150]: Curated presentation boxes for employees and clients.
+              - paragraph [ref=f2e151]: 7 products
+            - link [ref=f2e152] [cursor=pointer]:
+              - /url: /admin/categories/a9334245-d9ae-4ff7-bd59-5812cb3763b9
+              - heading "Luxury Gift Sets" [level=2] [ref=f2e154]
+              - paragraph [ref=f2e155]: luxury-gift-sets
+              - paragraph [ref=f2e156]: Executive-grade boxes, journals, and fine accessories.
+              - paragraph [ref=f2e157]: 6 products
+            - link [ref=f2e158] [cursor=pointer]:
+              - /url: /admin/categories/00e25222-c746-4203-b18b-55ef25c0160a
+              - heading "Eco-Friendly Gift Sets" [level=2] [ref=f2e160]
+              - paragraph [ref=f2e161]: eco-gift-sets
+              - paragraph [ref=f2e162]: Sustainable corporate gifts with refined utility.
+              - paragraph [ref=f2e163]: 3 products
+            - link [ref=f2e164] [cursor=pointer]:
+              - /url: /admin/categories/b120d9c8-7d63-4014-a21c-8c37fae56555
+              - heading "Pens & Desk Accessories" [level=2] [ref=f2e166]
+              - paragraph [ref=f2e167]: pens-desk-accessories
+              - paragraph [ref=f2e168]: Pens, keychains, folios, planners, and desk add-ons.
+              - paragraph [ref=f2e169]: 1 products
+            - link [ref=f2e170] [cursor=pointer]:
+              - /url: /admin/categories/e51f4474-f058-4c58-ad26-5a844c8ee003
+              - heading "QA Test Category" [level=2] [ref=f2e172]
+              - paragraph [ref=f2e173]: qa-test-category
+              - paragraph [ref=f2e174]: No description
+              - paragraph [ref=f2e175]: 0 products
+  - button "Open Next.js Dev Tools" [ref=f2e181] [cursor=pointer]

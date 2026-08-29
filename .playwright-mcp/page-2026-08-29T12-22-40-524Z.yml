@@ -1,0 +1,129 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - link "Gifta Guru Admin" [ref=e6] [cursor=pointer]:
+          - /url: /admin
+        - button "Menu" [ref=e7] [cursor=pointer]
+      - main [ref=e10]:
+        - generic [ref=e11]:
+          - generic [ref=e12]:
+            - generic [ref=e13]:
+              - link "← Products" [ref=e14] [cursor=pointer]:
+                - /url: /admin/products
+              - heading "QA Test Product" [level=1] [ref=e15]
+              - paragraph [ref=e16]: qa-test-product · Uncategorized
+            - generic [ref=e17]:
+              - generic [ref=e18]: draft
+              - link "View on storefront" [ref=e19] [cursor=pointer]:
+                - /url: /products/qa-test-product
+          - generic [ref=e20]:
+            - generic [ref=e21]:
+              - generic [ref=e22]:
+                - heading "Images" [level=2] [ref=e23]
+                - paragraph [ref=e24]: Position 1 is the primary storefront image. Use the arrows to reorder.
+                - generic [ref=e26]:
+                  - generic [ref=e27]:
+                    - img "QA Test Product" [ref=e28]
+                    - generic [ref=e29]: Primary
+                  - generic [ref=e30]:
+                    - button "Move image earlier" [disabled] [ref=e32]: ←
+                    - button "Move image later" [disabled] [ref=e34]: →
+                    - button "Remove" [ref=e36] [cursor=pointer]
+                - generic [ref=e37]:
+                  - generic [ref=e38]:
+                    - text: Add image (PNG, JPG or WEBP, up to 8MB)
+                    - button "Add image (PNG, JPG or WEBP, up to 8MB)" [ref=e39]
+                  - button "Upload image" [ref=e40] [cursor=pointer]
+              - generic [ref=e41]:
+                - heading "Details" [level=2] [ref=e42]
+                - generic [ref=e43]:
+                  - generic [ref=e44]:
+                    - text: Name
+                    - textbox "Name" [ref=e45]: QA Test Product
+                  - generic [ref=e46]:
+                    - text: Slug
+                    - textbox "Slug" [ref=e47]: qa-test-product
+                  - generic [ref=e48]:
+                    - text: Category
+                    - combobox "Category" [ref=e49]:
+                      - option "Uncategorized" [selected]
+                      - option "Eco-Friendly Gift Sets"
+                      - option "Luxury Gift Sets"
+                      - option "Office & Stationery"
+                      - option "Pens & Desk Accessories"
+                      - option "Premium Gift Sets"
+                      - option "QA Test Category"
+                  - generic [ref=e50]:
+                    - text: Description
+                    - textbox "Description" [ref=e51]
+                  - generic [ref=e52]:
+                    - text: Base price (INR)
+                    - spinbutton "Base price (INR)" [ref=e53]: "999"
+                  - generic [ref=e54]:
+                    - text: Compare-at price
+                    - spinbutton "Compare-at price" [ref=e55]
+                  - generic [ref=e56]:
+                    - text: Minimum order quantity
+                    - spinbutton "Minimum order quantity" [ref=e57]: "5"
+                  - generic [ref=e58]:
+                    - generic [ref=e59]:
+                      - checkbox "Customizable" [checked] [ref=e60]
+                      - text: Customizable
+                    - generic [ref=e61]:
+                      - checkbox "Featured" [ref=e62]
+                      - text: Featured
+                  - button "Save changes" [ref=e63] [cursor=pointer]
+              - generic [ref=e64]:
+                - heading "Collections" [level=2] [ref=e65]
+                - paragraph [ref=e66]: Assign this product to the storefront collections it should appear in.
+                - generic [ref=e67]:
+                  - button "Corporate Gifts" [ref=e69]
+                  - button "Joining Gifts" [ref=e72]
+                  - button "Employee Welcome Kits" [ref=e75]
+                  - button "Premium Gifts" [ref=e78]
+                  - button "Luxury Gifts" [ref=e81]
+                  - button "Eco-Friendly Gifts" [ref=e84]
+                  - button "Client Gifts" [ref=e87]
+                  - button "Employee Appreciation Gifts" [ref=e90]
+                  - button "Festive Corporate Gifts" [ref=e93]
+                  - button "Gift Sets & Hampers" [ref=e96]
+                  - button "QA Test Collection" [ref=e99]
+              - generic [ref=e101]:
+                - heading "Quantity pricing" [level=2] [ref=e102]
+                - paragraph [ref=e103]: Base price ₹999 applies below the first tier. Cart and checkout always recalculate the price server-side from these tiers — the storefront cannot override it.
+                - generic [ref=e105]:
+                  - generic [ref=e106]: 1 – ∞
+                  - generic [ref=e107]: ₹999 (base)
+                - generic [ref=e108]:
+                  - heading "Add / update a tier" [level=3] [ref=e109]
+                  - generic [ref=e110]:
+                    - generic [ref=e111]:
+                      - text: Min quantity
+                      - spinbutton "Min quantity" [ref=e112]
+                    - generic [ref=e113]:
+                      - text: Unit price (INR)
+                      - spinbutton "Unit price (INR)" [ref=e114]
+                    - button "Save tier" [ref=e115] [cursor=pointer]
+            - complementary [ref=e116]:
+              - generic [ref=e117]:
+                - heading "Publish status" [level=2] [ref=e118]
+                - paragraph [ref=e119]:
+                  - text: Only
+                  - strong [ref=e120]: active
+                  - text: products appear on the storefront.
+                - generic [ref=e121]:
+                  - combobox [ref=e122]:
+                    - option "draft" [selected]
+                    - option "active"
+                    - option "archived"
+                  - button "Update status" [ref=e123] [cursor=pointer]
+              - generic [ref=e124]:
+                - heading "Variants & stock" [level=2] [ref=e125]
+                - generic [ref=e127]:
+                  - paragraph [ref=e128]: Standard
+                  - paragraph [ref=e129]: SKU GG-0C06A95F
+                  - paragraph [ref=e130]: 0 in stock
+                - link "Manage stock →" [ref=e131] [cursor=pointer]:
+                  - /url: /admin/inventory
+  - button "Open Next.js Dev Tools" [ref=e137] [cursor=pointer]

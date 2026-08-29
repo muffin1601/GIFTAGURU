@@ -19,6 +19,7 @@ export async function getCollections(): Promise<StorefrontCollection[]> {
   if (isDatabaseConfigured()) {
     try {
       const collections = await prisma.collection.findMany({
+        where: { isPublished: true },
         orderBy: { sortOrder: "asc" },
       });
 
@@ -93,7 +94,7 @@ export async function getFeaturedCollectionsAsCategories(): Promise<Category[]> 
 export async function getCollectionBySlug(slug: string): Promise<Category | undefined> {
   if (isDatabaseConfigured()) {
     const collection = await prisma.collection.findUnique({ where: { slug } });
-    if (!collection) return undefined;
+    if (!collection || !collection.isPublished) return undefined;
 
     return {
       slug: collection.slug,

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth/admin";
+import { logAdminAction } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import { sendOrderStatusEmail } from "@/lib/email/service";
 
@@ -73,6 +74,14 @@ export async function updateOrderStatusAction(_state: { error?: string; success?
     }),
   ]);
 
+  await logAdminAction(admin, {
+    action: "order.status_changed",
+    entityType: "order",
+    entityId: order.id,
+    before: { status: order.status },
+    after: { status: parsed.data.status, note: parsed.data.note },
+  });
+
   await sendOrderStatusEmail(order.id, parsed.data.status);
   revalidatePath("/admin/orders");
   revalidatePath(`/admin/orders/${order.orderNumber}`);
@@ -112,6 +121,14 @@ export async function updateDeliveryAction(_state: { error?: string; success?: s
       },
     }),
   ]);
+
+  await logAdminAction(admin, {
+    action: "order.delivery_updated",
+    entityType: "order",
+    entityId: order.id,
+    before: { deliveryStatus: order.deliveryStatus },
+    after: { deliveryStatus: parsed.data.deliveryStatus, courierName: parsed.data.courierName, trackingNumber: parsed.data.trackingNumber },
+  });
 
   await sendOrderStatusEmail(order.id, parsed.data.deliveryStatus);
   revalidatePath(`/admin/orders/${order.orderNumber}`);
@@ -153,12 +170,20 @@ export async function updateInventoryAction(_state: { error?: string; success?: 
     }),
   ]);
 
+  await logAdminAction(admin, {
+    action: "inventory.adjusted",
+    entityType: "inventory",
+    entityId: inventory.id,
+    before: { quantityAvailable: inventory.quantityAvailable, lowStockThreshold: inventory.lowStockThreshold },
+    after: { quantityAvailable: parsed.data.quantityAvailable, lowStockThreshold: parsed.data.lowStockThreshold, reason: parsed.data.reason },
+  });
+
   revalidatePath("/admin/inventory");
   return { success: "Inventory updated." };
 }
 
 export async function updateBulkQuoteAction(_state: { error?: string; success?: string }, formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const parsed = z.object({
     id: z.string().uuid(),
     status: z.enum(["new", "contacted", "quoted", "negotiating", "converted", "closed", "won", "lost"]),
@@ -166,16 +191,24 @@ export async function updateBulkQuoteAction(_state: { error?: string; success?: 
   }).safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid enquiry update." };
 
+  const before = await prisma.bulkQuoteRequest.findUnique({ where: { id: parsed.data.id }, select: { status: true } });
   await prisma.bulkQuoteRequest.update({
     where: { id: parsed.data.id },
     data: { status: parsed.data.status, adminNotes: parsed.data.adminNotes },
+  });
+  await logAdminAction(admin, {
+    action: "bulk_quote.status_changed",
+    entityType: "bulk_quote_request",
+    entityId: parsed.data.id,
+    before,
+    after: { status: parsed.data.status },
   });
   revalidatePath("/admin/bulk-enquiries");
   return { success: "Bulk enquiry updated." };
 }
 
 export async function updateLeadAction(_state: { error?: string; success?: string }, formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const parsed = z.object({
     id: z.string().uuid(),
     status: z.enum(["new", "contacted", "qualified", "quoted", "negotiating", "converted", "closed"]),
@@ -183,9 +216,17 @@ export async function updateLeadAction(_state: { error?: string; success?: strin
   }).safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid lead update." };
 
+  const before = await prisma.lead.findUnique({ where: { id: parsed.data.id }, select: { status: true } });
   await prisma.lead.update({
     where: { id: parsed.data.id },
     data: { status: parsed.data.status, adminNotes: parsed.data.adminNotes },
+  });
+  await logAdminAction(admin, {
+    action: "lead.status_changed",
+    entityType: "lead",
+    entityId: parsed.data.id,
+    before,
+    after: { status: parsed.data.status },
   });
   revalidatePath("/admin/leads");
   revalidatePath(`/admin/leads/${parsed.data.id}`);
@@ -193,7 +234,7 @@ export async function updateLeadAction(_state: { error?: string; success?: strin
 }
 
 export async function updateCustomizationAction(_state: { error?: string; success?: string }, formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const parsed = z.object({
     id: z.string().uuid(),
     status: z.enum(["pending", "in_review", "approved", "rejected", "completed"]),
@@ -201,6 +242,7 @@ export async function updateCustomizationAction(_state: { error?: string; succes
   }).safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid customization update." };
 
+  await logAdminAction(admin, { action: "customization.status_changed", entityType: "customization_request", entityId: parsed.data.id, after: { status: parsed.data.status } });
   await prisma.customizationRequest.update({
     where: { id: parsed.data.id },
     data: { status: parsed.data.status, adminNotes: parsed.data.adminNotes },
@@ -210,7 +252,7 @@ export async function updateCustomizationAction(_state: { error?: string; succes
 }
 
 export async function createCouponAction(_state: { error?: string; success?: string }, formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const parsed = z.object({
     code: z.string().trim().min(3).max(40).transform((value) => value.toUpperCase()),
     description: z.string().trim().max(300).optional(),
@@ -246,12 +288,13 @@ export async function createCouponAction(_state: { error?: string; success?: str
       expiresAt: parsed.data.expiresAt ? new Date(parsed.data.expiresAt) : null,
     },
   });
+  await logAdminAction(admin, { action: "coupon.saved", entityType: "discount", entityId: parsed.data.code, after: parsed.data });
   revalidatePath("/admin/coupons");
   return { success: "Coupon saved." };
 }
 
 export async function updateStoreSettingsAction(_state: { error?: string; success?: string }, formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const entries = ["store_name", "contact_phone", "whatsapp_number", "support_email", "minimum_quantity", "gift_wrap_price", "shipping_message", "shipping_timeline"];
 
   await prisma.$transaction(entries.map((key) => {
@@ -264,6 +307,7 @@ export async function updateStoreSettingsAction(_state: { error?: string; succes
     });
   }));
 
+  await logAdminAction(admin, { action: "store_settings.updated", entityType: "store_setting", after: Object.fromEntries(entries.map((key) => [key, formData.get(key)])) });
   revalidatePath("/admin/settings");
   return { success: "Store settings updated." };
 }
@@ -275,7 +319,7 @@ const addPriceTierSchema = z.object({
 });
 
 export async function addPriceTierAction(_state: { error?: string; success?: string }, formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const parsed = addPriceTierSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid price tier." };
 
@@ -291,6 +335,12 @@ export async function addPriceTierAction(_state: { error?: string; success?: str
     create: { productId: parsed.data.productId, minQuantity: parsed.data.minQuantity, unitPrice: parsed.data.unitPrice },
   });
 
+  await logAdminAction(admin, {
+    action: "price_tier.saved",
+    entityType: "product",
+    entityId: parsed.data.productId,
+    after: { minQuantity: parsed.data.minQuantity, unitPrice: parsed.data.unitPrice },
+  });
   revalidatePath(`/admin/products/${parsed.data.productId}`);
   revalidatePath(`/products/${product.slug}`);
   return { success: "Price tier saved." };
@@ -302,13 +352,14 @@ const deletePriceTierSchema = z.object({
 });
 
 export async function deletePriceTierAction(_state: { error?: string; success?: string }, formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const parsed = deletePriceTierSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { error: "Invalid price tier." };
 
   const product = await prisma.product.findUnique({ where: { id: parsed.data.productId }, select: { slug: true } });
   await prisma.productPriceTier.delete({ where: { id: parsed.data.tierId } }).catch(() => null);
 
+  await logAdminAction(admin, { action: "price_tier.removed", entityType: "product", entityId: parsed.data.productId, before: { tierId: parsed.data.tierId } });
   revalidatePath(`/admin/products/${parsed.data.productId}`);
   if (product) revalidatePath(`/products/${product.slug}`);
   return { success: "Price tier removed." };
@@ -354,6 +405,13 @@ export async function updateCustomerRoleAction(
     data: { role: parsed.data.role },
   });
 
+  await logAdminAction(admin, {
+    action: "profile.role_changed",
+    entityType: "profile",
+    entityId: parsed.data.profileId,
+    before: { role: target.role },
+    after: { role: parsed.data.role },
+  });
   revalidatePath(`/admin/customers/${parsed.data.profileId}`);
   revalidatePath("/admin/customers");
   return { success: `Role updated to ${parsed.data.role.replaceAll("_", " ")}.` };

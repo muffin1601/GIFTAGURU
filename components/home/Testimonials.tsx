@@ -1,9 +1,11 @@
 import Container from "@/components/ui/Container";
 import SectionHeading from "@/components/ui/SectionHeading";
-import { testimonials } from "@/data/testimonials";
+import { getTestimonials } from "@/lib/data/content";
 
-export default function Testimonials() {
-  // No invented social proof: render nothing until real quotes are added.
+export default async function Testimonials() {
+  const testimonials = await getTestimonials();
+  // No invented social proof: render nothing until a real quote is added
+  // from /admin/testimonials.
   if (testimonials.length === 0) return null;
 
   return (

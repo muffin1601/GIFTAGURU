@@ -1,0 +1,20 @@
+- generic [active] [ref=f6e1]:
+  - main [ref=f6e2]:
+    - generic [ref=f6e240]:
+      - text: Something went wrong
+      - heading "We hit a snag" [level=1] [ref=f6e241]
+      - paragraph [ref=f6e242]: Please try again. If the problem continues, our team is happy to help over WhatsApp or email.
+      - generic [ref=f6e243]:
+        - button "Try again" [ref=f6e244] [cursor=pointer]
+        - link "Contact us" [ref=f6e245] [cursor=pointer]:
+          - /url: /contact
+  - generic [ref=f6e234] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=f6e235]
+    - generic [ref=f6e246]:
+      - button "Open issues overlay" [ref=f6e247]:
+        - generic [ref=f6e248]:
+          - generic [ref=f6e249]: "0"
+          - generic [ref=f6e250]: "1"
+        - generic [ref=f6e251]: Issue
+      - button "Collapse issues badge" [ref=f6e252]
+  - alert [ref=f6e239]

@@ -20,7 +20,8 @@
     "db:migrate:baseline": "node prisma/migrate.mjs --baseline",
     "admin:create": "node prisma/create-admin.mjs",
     "admin:list": "node prisma/list-admins.mjs",
-    "check:config": "node prisma/check-config.mjs"
+    "check:config": "node prisma/check-config.mjs",
+    "ensure:storage": "node prisma/ensure-storage.mjs"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",

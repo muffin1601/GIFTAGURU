@@ -1,0 +1,180 @@
+- generic [active] [ref=f4e1]:
+  - main [ref=f4e2]:
+    - generic [ref=f4e3]:
+      - complementary [ref=f4e4]:
+        - navigation "Admin navigation" [ref=f4e5]:
+          - link "Gifta Guru" [ref=f4e6] [cursor=pointer]:
+            - /url: /admin
+          - generic [ref=f4e7]:
+            - paragraph [ref=f4e8]: Dashboard
+            - link "Overview" [ref=f4e10] [cursor=pointer]:
+              - /url: /admin
+          - generic [ref=f4e14]:
+            - paragraph [ref=f4e15]: Catalog
+            - generic [ref=f4e16]:
+              - link "Products" [ref=f4e17] [cursor=pointer]:
+                - /url: /admin/products
+              - link "Categories" [ref=f4e21] [cursor=pointer]:
+                - /url: /admin/categories
+              - link "Collections" [ref=f4e27] [cursor=pointer]:
+                - /url: /admin/collections
+              - link "Inventory" [ref=f4e32] [cursor=pointer]:
+                - /url: /admin/inventory
+          - generic [ref=f4e43]:
+            - paragraph [ref=f4e44]: Sales
+            - generic [ref=f4e45]:
+              - link "Orders" [ref=f4e46] [cursor=pointer]:
+                - /url: /admin/orders
+              - link "Payments" [ref=f4e52] [cursor=pointer]:
+                - /url: /admin/payments
+              - link "Coupons" [ref=f4e56] [cursor=pointer]:
+                - /url: /admin/coupons
+          - generic [ref=f4e60]:
+            - paragraph [ref=f4e61]: Customers
+            - link "Customers" [ref=f4e63] [cursor=pointer]:
+              - /url: /admin/customers
+          - generic [ref=f4e68]:
+            - paragraph [ref=f4e69]: Corporate
+            - generic [ref=f4e70]:
+              - link "Bulk Enquiries" [ref=f4e71] [cursor=pointer]:
+                - /url: /admin/bulk-enquiries
+              - link "Leads" [ref=f4e75] [cursor=pointer]:
+                - /url: /admin/leads
+              - link "Customizations" [ref=f4e80] [cursor=pointer]:
+                - /url: /admin/customizations
+          - generic [ref=f4e85]:
+            - paragraph [ref=f4e86]: Marketing
+            - generic [ref=f4e87]:
+              - link "Email Campaigns" [ref=f4e88] [cursor=pointer]:
+                - /url: /admin/email-campaigns
+              - link "Subscribers" [ref=f4e92] [cursor=pointer]:
+                - /url: /admin/subscribers
+          - generic [ref=f4e95]:
+            - paragraph [ref=f4e96]: Content
+            - generic [ref=f4e97]:
+              - link "FAQs" [ref=f4e98] [cursor=pointer]:
+                - /url: /admin/faqs
+              - link "Testimonials" [ref=f4e102] [cursor=pointer]:
+                - /url: /admin/testimonials
+          - generic [ref=f4e107]:
+            - paragraph [ref=f4e108]: System
+            - generic [ref=f4e109]:
+              - link "Store Settings" [ref=f4e110] [cursor=pointer]:
+                - /url: /admin/settings
+              - link "Audit Log" [ref=f4e114] [cursor=pointer]:
+                - /url: /admin/audit-logs
+      - main [ref=f4e119]:
+        - generic [ref=f4e120]:
+          - generic [ref=f4e121]:
+            - paragraph [ref=f4e122]: Catalog
+            - heading "Collections" [level=1] [ref=f4e123]
+            - paragraph [ref=f4e124]: Collections are the curated, image-led pages customers browse (Eco Gifts, Premium Gifts, ...). Feature a collection to show it on the homepage.
+          - generic [ref=f4e125]:
+            - heading "New collection" [level=2] [ref=f4e126]
+            - generic [ref=f4e127]:
+              - generic [ref=f4e128]:
+                - text: Name
+                - textbox "Name" [ref=f4e129]:
+                  - /placeholder: e.g. Festive Gifts
+              - generic [ref=f4e130]:
+                - text: Slug (optional)
+                - textbox "Slug (optional)" [ref=f4e131]:
+                  - /placeholder: festive-gifts
+              - generic [ref=f4e132]:
+                - text: Tagline
+                - textbox "Tagline" [ref=f4e133]:
+                  - /placeholder: Seasonal gifting, done right.
+              - generic [ref=f4e134]:
+                - text: Image URL
+                - textbox "Image URL" [ref=f4e135]:
+                  - /placeholder: /SBanners/...
+              - generic [ref=f4e136]:
+                - text: Description
+                - textbox "Description" [ref=f4e137]
+              - generic [ref=f4e138]:
+                - checkbox "Feature on homepage" [ref=f4e139]
+                - text: Feature on homepage
+              - generic [ref=f4e140]:
+                - text: Display order
+                - spinbutton "Display order" [ref=f4e141]: "11"
+              - button "Create collection" [ref=f4e142] [cursor=pointer]
+          - generic [ref=f4e143]:
+            - link "Corporate Gifts Featured corporate-gifts 12 products" [ref=f4e144] [cursor=pointer]:
+              - /url: /admin/collections/868786ee-e0eb-4679-bef9-0013357fe3e2
+              - generic [ref=f4e146]:
+                - generic [ref=f4e147]:
+                  - heading "Corporate Gifts" [level=2] [ref=f4e148]
+                  - generic [ref=f4e149]: Featured
+                - paragraph [ref=f4e150]: corporate-gifts
+                - paragraph [ref=f4e151]: 12 products
+            - link "Joining Gifts Featured joining-gifts 6 products" [ref=f4e152] [cursor=pointer]:
+              - /url: /admin/collections/2799f707-6023-4bad-b594-70e94723f4dc
+              - generic [ref=f4e154]:
+                - generic [ref=f4e155]:
+                  - heading "Joining Gifts" [level=2] [ref=f4e156]
+                  - generic [ref=f4e157]: Featured
+                - paragraph [ref=f4e158]: joining-gifts
+                - paragraph [ref=f4e159]: 6 products
+            - link "Employee Welcome Kits employee-welcome-kits 3 products" [ref=f4e160] [cursor=pointer]:
+              - /url: /admin/collections/0067b197-50a5-4dca-b4c8-daa802854699
+              - generic [ref=f4e162]:
+                - heading "Employee Welcome Kits" [level=2] [ref=f4e164]
+                - paragraph [ref=f4e165]: employee-welcome-kits
+                - paragraph [ref=f4e166]: 3 products
+            - link "Premium Gifts Featured premium-gifts 9 products" [ref=f4e167] [cursor=pointer]:
+              - /url: /admin/collections/3409d3f1-0c4a-42ba-9c52-2bb20e027978
+              - generic [ref=f4e169]:
+                - generic [ref=f4e170]:
+                  - heading "Premium Gifts" [level=2] [ref=f4e171]
+                  - generic [ref=f4e172]: Featured
+                - paragraph [ref=f4e173]: premium-gifts
+                - paragraph [ref=f4e174]: 9 products
+            - link "Luxury Gifts Featured luxury-gifts 6 products" [ref=f4e175] [cursor=pointer]:
+              - /url: /admin/collections/f3561ac7-8ebf-4040-a3f2-9955b7ed0b3f
+              - generic [ref=f4e177]:
+                - generic [ref=f4e178]:
+                  - heading "Luxury Gifts" [level=2] [ref=f4e179]
+                  - generic [ref=f4e180]: Featured
+                - paragraph [ref=f4e181]: luxury-gifts
+                - paragraph [ref=f4e182]: 6 products
+            - link "Eco-Friendly Gifts Featured eco-gifts 3 products" [ref=f4e183] [cursor=pointer]:
+              - /url: /admin/collections/d765788b-91e6-4459-b4fa-c0890b44fd0f
+              - generic [ref=f4e185]:
+                - generic [ref=f4e186]:
+                  - heading "Eco-Friendly Gifts" [level=2] [ref=f4e187]
+                  - generic [ref=f4e188]: Featured
+                - paragraph [ref=f4e189]: eco-gifts
+                - paragraph [ref=f4e190]: 3 products
+            - link [ref=f4e191] [cursor=pointer]:
+              - /url: /admin/collections/f2620f29-1b80-4787-a0f0-b704c42c371a
+              - generic [ref=f4e193]:
+                - heading "Client Gifts" [level=2] [ref=f4e195]
+                - paragraph [ref=f4e196]: client-gifts
+                - paragraph [ref=f4e197]: 9 products
+            - link [ref=f4e198] [cursor=pointer]:
+              - /url: /admin/collections/a9d08765-3cb8-41c8-b0d6-3b6597b86b75
+              - generic [ref=f4e200]:
+                - heading "Employee Appreciation Gifts" [level=2] [ref=f4e202]
+                - paragraph [ref=f4e203]: employee-appreciation-gifts
+                - paragraph [ref=f4e204]: 4 products
+            - link "Festive Corporate Gifts Featured festive-corporate-gifts 2 products" [ref=f4e205] [cursor=pointer]:
+              - /url: /admin/collections/073a44fd-a6ce-41f0-a736-4172ec5fa7c3
+              - generic [ref=f4e207]:
+                - generic [ref=f4e208]:
+                  - heading "Festive Corporate Gifts" [level=2] [ref=f4e209]
+                  - generic [ref=f4e210]: Featured
+                - paragraph [ref=f4e211]: festive-corporate-gifts
+                - paragraph [ref=f4e212]: 2 products
+            - link [ref=f4e213] [cursor=pointer]:
+              - /url: /admin/collections/6ef51dda-a7fb-46e0-826d-1473923a1487
+              - generic [ref=f4e215]:
+                - heading "Gift Sets & Hampers" [level=2] [ref=f4e217]
+                - paragraph [ref=f4e218]: gift-sets-hampers
+                - paragraph [ref=f4e219]: 1 products
+            - link [ref=f4e220] [cursor=pointer]:
+              - /url: /admin/collections/e405c7df-5465-4b17-abcc-9461214e7080
+              - generic [ref=f4e222]:
+                - heading "QA Test Collection" [level=2] [ref=f4e224]
+                - paragraph [ref=f4e225]: qa-test-collection
+                - paragraph [ref=f4e226]: 0 products
+  - button "Open Next.js Dev Tools" [ref=f4e232] [cursor=pointer]

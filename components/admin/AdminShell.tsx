@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, Boxes, ChevronDown, CircleDollarSign, FolderTree, Gift, Home, Mail, PackageCheck, Settings, ShoppingBag, TicketPercent, UsersRound } from "lucide-react";
+import { BarChart3, Boxes, ChevronDown, CircleDollarSign, ClipboardList, FolderTree, Gift, Home, Mail, MessageSquareQuote, PackageCheck, Settings, ShoppingBag, TicketPercent, UsersRound } from "lucide-react";
 import { useState } from "react";
 
 const sections = [
@@ -47,8 +47,18 @@ const sections = [
     ],
   },
   {
-    title: "Store",
-    links: [{ label: "Store Settings", href: "/admin/settings", Icon: Settings }],
+    title: "Content",
+    links: [
+      { label: "FAQs", href: "/admin/faqs", Icon: ClipboardList },
+      { label: "Testimonials", href: "/admin/testimonials", Icon: MessageSquareQuote },
+    ],
+  },
+  {
+    title: "System",
+    links: [
+      { label: "Store Settings", href: "/admin/settings", Icon: Settings },
+      { label: "Audit Log", href: "/admin/audit-logs", Icon: ClipboardList },
+    ],
   },
 ];
 

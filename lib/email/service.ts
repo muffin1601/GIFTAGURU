@@ -3,7 +3,7 @@ import "server-only";
 import { isEmailConfigured, siteUrl } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { STORE_CONTACT } from "@/lib/config/store";
-import { adminNotificationTemplate, orderEmailTemplate, type EmailOrder } from "@/lib/email/templates";
+import { adminNotificationTemplate, confirmSignupEmailTemplate, orderEmailTemplate, type EmailOrder } from "@/lib/email/templates";
 
 type SendEmailInput = {
   eventKey: string;
@@ -84,6 +84,16 @@ export async function sendTransactionalEmail(input: SendEmailInput) {
       },
     });
   }
+}
+
+export async function sendSignupConfirmationEmail(email: string, confirmationUrl: string) {
+  return sendTransactionalEmail({
+    eventKey: `signup:${email}:confirm`,
+    type: "signup_confirmation",
+    to: email,
+    subject: "Confirm your Gifta Guru account",
+    html: confirmSignupEmailTemplate(confirmationUrl),
+  });
 }
 
 export async function sendOrderReceivedEmail(orderId: string) {

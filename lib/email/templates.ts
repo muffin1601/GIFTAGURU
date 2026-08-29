@@ -63,6 +63,16 @@ export function orderEmailTemplate(title: string, intro: string, order: EmailOrd
   `);
 }
 
+export function confirmSignupEmailTemplate(confirmationUrl: string) {
+  return shell("Confirm your account", `
+    <p style="font-size:15px;line-height:1.7">Thanks for creating a Gifta Guru business gifting account. Confirm your email to activate faster checkout and quotes.</p>
+    <p style="margin:22px 0">
+      <a href="${confirmationUrl}" style="display:inline-block;background:#0f2038;color:#fff;text-decoration:none;border-radius:999px;padding:12px 24px;font-size:15px">Confirm account</a>
+    </p>
+    <p style="font-size:13px;color:#637083">If the button doesn't work, copy and paste this link into your browser:<br />${confirmationUrl}</p>
+  `);
+}
+
 export function adminNotificationTemplate(title: string, lines: string[]) {
   return shell(title, `
     ${lines.map((line) => `<p style="margin:0 0 10px;font-size:15px;line-height:1.6">${line}</p>`).join("")}

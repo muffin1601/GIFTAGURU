@@ -1,0 +1,277 @@
+- generic [active] [ref=f5e1]:
+  - banner [ref=f5e2]:
+    - generic [ref=f5e3]:
+      - link "Gifta Guru home" [ref=f5e4] [cursor=pointer]:
+        - /url: /
+        - img "Gifta Guru" [ref=f5e5]
+      - generic [ref=f5e6]:
+        - link "Search" [ref=f5e7] [cursor=pointer]:
+          - /url: /search
+        - link "Account" [ref=f5e11] [cursor=pointer]:
+          - /url: /account
+        - button "Open menu" [ref=f5e16]
+  - main [ref=f5e18]:
+    - generic [ref=f5e19]:
+      - navigation "Breadcrumb" [ref=f5e20]:
+        - link "Home" [ref=f5e21] [cursor=pointer]:
+          - /url: /
+        - generic [ref=f5e22]: /
+        - link "Shop" [ref=f5e23] [cursor=pointer]:
+          - /url: /shop
+        - generic [ref=f5e24]: /
+        - generic [ref=f5e25]: QA Test Product
+      - generic [ref=f5e26]:
+        - generic [ref=f5e27]:
+          - img "QA Test Product" [ref=f5e29]
+          - generic [ref=f5e30]:
+            - button "View image 1 of 3" [ref=f5e31]
+            - button "View image 2 of 3" [ref=f5e32]
+            - button "View image 3 of 3" [ref=f5e33]
+        - generic [ref=f5e34]:
+          - paragraph [ref=f5e35]: Corporate Gifts
+          - heading "QA Test Product" [level=1] [ref=f5e36]
+          - paragraph
+          - generic [ref=f5e37]:
+            - generic [ref=f5e38]: ₹999
+            - generic [ref=f5e39]: excl. GST
+          - generic [ref=f5e40]:
+            - heading "Volume Pricing" [level=2] [ref=f5e41]
+            - table [ref=f5e42]:
+              - caption [ref=f5e43]: Price per unit by order quantity
+              - rowgroup [ref=f5e44]:
+                - row [ref=f5e45]:
+                  - columnheader "Quantity" [ref=f5e46]
+                  - columnheader "Price per unit" [ref=f5e47]
+              - rowgroup [ref=f5e48]:
+                - row [ref=f5e49]:
+                  - cell "1 – 9" [ref=f5e50]
+                  - cell "₹999" [ref=f5e51]
+                - row [ref=f5e52]:
+                  - cell "10+" [ref=f5e53]
+                  - cell "₹799" [ref=f5e54]
+            - paragraph [ref=f5e55]:
+              - text: Need a larger quantity?
+              - link "Request a quote" [ref=f5e56] [cursor=pointer]:
+                - /url: /bulk-enquiry
+              - text: .
+          - generic [ref=f5e58]:
+            - generic [ref=f5e59]:
+              - text: Quantity
+              - generic [ref=f5e60]:
+                - button "Decrease quantity" [ref=f5e61]
+                - spinbutton "Quantity" [ref=f5e63]: "5"
+                - button "Increase quantity" [ref=f5e64]
+              - paragraph [ref=f5e66]: "Minimum order quantity: 5 units"
+              - paragraph [ref=f5e67]: ₹999 / unit · ₹4,995 total for 5
+            - generic [ref=f5e68]:
+              - heading "Customize for your company" [level=2] [ref=f5e69]
+              - paragraph [ref=f5e70]: Upload logo artwork, add personalization text and choose wrap preferences. We share a branding proof before production.
+              - generic [ref=f5e71]:
+                - generic [ref=f5e72]:
+                  - generic [ref=f5e73]: Company logo
+                  - button "Company logo" [ref=f5e74]
+                - generic [ref=f5e75]:
+                  - generic [ref=f5e76]: Personalization text
+                  - textbox "Personalization text" [ref=f5e77]:
+                    - /placeholder: Up to 10 characters
+                  - generic [ref=f5e78]: 0/10
+                - generic [ref=f5e79]:
+                  - generic [ref=f5e80]:
+                    - generic [ref=f5e81]: Gift wrap
+                    - generic [ref=f5e82]: ₹40 per cart item
+                  - checkbox "Gift wrap ₹40 per cart item" [ref=f5e83]
+            - generic [ref=f5e84]:
+              - generic [ref=f5e85]: Delivery PIN code
+              - generic [ref=f5e86]:
+                - textbox "Delivery PIN code" [ref=f5e87]:
+                  - /placeholder: 6-digit PIN
+                - button "Check" [ref=f5e88] [cursor=pointer]
+              - paragraph [ref=f5e89]: Ships within 10-15 days
+            - generic [ref=f5e90]:
+              - button "Add to Cart" [ref=f5e91] [cursor=pointer]
+              - button "Buy Now" [ref=f5e92] [cursor=pointer]
+            - generic [ref=f5e93]:
+              - button "Need a bulk quote?" [ref=f5e94]
+              - link "Request a Quote" [ref=f5e97] [cursor=pointer]:
+                - /url: /bulk-enquiry?product=QA%20Test%20Product
+              - link "WhatsApp" [ref=f5e98] [cursor=pointer]:
+                - /url: https://wa.me/918750708222?text=Hi%20Gifta%20Guru%2C%20I%20want%20to%20enquire%20about%20QA%20Test%20Product.%20Quantity%3A%205.
+      - generic [ref=f5e101]:
+        - generic [ref=f5e102]:
+          - heading "Estimated delivery" [level=2] [ref=f5e106]
+          - paragraph [ref=f5e107]: Ships within 10-15 days
+        - generic [ref=f5e108]:
+          - heading "Secure fulfilment" [level=2] [ref=f5e112]
+          - paragraph [ref=f5e113]: Server-side pricing and payment verification.
+        - generic [ref=f5e114]:
+          - heading "Bulk support" [level=2] [ref=f5e120]
+          - paragraph [ref=f5e121]: Dedicated assistance for custom quantities and packaging.
+      - generic [ref=f5e122]:
+        - heading "Product details" [level=2] [ref=f5e123]
+        - generic [ref=f5e125]:
+          - generic [ref=f5e126]:
+            - button "Specifications" [expanded] [ref=f5e127]
+            - region [ref=f5e130]:
+              - generic [ref=f5e133]:
+                - generic [ref=f5e134]:
+                  - term [ref=f5e135]: Minimum quantity
+                  - definition [ref=f5e136]: 5 units
+                - generic [ref=f5e137]:
+                  - term [ref=f5e138]: Customization
+                  - definition [ref=f5e139]: Available
+                - generic [ref=f5e140]:
+                  - term [ref=f5e141]: Gift wrap
+                  - definition [ref=f5e142]: ₹40
+                - generic [ref=f5e143]:
+                  - term [ref=f5e144]: Logo proof
+                  - definition [ref=f5e145]: Shared before production
+          - generic [ref=f5e146]:
+            - button "What's Included & Customization" [ref=f5e147]
+            - region:
+              - list [ref=f5e151]:
+                - listitem [ref=f5e152]: Company logo embossing or print where applicable
+                - listitem [ref=f5e153]: Personalization text up to 10 characters
+                - listitem [ref=f5e154]: Gift wrap and branded presentation boxes
+                - listitem [ref=f5e155]: Bulk quote support for high-volume orders
+          - generic [ref=f5e156]:
+            - button "Shipping & Returns" [ref=f5e157]
+            - region:
+              - generic [ref=f5e161]:
+                - paragraph [ref=f5e162]: Ships within 10-15 days. Final shipping charges are calculated securely at checkout based on your delivery address and order size.
+                - paragraph [ref=f5e163]: Customized and personalized orders are made to your specification and are not eligible for return once production has started. Contact our team before placing a bulk order if you have questions.
+      - generic [ref=f5e164]:
+        - heading "Related products" [level=2] [ref=f5e165]
+        - generic [ref=f5e166]:
+          - article [ref=f5e167]:
+            - link [ref=f5e168] [cursor=pointer]:
+              - /url: /products/grey-planner-corporate-set
+            - generic [ref=f5e170]:
+              - generic [ref=f5e171]: Office & Stationery
+              - heading [level=3] [ref=f5e172]:
+                - link "Grey Planner Corporate Set" [ref=f5e173] [cursor=pointer]:
+                  - /url: /products/grey-planner-corporate-set
+              - generic [ref=f5e174]:
+                - generic [ref=f5e175]: ₹1,299
+                - generic [ref=f5e176]: / unit
+              - button "Add to cart" [ref=f5e177]
+          - article [ref=f5e178]:
+            - link [ref=f5e179] [cursor=pointer]:
+              - /url: /products/white-premium-corporate-gift-set
+            - generic [ref=f5e181]:
+              - generic [ref=f5e182]: Premium Gift Sets
+              - heading [level=3] [ref=f5e183]:
+                - link "White Premium Corporate Gift Set" [ref=f5e184] [cursor=pointer]:
+                  - /url: /products/white-premium-corporate-gift-set
+              - generic [ref=f5e185]:
+                - generic [ref=f5e186]: ₹1,999
+                - generic [ref=f5e187]: / unit
+              - button "Add to cart" [ref=f5e188]
+          - article [ref=f5e189]:
+            - link [ref=f5e190] [cursor=pointer]:
+              - /url: /products/grey-folio-and-notebook-set
+            - generic [ref=f5e192]:
+              - generic [ref=f5e193]: Premium Gift Sets
+              - heading [level=3] [ref=f5e194]:
+                - link "Grey Folio & Notebook Set" [ref=f5e195] [cursor=pointer]:
+                  - /url: /products/grey-folio-and-notebook-set
+              - generic [ref=f5e196]:
+                - generic [ref=f5e197]: ₹1,799
+                - generic [ref=f5e198]: / unit
+              - button "Add to cart" [ref=f5e199]
+    - button "Add to Cart" [ref=f5e201] [cursor=pointer]
+  - contentinfo [ref=f5e205]:
+    - generic [ref=f5e206]:
+      - generic [ref=f5e207]:
+        - img "Gifta Guru" [ref=f5e208]
+        - paragraph [ref=f5e209]: A premium corporate gifting partner helping businesses across India curate, customize and deliver thoughtful gifts at scale.
+        - list [ref=f5e210]:
+          - listitem [ref=f5e211]:
+            - link "+91 87507 08222" [ref=f5e214] [cursor=pointer]:
+              - /url: tel:+918750708222
+          - listitem [ref=f5e215]:
+            - link "giftaguru27@gmail.com" [ref=f5e219] [cursor=pointer]:
+              - /url: mailto:giftaguru27@gmail.com
+          - listitem [ref=f5e220]:
+            - generic [ref=f5e224]: F90/1, Beside ESIC Hospital, Okhla Industrial Area Phase 1, New Delhi - 110020, India
+        - generic [ref=f5e225]:
+          - link "facebook" [ref=f5e226] [cursor=pointer]:
+            - /url: "#"
+          - link "instagram" [ref=f5e229] [cursor=pointer]:
+            - /url: "#"
+          - link "linkedin" [ref=f5e232] [cursor=pointer]:
+            - /url: "#"
+      - navigation "Shop" [ref=f5e235]:
+        - heading "Shop" [level=3] [ref=f5e236]
+        - list [ref=f5e237]:
+          - listitem [ref=f5e238]:
+            - link "All Gifts" [ref=f5e239] [cursor=pointer]:
+              - /url: /shop
+          - listitem [ref=f5e240]:
+            - link "Collections" [ref=f5e241] [cursor=pointer]:
+              - /url: /categories
+          - listitem [ref=f5e242]:
+            - link "Joining Gifts" [ref=f5e243] [cursor=pointer]:
+              - /url: /categories/joining-gifts
+          - listitem [ref=f5e244]:
+            - link "Premium Gifts" [ref=f5e245] [cursor=pointer]:
+              - /url: /categories/premium-gifts
+          - listitem [ref=f5e246]:
+            - link "Luxury Gifts" [ref=f5e247] [cursor=pointer]:
+              - /url: /categories/luxury-gifts
+          - listitem [ref=f5e248]:
+            - link "Eco-Friendly Gifts" [ref=f5e249] [cursor=pointer]:
+              - /url: /categories/eco-gifts
+      - navigation "Business" [ref=f5e250]:
+        - heading "Business" [level=3] [ref=f5e251]
+        - list [ref=f5e252]:
+          - listitem [ref=f5e253]:
+            - link "Corporate Gifting" [ref=f5e254] [cursor=pointer]:
+              - /url: /corporate-gifting
+          - listitem [ref=f5e255]:
+            - link "Custom Branding" [ref=f5e256] [cursor=pointer]:
+              - /url: /custom-gifts
+          - listitem [ref=f5e257]:
+            - link "Bulk Orders" [ref=f5e258] [cursor=pointer]:
+              - /url: /bulk-orders
+          - listitem [ref=f5e259]:
+            - link "Request a Quote" [ref=f5e260] [cursor=pointer]:
+              - /url: /bulk-enquiry
+      - navigation "Help" [ref=f5e261]:
+        - heading "Help" [level=3] [ref=f5e262]
+        - list [ref=f5e263]:
+          - listitem [ref=f5e264]:
+            - link "Contact" [ref=f5e265] [cursor=pointer]:
+              - /url: /contact
+          - listitem [ref=f5e266]:
+            - link "Track Order" [ref=f5e267] [cursor=pointer]:
+              - /url: /track-order
+          - listitem [ref=f5e268]:
+            - link "Your Account" [ref=f5e269] [cursor=pointer]:
+              - /url: /account
+          - listitem [ref=f5e270]:
+            - link "Your Cart" [ref=f5e271] [cursor=pointer]:
+              - /url: /cart
+      - navigation "Company" [ref=f5e272]:
+        - heading "Company" [level=3] [ref=f5e273]
+        - list [ref=f5e274]:
+          - listitem [ref=f5e275]:
+            - link "About" [ref=f5e276] [cursor=pointer]:
+              - /url: /about
+          - listitem [ref=f5e277]:
+            - link "Privacy Policy" [ref=f5e278] [cursor=pointer]:
+              - /url: /privacy-policy
+          - listitem [ref=f5e279]:
+            - link "Terms and Conditions" [ref=f5e280] [cursor=pointer]:
+              - /url: /terms-and-conditions
+    - generic [ref=f5e282]:
+      - generic [ref=f5e283]: © 2026 Gifta Guru. All rights reserved.
+      - generic [ref=f5e284]:
+        - link "Privacy Policy" [ref=f5e285] [cursor=pointer]:
+          - /url: /privacy-policy
+        - link "Terms and Conditions" [ref=f5e286] [cursor=pointer]:
+          - /url: /terms-and-conditions
+  - generic [ref=f5e287]:
+    - button "Open gift advisor chatbot" [ref=f5e288]
+    - button "Chat with us on WhatsApp" [ref=f5e292]
+  - button "Open Next.js Dev Tools" [ref=f5e300] [cursor=pointer]
+  - alert [ref=f5e304]

@@ -1,0 +1,107 @@
+- generic [active] [ref=f5e1]:
+  - main [ref=f5e2]:
+    - generic [ref=f5e3]:
+      - complementary [ref=f5e4]:
+        - navigation "Admin navigation" [ref=f5e5]:
+          - link "Gifta Guru" [ref=f5e6] [cursor=pointer]:
+            - /url: /admin
+          - generic [ref=f5e7]:
+            - paragraph [ref=f5e8]: Dashboard
+            - link "Overview" [ref=f5e10] [cursor=pointer]:
+              - /url: /admin
+          - generic [ref=f5e14]:
+            - paragraph [ref=f5e15]: Catalog
+            - generic [ref=f5e16]:
+              - link "Products" [ref=f5e17] [cursor=pointer]:
+                - /url: /admin/products
+              - link "Categories" [ref=f5e21] [cursor=pointer]:
+                - /url: /admin/categories
+              - link "Collections" [ref=f5e27] [cursor=pointer]:
+                - /url: /admin/collections
+              - link "Inventory" [ref=f5e32] [cursor=pointer]:
+                - /url: /admin/inventory
+          - generic [ref=f5e43]:
+            - paragraph [ref=f5e44]: Sales
+            - generic [ref=f5e45]:
+              - link "Orders" [ref=f5e46] [cursor=pointer]:
+                - /url: /admin/orders
+              - link "Payments" [ref=f5e52] [cursor=pointer]:
+                - /url: /admin/payments
+              - link "Coupons" [ref=f5e56] [cursor=pointer]:
+                - /url: /admin/coupons
+          - generic [ref=f5e60]:
+            - paragraph [ref=f5e61]: Customers
+            - link "Customers" [ref=f5e63] [cursor=pointer]:
+              - /url: /admin/customers
+          - generic [ref=f5e68]:
+            - paragraph [ref=f5e69]: Corporate
+            - generic [ref=f5e70]:
+              - link "Bulk Enquiries" [ref=f5e71] [cursor=pointer]:
+                - /url: /admin/bulk-enquiries
+              - link "Leads" [ref=f5e75] [cursor=pointer]:
+                - /url: /admin/leads
+              - link "Customizations" [ref=f5e80] [cursor=pointer]:
+                - /url: /admin/customizations
+          - generic [ref=f5e85]:
+            - paragraph [ref=f5e86]: Marketing
+            - generic [ref=f5e87]:
+              - link "Email Campaigns" [ref=f5e88] [cursor=pointer]:
+                - /url: /admin/email-campaigns
+              - link "Subscribers" [ref=f5e92] [cursor=pointer]:
+                - /url: /admin/subscribers
+          - generic [ref=f5e95]:
+            - paragraph [ref=f5e96]: Content
+            - generic [ref=f5e97]:
+              - link "FAQs" [ref=f5e98] [cursor=pointer]:
+                - /url: /admin/faqs
+              - link "Testimonials" [ref=f5e102] [cursor=pointer]:
+                - /url: /admin/testimonials
+          - generic [ref=f5e107]:
+            - paragraph [ref=f5e108]: System
+            - generic [ref=f5e109]:
+              - link "Store Settings" [ref=f5e110] [cursor=pointer]:
+                - /url: /admin/settings
+              - link "Audit Log" [ref=f5e114] [cursor=pointer]:
+                - /url: /admin/audit-logs
+      - main [ref=f5e119]:
+        - generic [ref=f5e120]:
+          - generic [ref=f5e121]:
+            - paragraph [ref=f5e122]: Catalog
+            - heading "New product" [level=1] [ref=f5e123]
+            - paragraph [ref=f5e124]: Products start as drafts and never appear on the storefront until you publish them. After creating it you can upload images, assign collections and configure quantity pricing.
+          - generic [ref=f5e126]:
+            - generic [ref=f5e127]:
+              - text: Product name
+              - textbox "Product name" [ref=f5e128]:
+                - /placeholder: e.g. Grey Planner Corporate Set
+            - generic [ref=f5e129]:
+              - text: Slug (optional, auto-generated)
+              - textbox "Slug (optional, auto-generated)" [ref=f5e130]:
+                - /placeholder: grey-planner-corporate-set
+            - generic [ref=f5e131]:
+              - text: Category
+              - combobox "Category" [ref=f5e132]:
+                - option "Uncategorized" [selected]
+                - option "Eco-Friendly Gift Sets"
+                - option "Luxury Gift Sets"
+                - option "Office & Stationery"
+                - option "Pens & Desk Accessories"
+                - option "Premium Gift Sets"
+                - option "QA Test Category"
+            - generic [ref=f5e133]:
+              - text: Description
+              - textbox "Description" [ref=f5e134]
+            - generic [ref=f5e135]:
+              - text: Base price (INR)
+              - spinbutton "Base price (INR)" [ref=f5e136]
+            - generic [ref=f5e137]:
+              - text: Compare-at price (optional)
+              - spinbutton "Compare-at price (optional)" [ref=f5e138]
+            - generic [ref=f5e139]:
+              - text: Minimum order quantity
+              - spinbutton "Minimum order quantity" [ref=f5e140]: "5"
+            - generic [ref=f5e141]:
+              - checkbox "Customization available" [checked] [ref=f5e142]
+              - text: Customization available
+            - button "Create draft product" [ref=f5e143] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=f5e149] [cursor=pointer]
