@@ -47,7 +47,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
 
       <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
         <div className="space-y-6">
-          <section className="rounded-lg bg-white p-5 ring-1 ring-navy-950/5">
+          <section className="panel p-5">
             <h2 className="font-display text-2xl text-navy-950">Order information</h2>
             <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
               <Info label="Order status" value={order.status} />
@@ -59,7 +59,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
             </dl>
           </section>
 
-          <section className="rounded-lg bg-white p-5 ring-1 ring-navy-950/5">
+          <section className="panel p-5">
             <h2 className="font-display text-2xl text-navy-950">Customer and delivery</h2>
             <div className="mt-4 grid gap-5 text-sm md:grid-cols-2">
               <div>
@@ -77,7 +77,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
             </div>
           </section>
 
-          <section className="rounded-lg bg-white p-5 ring-1 ring-navy-950/5">
+          <section className="panel p-5">
             <h2 className="font-display text-2xl text-navy-950">Order items</h2>
             <div className="mt-4 divide-y divide-navy-950/10">
               {order.items.map((item) => {
@@ -109,15 +109,15 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
             </div>
           </section>
 
-          <section className="rounded-lg bg-white p-5 ring-1 ring-navy-950/5">
+          <section className="panel p-5">
             <h2 className="font-display text-2xl text-navy-950">Timeline</h2>
             <div className="mt-4 space-y-3">
-              <div className="rounded-lg border border-navy-950/10 p-3 text-sm">
+              <div className="border border-line p-3 text-sm">
                 <p className="font-semibold text-navy-950">Order placed</p>
                 <p className="text-ink-600">{order.createdAt.toLocaleString("en-IN")}</p>
               </div>
               {order.statusHistory.map((entry) => (
-                <div key={entry.id} className="rounded-lg border border-navy-950/10 p-3 text-sm">
+                <div key={entry.id} className="border border-line p-3 text-sm">
                   <p className="font-semibold text-navy-950">{entry.toStatus.replaceAll("_", " ")}</p>
                   <p className="text-ink-600">{entry.createdAt.toLocaleString("en-IN")} · {entry.actor?.fullName ?? "System"}</p>
                   {entry.note ? <p className="mt-1 text-ink-700">{entry.note}</p> : null}
@@ -128,7 +128,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         </div>
 
         <aside className="space-y-6">
-          <section className="rounded-lg bg-white p-5 ring-1 ring-navy-950/5">
+          <section className="panel p-5">
             <h2 className="font-display text-xl text-navy-950">Update status</h2>
             <ActionForm action={updateOrderStatusAction} submitLabel="Update order">
               <input type="hidden" name="orderId" value={order.id} />
@@ -137,7 +137,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
             </ActionForm>
           </section>
 
-          <section className="rounded-lg bg-white p-5 ring-1 ring-navy-950/5">
+          <section className="panel p-5">
             <h2 className="font-display text-xl text-navy-950">Delivery management</h2>
             <ActionForm action={updateDeliveryAction} submitLabel="Save delivery">
               <input type="hidden" name="orderId" value={order.id} />
@@ -152,7 +152,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
             </ActionForm>
           </section>
 
-          <section className="rounded-lg bg-navy-950 p-5 text-cream-100">
+          <section className="border border-navy-950 bg-navy-950 p-5 text-cream-100">
             <h2 className="font-display text-xl">Totals</h2>
             <div className="mt-4 space-y-2 text-sm">
               <Row label="Product subtotal" value={formatPrice(Number(order.subtotal) - giftWrapTotal)} />

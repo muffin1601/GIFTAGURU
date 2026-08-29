@@ -9,7 +9,7 @@ export default function TrackOrderPage() {
         <form action="/api/track-order" method="get" className="mt-6 grid gap-4">
           <input name="orderNumber" required placeholder="Order number" className="rounded-lg border border-navy-950/10 px-4 py-3 outline-none focus:border-navy-900" />
           <input name="email" required type="email" placeholder="Email used at checkout" className="rounded-lg border border-navy-950/10 px-4 py-3 outline-none focus:border-navy-900" />
-          <button className="rounded-full bg-navy-900 px-6 py-3 text-sm font-semibold text-cream-100">Track Order</button>
+          <button className="btn btn-primary">Track Order</button>
         </form>
       </div>
     </Container>

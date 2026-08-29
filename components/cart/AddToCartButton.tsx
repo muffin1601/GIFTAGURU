@@ -26,9 +26,9 @@ export default function AddToCartButton({
         addItem(product, options ?? quantity);
         setAdded(true);
       }}
-      className={className ?? "inline-flex items-center justify-center gap-2 rounded-full bg-navy-900 px-6 py-3 text-sm font-semibold text-cream-100 transition-colors hover:bg-navy-800"}
+      className={className ?? "btn btn-primary"}
     >
-      <ShoppingBag className="h-4 w-4" aria-hidden="true" />
+      <ShoppingBag className="h-4 w-4" aria-hidden="true" strokeWidth={1.5} />
       {added ? "Added to Cart" : "Add to Cart"}
     </button>
   );

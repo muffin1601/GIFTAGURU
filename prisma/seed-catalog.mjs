@@ -24,7 +24,8 @@ const categories = [
 const collections = [
   ["corporate-gifts", "Corporate Gifts", "Gifting for every business relationship", "General corporate gifting for clients, teams, and partners.", null, true, 1],
   ["joining-gifts", "Joining Gifts", "Thoughtfully curated joining kits", "Joining kits to inspire, engage and empower.", "/SBanners/SBanners/JOINING.png", true, 2],
-  ["employee-welcome-kits", "Employee Welcome Kits", "Welcome to New Beginnings.", "Onboarding kits for new hires.", "/SBanners/SBanners/JOINING.png", true, 3],
+  // Not featured: shares Joining Gifts' banner, so it duplicates that card.
+  ["employee-welcome-kits", "Employee Welcome Kits", "Welcome to New Beginnings.", "Onboarding kits for new hires.", "/SBanners/SBanners/JOINING.png", false, 3],
   ["premium-gifts", "Premium Gifts", "Thoughtful Gifts. Stronger Relationships.", "Premium gift kits for every corporate occasion.", "/SBanners/SBanners/PREMIUM.png", true, 4],
   ["luxury-gifts", "Luxury Gifts", "Luxury Gifts. Timeless Impressions.", "Exquisite gift sets for executive occasions.", "/SBanners/SBanners/LUXURY.png", true, 5],
   ["eco-gifts", "Eco-Friendly Gifts", "Gifts That Care. For People & Planet.", "Sustainable gift sets for a responsible tomorrow.", "/SBanners/SBanners/ECO.png", true, 6],
@@ -120,13 +121,15 @@ async function seedProducts() {
       `insert into public.products
        (slug, name, description, category_id, base_price, compare_at_price, is_customizable,
         min_order_quantity, occasion_tags, status, is_featured, avg_rating, review_count)
-       values ($1, $2, $3, $4, $5, $6, true, $7, $8, 'active', $9, 4.8, $10)
+       -- Ratings start at zero. They are only meaningful once real reviews
+       -- exist; seeding 4.8 stars invented social proof for every product.
+       values ($1, $2, $3, $4, $5, $6, true, $7, $8, 'active', $9, 0, 0)
        on conflict (slug) do update set name = excluded.name, description = excluded.description,
        category_id = excluded.category_id, base_price = excluded.base_price,
        compare_at_price = excluded.compare_at_price, min_order_quantity = excluded.min_order_quantity,
        occasion_tags = excluded.occasion_tags, status = excluded.status, is_featured = excluded.is_featured
        returning id`,
-      [slug, name, description, category.id, price, Math.round(price * 1.18), minOrderQuantity, collectionSlugs, featured, 18 + setNumber],
+      [slug, name, description, category.id, price, Math.round(price * 1.18), minOrderQuantity, collectionSlugs, featured],
     );
 
     const variant = await one(

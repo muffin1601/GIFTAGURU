@@ -25,15 +25,15 @@ export default function ContactPage() {
             <h2 className="font-display text-xl text-navy-950">Contact details</h2>
             <ul className="flex flex-col gap-4 text-sm text-ink-700">
               <li className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-gold-600" aria-hidden="true" />
+                <Phone className="h-5 w-5 text-gold-600" strokeWidth={1.25} aria-hidden="true" />
                 <a href={`tel:${STORE_CONTACT.phoneHref}`} className="hover:text-gold-600">+91 {STORE_CONTACT.phone}</a>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="h-5 w-5 text-gold-600" aria-hidden="true" />
+                <Mail className="h-5 w-5 text-gold-600" strokeWidth={1.25} aria-hidden="true" />
                 <a href={`mailto:${STORE_CONTACT.email}`} className="hover:text-gold-600">{STORE_CONTACT.email}</a>
               </li>
               <li className="flex items-start gap-3">
-                <MapPin className="mt-0.5 h-5 w-5 text-gold-600" aria-hidden="true" />
+                <MapPin className="mt-0.5 h-5 w-5 text-gold-600" aria-hidden="true" strokeWidth={1.5} />
                 <span>{STORE_CONTACT.address}</span>
               </li>
             </ul>
@@ -41,7 +41,7 @@ export default function ContactPage() {
               Request a Quote
             </Button>
             <a href={buildWhatsAppUrl("Hi Gifta Guru, I would like to know more about your corporate gifting solutions.")} target="_blank" rel="noreferrer" className="inline-flex w-fit items-center gap-2 rounded-full border border-navy-950/15 px-5 py-2.5 text-sm font-semibold text-navy-950 hover:bg-cream-200">
-              <MessageCircle className="h-4 w-4" />
+              <MessageCircle className="h-4 w-4" strokeWidth={1.5} />
               WhatsApp quick action
             </a>
           </div>

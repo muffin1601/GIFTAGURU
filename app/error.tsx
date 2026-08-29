@@ -10,13 +10,14 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
   }, [error]);
 
   return (
-    <Container className="py-24 text-center">
-      <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">Something went wrong</p>
-      <h1 className="mt-3 font-display text-4xl text-navy-950 sm:text-5xl">We hit a snag</h1>
-      <p className="mx-auto mt-4 max-w-md text-ink-700">
-        Please try again. If the problem continues, our team is happy to help over WhatsApp or email.
+    <Container className="max-w-lg py-24 sm:py-32">
+      <span className="type-eyebrow">Something went wrong</span>
+      <h1 className="type-h1 mt-4">We hit a snag</h1>
+      <p className="type-lead mt-5">
+        Please try again. If the problem continues, our team is happy to help over WhatsApp or
+        email.
       </p>
-      <div className="mt-8 flex flex-wrap justify-center gap-4">
+      <div className="mt-9 flex flex-wrap gap-3">
         <Button onClick={reset}>Try again</Button>
         <Button href="/contact" variant="secondary">Contact us</Button>
       </div>

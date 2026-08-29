@@ -41,48 +41,46 @@ export default async function CategoryPage({
 
   return (
     <>
-      <section className="relative">
-        <div className="relative aspect-[16/9] w-full sm:aspect-[21/9]">
-          <Image
-            src={category.image}
-            alt={category.tagline}
-            fill
-            sizes="100vw"
-            className="object-cover"
-            priority
-          />
-        </div>
-      </section>
-
-      <section className="py-16 sm:py-20">
-        <Container className="flex flex-col gap-10">
-          <div className="flex flex-col gap-3">
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-600">
-              {category.name}
-            </span>
-            <h1 className="font-display text-3xl text-navy-950 sm:text-4xl">{category.tagline}</h1>
-            <p className="max-w-2xl text-base text-ink-700">{category.description}</p>
-            <div>
-              <Button href={`/bulk-enquiry?collection=${encodeURIComponent(category.name)}`} variant="primary" className="mt-2">
-                Request a custom quote
-              </Button>
-            </div>
-          </div>
-
-          <div className="rounded-lg border border-navy-950/10 bg-white p-5">
-            <p className="font-display text-2xl text-navy-950">Looking for gifts in bulk?</p>
-            <p className="mt-2 text-sm text-ink-700">Tell us your quantity, budget, and branding needs for the {category.name} collection.</p>
-            <Button href={`/bulk-enquiry?collection=${encodeURIComponent(category.name)}`} variant="secondary" className="mt-4">
-              Request a custom quote
+      <section className="border-b border-line">
+        <Container className="grid items-center gap-10 py-14 sm:py-16 lg:grid-cols-[1fr_auto] lg:gap-16">
+          <div className="max-w-2xl">
+            <span className="type-eyebrow">{category.name}</span>
+            <h1 className="type-h1 mt-4">{category.tagline}</h1>
+            <p className="type-lead mt-5">{category.description}</p>
+            <Button
+              href={`/bulk-enquiry?collection=${encodeURIComponent(category.name)}`}
+              variant="primary"
+              className="mt-8"
+            >
+              Request a Custom Quote
             </Button>
           </div>
 
-          {products.length > 0 && (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {/* A small accent image rather than a full-bleed banner -- the
+              product grid below is the real content on this page. */}
+          <div className="relative hidden aspect-square w-40 shrink-0 overflow-hidden border border-line bg-sunken lg:block xl:w-48">
+            <Image
+              src={category.image}
+              alt=""
+              fill
+              sizes="192px"
+              className="object-cover"
+              priority
+            />
+          </div>
+        </Container>
+      </section>
+
+      <section className="section">
+        <Container>
+          {products.length > 0 ? (
+            <div className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
               {products.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
+          ) : (
+            <p className="type-body">No products in this collection yet.</p>
           )}
         </Container>
       </section>

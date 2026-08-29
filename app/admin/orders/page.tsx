@@ -50,20 +50,20 @@ export default async function AdminOrdersPage({
         <h1 className="mt-2 font-display text-4xl text-navy-950">Orders</h1>
       </div>
 
-      <form className="grid gap-3 rounded-lg bg-white p-4 ring-1 ring-navy-950/5 md:grid-cols-[1fr_180px_180px_140px]">
-        <input name="q" defaultValue={q} placeholder="Search order, email, phone" className="rounded-lg border border-navy-950/10 px-3 py-2 text-sm outline-none focus:border-navy-900" />
-        <select name="status" defaultValue={status ?? ""} className="rounded-lg border border-navy-950/10 px-3 py-2 text-sm">
+      <form className="panel grid gap-3 p-4 md:grid-cols-[1fr_180px_180px_140px]">
+        <input name="q" defaultValue={q} placeholder="Search order, email, phone" className="field-input text-sm" />
+        <select name="status" defaultValue={status ?? ""} className="field-input text-sm">
           <option value="">All statuses</option>
           {orderStatuses.map((item) => <option key={item} value={item}>{item.replaceAll("_", " ")}</option>)}
         </select>
-        <select name="payment" defaultValue={payment ?? ""} className="rounded-lg border border-navy-950/10 px-3 py-2 text-sm">
+        <select name="payment" defaultValue={payment ?? ""} className="field-input text-sm">
           <option value="">All payments</option>
           {paymentStatuses.map((item) => <option key={item} value={item}>{item}</option>)}
         </select>
-        <button className="rounded-full bg-navy-900 px-5 py-2 text-sm font-semibold text-cream-100">Filter</button>
+        <button className="btn btn-primary">Filter</button>
       </form>
 
-      <div className="overflow-hidden rounded-lg bg-white ring-1 ring-navy-950/5">
+      <div className="panel overflow-x-auto">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left text-sm">
             <thead className="bg-cream-200 text-xs uppercase tracking-wide text-ink-600">
@@ -105,8 +105,8 @@ export default async function AdminOrdersPage({
       <div className="flex items-center justify-between text-sm text-ink-600">
         <span>Showing {orders.length} of {total}</span>
         <div className="flex gap-2">
-          {page > 1 ? <Link href={`/admin/orders?page=${page - 1}`} className="rounded-full border border-navy-950/15 px-4 py-2">Previous</Link> : null}
-          {page * pageSize < total ? <Link href={`/admin/orders?page=${page + 1}`} className="rounded-full border border-navy-950/15 px-4 py-2">Next</Link> : null}
+          {page > 1 ? <Link href={`/admin/orders?page=${page - 1}`} className="btn btn-secondary">Previous</Link> : null}
+          {page * pageSize < total ? <Link href={`/admin/orders?page=${page + 1}`} className="btn btn-secondary">Next</Link> : null}
         </div>
       </div>
     </div>

@@ -18,7 +18,7 @@ export default async function AdminCustomizationsPage() {
       </div>
       <div className="grid gap-4 xl:grid-cols-2">
         {requests.map((request) => (
-          <section key={request.id} className="rounded-lg bg-white p-5 ring-1 ring-navy-950/5">
+          <section key={request.id} className="panel p-5">
             <h2 className="font-display text-xl text-navy-950">{request.product?.name ?? request.orderItem?.productName ?? "Custom request"}</h2>
             <p className="mt-1 text-sm text-ink-600">{request.companyName ?? request.user?.fullName ?? "Customer"} · Qty {request.quantity} · {request.status}</p>
             {request.logoUrl ? <a href={request.logoUrl} target="_blank" rel="noreferrer" className="mt-2 inline-block text-sm font-semibold text-gold-700">View logo asset</a> : null}

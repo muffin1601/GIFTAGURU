@@ -23,7 +23,8 @@ on conflict (slug) do nothing;
 insert into public.collections (slug, name, tagline, description, image_url, is_featured, sort_order) values
   ('corporate-gifts', 'Corporate Gifts', 'Gifting for every business relationship', 'General corporate gifting for clients, teams, and partners.', null, true, 1),
   ('bulk-corporate-orders', 'Bulk Corporate Orders', 'Scale gifting without losing quality', 'Volume gifting programs for large teams and events.', null, false, 2),
-  ('employee-welcome-kits', 'Employee Welcome Kits', 'Welcome to New Beginnings.', 'Onboarding kits for new hires.', '/images/joining-gifts.png', true, 3),
+  -- Not featured: shares Joining Gifts' banner, so it duplicates that card.
+  ('employee-welcome-kits', 'Employee Welcome Kits', 'Welcome to New Beginnings.', 'Onboarding kits for new hires.', '/images/joining-gifts.png', false, 3),
   ('joining-gifts', 'Joining Gifts', 'Thoughtfully curated joining kits', 'Joining kits to inspire, engage and empower.', '/images/joining-gifts.png', true, 4),
   ('client-gifts', 'Client Gifts', 'Strengthen client relationships', 'Premium, branded gifts for valued clients.', null, false, 5),
   ('employee-appreciation-gifts', 'Employee Appreciation Gifts', 'Recognize great work', 'Gifting for milestones and performance recognition.', null, false, 6),

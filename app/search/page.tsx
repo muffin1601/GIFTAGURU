@@ -34,7 +34,7 @@ export default async function SearchPage({
           placeholder="Search products, categories, keywords..."
           className="min-h-12 flex-1 rounded-full bg-cream-100 px-5 text-sm outline-none focus:ring-2 focus:ring-navy-900"
         />
-        <button className="rounded-full bg-navy-900 px-6 py-3 text-sm font-semibold text-cream-100 hover:bg-navy-800">
+        <button className="btn btn-primary">
           Search
         </button>
       </form>

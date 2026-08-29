@@ -7,13 +7,20 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
+    "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:studio": "prisma studio",
     "prisma:pull": "prisma db pull",
     "prisma:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:seed": "node prisma/seed-catalog.mjs",
-    "db:apply-sql": "node prisma/apply-sql.mjs supabase/migrations/0001_init.sql"
+    "db:apply-sql": "node prisma/apply-sql.mjs supabase/migrations/0001_init.sql",
+    "db:migrate": "node prisma/migrate.mjs",
+    "db:migrate:status": "node prisma/migrate.mjs --status",
+    "db:migrate:baseline": "node prisma/migrate.mjs --baseline",
+    "admin:create": "node prisma/create-admin.mjs",
+    "admin:list": "node prisma/list-admins.mjs",
+    "check:config": "node prisma/check-config.mjs"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",

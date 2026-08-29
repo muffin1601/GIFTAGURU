@@ -57,23 +57,30 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-cream-100 lg:grid lg:grid-cols-[280px_1fr]">
-      <aside className="hidden border-r border-navy-950/10 bg-white lg:block">
+    <div className="min-h-screen bg-canvas lg:grid lg:grid-cols-[16rem_1fr]">
+      <aside className="hidden border-r border-line bg-surface lg:block">
         <AdminNavigation pathname={pathname} />
       </aside>
-      <div>
-        <div className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-navy-950/10 bg-white px-4 lg:hidden">
-          <Link href="/admin" className="font-display text-xl text-navy-950">Gifta Guru Admin</Link>
-          <button type="button" onClick={() => setOpen((value) => !value)} className="inline-flex items-center gap-2 rounded-full border border-navy-950/15 px-4 py-2 text-sm font-semibold text-navy-950">
-            Menu <ChevronDown className="h-4 w-4" />
+      <div className="min-w-0">
+        <div className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-line bg-surface px-4 lg:hidden">
+          <Link href="/admin" className="font-display text-lg text-navy-950">
+            Gifta Guru Admin
+          </Link>
+          <button
+            type="button"
+            onClick={() => setOpen((value) => !value)}
+            aria-expanded={open}
+            className="btn btn-secondary py-2"
+          >
+            Menu <ChevronDown className="h-4 w-4" aria-hidden="true" />
           </button>
         </div>
         {open ? (
-          <div className="border-b border-navy-950/10 bg-white lg:hidden">
+          <div className="border-b border-line bg-surface lg:hidden">
             <AdminNavigation pathname={pathname} onNavigate={() => setOpen(false)} />
           </div>
         ) : null}
-        <main className="px-4 py-8 sm:px-6 lg:px-8">{children}</main>
+        <main className="px-4 py-8 sm:px-6 lg:px-10 lg:py-12">{children}</main>
       </div>
     </div>
   );
@@ -81,23 +88,32 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
 function AdminNavigation({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {
   return (
-    <nav className="flex h-full flex-col gap-7 p-5" aria-label="Admin navigation">
-      <Link href="/admin" onClick={onNavigate} className="font-display text-2xl text-navy-950">Gifta Guru</Link>
+    <nav className="flex h-full flex-col gap-8 p-6" aria-label="Admin navigation">
+      <Link href="/admin" onClick={onNavigate} className="font-display text-xl text-navy-950">
+        Gifta Guru
+      </Link>
       {sections.map((section) => (
         <div key={section.title}>
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">{section.title}</p>
-          <div className="mt-2 flex flex-col gap-1">
+          <p className="text-[0.625rem] font-semibold uppercase tracking-[0.16em] text-ink-500">
+            {section.title}
+          </p>
+          <div className="mt-2.5 flex flex-col">
             {section.links.map(({ label, href, Icon }) => {
-              const active = pathname === href || (href !== "/admin" && pathname.startsWith(`${href}/`));
+              const active =
+                pathname === href || (href !== "/admin" && pathname.startsWith(`${href}/`));
               return (
                 <Link
                   key={href}
                   href={href}
                   onClick={onNavigate}
                   aria-current={active ? "page" : undefined}
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium ${active ? "bg-navy-950 text-cream-100" : "text-navy-950 hover:bg-cream-100"}`}
+                  className={`-mx-2 flex items-center gap-3 border-l-2 px-4 py-2 text-sm transition-colors duration-200 ${
+                    active
+                      ? "border-gold-500 font-medium text-navy-950"
+                      : "border-transparent text-ink-700 hover:text-navy-950"
+                  }`}
                 >
-                  <Icon className="h-4 w-4" aria-hidden="true" />
+                  <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
                   {label}
                 </Link>
               );

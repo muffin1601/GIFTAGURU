@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Bot, MessageCircle, X } from "lucide-react";
+import { Sparkles, X } from "lucide-react";
 import { useState } from "react";
 import LeadForm from "@/components/forms/LeadForm";
 import { chatbotSuggestions, getChatbotResponse } from "@/lib/chatbot/knowledge";
@@ -31,9 +31,11 @@ export default function ChatbotWidget() {
   return (
     <>
       {open ? (
-        <div className="max-h-[72vh] w-[320px] overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-navy-950/10 sm:w-[360px]">
+        <div className="max-h-[72vh] w-[320px] overflow-hidden border border-line bg-surface sm:w-[360px]">
           <div className="flex items-center justify-between bg-navy-950 px-4 py-3 text-cream-100">
-            <span className="inline-flex items-center gap-2 text-sm font-semibold"><Bot className="h-4 w-4" /> Gift advisor</span>
+            <span className="inline-flex items-center gap-2 text-sm font-semibold">
+              <Sparkles className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" /> Gift advisor
+            </span>
             <button type="button" onClick={() => setOpen(false)} aria-label="Close chatbot" className="rounded-full p-1 hover:bg-white/10">
               <X className="h-4 w-4" />
             </button>
@@ -74,11 +76,13 @@ export default function ChatbotWidget() {
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-navy-950 text-cream-100 shadow-md shadow-navy-950/15 transition-transform hover:-translate-y-0.5 hover:bg-navy-800"
+        className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-navy-950 text-cream-100 transition-colors duration-200 hover:bg-navy-800"
         aria-label="Open gift advisor chatbot"
         aria-expanded={open}
       >
-        <MessageCircle className="h-5 w-5" />
+        {/* Sparkles, not a chat bubble -- the WhatsApp button beside it is the
+            chat affordance, so a second bubble read as a duplicate. */}
+        <Sparkles className="h-[1.15rem] w-[1.15rem]" strokeWidth={1.5} aria-hidden="true" />
       </button>
     </>
   );

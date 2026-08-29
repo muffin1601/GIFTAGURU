@@ -7,14 +7,14 @@ export default async function GiftCategories() {
   const categories = await getFeaturedCollectionsAsCategories();
 
   return (
-    <section className="py-16 sm:py-20">
-      <Container className="flex flex-col gap-10">
+    <section className="section">
+      <Container className="flex flex-col gap-12 sm:gap-16">
         <SectionHeading
           eyebrow="Shop by Category"
-          title="Gifting collections for every occasion"
-          description="Explore curated gift ranges designed for onboarding, appreciation, leadership, and sustainable gifting."
+          title="Gifts for every business moment"
+          description="Curated ranges for onboarding, appreciation, leadership and sustainable gifting."
         />
-        <div className="grid gap-6 sm:grid-cols-2">
+        <div className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:gap-x-10">
           {categories.map((category) => (
             <CategoryCard key={category.slug} category={category} />
           ))}

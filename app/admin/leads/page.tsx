@@ -29,13 +29,13 @@ export default async function AdminLeadsPage({
         <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">Corporate</p>
         <h1 className="mt-2 font-display text-4xl text-navy-950">Leads</h1>
       </div>
-      <form className="grid gap-3 rounded-lg bg-white p-4 ring-1 ring-navy-950/5 md:grid-cols-[1fr_170px_170px_140px]">
-        <input name="q" defaultValue={q} placeholder="Search name, company, email, phone" className="rounded-lg border border-navy-950/10 px-3 py-2 text-sm" />
-        <select name="type" defaultValue={params?.type ?? ""} className="rounded-lg border border-navy-950/10 px-3 py-2 text-sm"><option value="">All types</option>{types.map((item) => <option key={item} value={item}>{item.replaceAll("_", " ")}</option>)}</select>
-        <select name="status" defaultValue={params?.status ?? ""} className="rounded-lg border border-navy-950/10 px-3 py-2 text-sm"><option value="">All statuses</option>{statuses.map((item) => <option key={item} value={item}>{item}</option>)}</select>
-        <button className="rounded-full bg-navy-900 px-5 py-2 text-sm font-semibold text-white">Filter</button>
+      <form className="panel grid gap-3 p-4 md:grid-cols-[1fr_170px_170px_140px]">
+        <input name="q" defaultValue={q} placeholder="Search name, company, email, phone" className="field-input text-sm" />
+        <select name="type" defaultValue={params?.type ?? ""} className="field-input text-sm"><option value="">All types</option>{types.map((item) => <option key={item} value={item}>{item.replaceAll("_", " ")}</option>)}</select>
+        <select name="status" defaultValue={params?.status ?? ""} className="field-input text-sm"><option value="">All statuses</option>{statuses.map((item) => <option key={item} value={item}>{item}</option>)}</select>
+        <button className="btn btn-primary">Filter</button>
       </form>
-      <div className="overflow-hidden rounded-lg bg-white ring-1 ring-navy-950/5">
+      <div className="panel overflow-x-auto">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left text-sm">
             <thead className="bg-cream-200 text-xs uppercase tracking-wide text-ink-600">

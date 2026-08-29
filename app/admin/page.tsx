@@ -67,7 +67,7 @@ export default async function AdminPage() {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-3">
-        <section className="rounded-lg bg-white p-5 ring-1 ring-navy-950/5 xl:col-span-2">
+        <section className="panel p-5 xl:col-span-2">
           <div className="flex items-center justify-between gap-4">
             <h2 className="font-display text-2xl text-navy-950">Recent orders</h2>
             <Link href="/admin/orders" className="text-sm font-semibold text-gold-700 hover:text-navy-950">View all</Link>
@@ -85,7 +85,7 @@ export default async function AdminPage() {
           </div>
         </section>
 
-        <section className="rounded-lg bg-white p-5 ring-1 ring-navy-950/5">
+        <section className="panel p-5">
           <h2 className="font-display text-2xl text-navy-950">Recent bulk enquiries</h2>
           <div className="mt-4 space-y-3">
             {recentBulk.map((quote) => (
@@ -98,11 +98,11 @@ export default async function AdminPage() {
           </div>
         </section>
 
-        <section className="rounded-lg bg-white p-5 ring-1 ring-navy-950/5 xl:col-span-3">
+        <section className="panel p-5 xl:col-span-3">
           <h2 className="font-display text-2xl text-navy-950">Recent customization requests</h2>
           <div className="mt-4 grid gap-3 md:grid-cols-3">
             {recentCustomizations.map((request) => (
-              <div key={request.id} className="rounded-lg border border-navy-950/10 p-4 text-sm">
+              <div key={request.id} className="border border-line p-4 text-sm">
                 <p className="font-semibold text-navy-950">{request.product?.name ?? "Custom product"}</p>
                 <p className="mt-1 text-ink-600">{request.companyName ?? "No company"} · {request.status}</p>
               </div>

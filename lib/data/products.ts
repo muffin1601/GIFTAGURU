@@ -464,8 +464,9 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
       isCustomizable: true,
       minOrderQuantity: fallback.minQuantity,
       occasionTags: [],
-      avgRating: 4.8,
-      reviewCount: 24,
+      // No invented ratings -- the product page hides the rating when count is 0.
+      avgRating: 0,
+      reviewCount: 0,
       images: fallback.image ? [{ url: fallback.image, alt: fallback.name }] : [],
       variants: [
         {

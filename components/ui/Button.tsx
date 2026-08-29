@@ -5,11 +5,9 @@ import { cn } from "@/lib/utils";
 type ButtonVariant = "primary" | "secondary" | "ghost";
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary:
-    "bg-navy-900 !text-white hover:bg-navy-800 focus-visible:outline-navy-900",
-  secondary:
-    "border border-navy-900 !text-navy-900 hover:bg-navy-900 hover:!text-white focus-visible:outline-navy-900",
-  ghost: "!text-navy-900 hover:!text-gold-600 focus-visible:outline-navy-900",
+  primary: "btn btn-primary",
+  secondary: "btn btn-secondary",
+  ghost: "btn btn-ghost",
 };
 
 interface BaseProps {
@@ -22,21 +20,28 @@ interface LinkButtonProps extends BaseProps {
   href: string;
   onClick?: never;
   type?: never;
+  disabled?: never;
 }
 
 interface ClickButtonProps extends BaseProps {
   href?: never;
   onClick?: () => void;
   type?: "button" | "submit";
+  disabled?: boolean;
 }
 
 type ButtonProps = LinkButtonProps | ClickButtonProps;
 
-const baseClasses =
-  "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold tracking-wide transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2";
-
-export default function Button({ children, variant = "primary", className, href, onClick, type = "button" }: ButtonProps) {
-  const classes = cn(baseClasses, variantClasses[variant], className);
+export default function Button({
+  children,
+  variant = "primary",
+  className,
+  href,
+  onClick,
+  type = "button",
+  disabled,
+}: ButtonProps) {
+  const classes = cn(variantClasses[variant], className);
 
   if (href) {
     return (
@@ -47,7 +52,7 @@ export default function Button({ children, variant = "primary", className, href,
   }
 
   return (
-    <button type={type} onClick={onClick} className={classes}>
+    <button type={type} onClick={onClick} disabled={disabled} className={classes}>
       {children}
     </button>
   );

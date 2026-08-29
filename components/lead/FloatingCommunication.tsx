@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MessageCircle, Send, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { buildWhatsAppUrl } from "@/lib/config/store";
 import ChatbotWidget from "@/components/lead/ChatbotWidget";
+import SocialIcon from "@/components/ui/SocialIcon";
 
 export default function FloatingCommunication() {
   const pathname = usePathname();
@@ -18,7 +19,7 @@ export default function FloatingCommunication() {
     <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3">
       <ChatbotWidget />
       {open ? (
-        <div className="w-[280px] rounded-lg bg-white p-4 shadow-lg ring-1 ring-navy-950/10">
+        <div className="w-[280px] border border-line bg-surface p-4">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="font-semibold text-navy-950">Need help choosing gifts?</p>
@@ -28,8 +29,12 @@ export default function FloatingCommunication() {
               <X className="h-4 w-4" />
             </button>
           </div>
-          <Link href={buildWhatsAppUrl(message)} target="_blank" className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#1ebc59]">
-            <Send className="h-4 w-4" />
+          <Link
+            href={buildWhatsAppUrl(message)}
+            target="_blank"
+            className="mt-4 inline-flex w-full items-center justify-center gap-2 bg-[#25D366] px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#1ebc59]"
+          >
+            <SocialIcon platform="whatsapp" />
             Chat on WhatsApp
           </Link>
         </div>
@@ -37,10 +42,11 @@ export default function FloatingCommunication() {
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="group inline-flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-3 text-sm font-semibold text-white shadow-md shadow-navy-950/15 transition-transform hover:-translate-y-0.5 hover:bg-[#1ebc59]"
+        className="group inline-flex items-center gap-2.5 rounded-full bg-[#25D366] px-5 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#1ebc59]"
         aria-expanded={open}
+        aria-label="Chat with us on WhatsApp"
       >
-        <MessageCircle className="h-5 w-5" />
+        <SocialIcon platform="whatsapp" className="h-[1.15rem] w-[1.15rem]" />
         <span className="hidden sm:inline">Chat with us</span>
       </button>
     </div>

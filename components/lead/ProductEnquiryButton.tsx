@@ -16,7 +16,7 @@ export default function ProductEnquiryButton({ product }: { product: Product }) 
       </button>
       {open ? (
         <div className="fixed inset-0 z-50 flex items-end bg-navy-950/40 p-0 sm:items-center sm:justify-center sm:p-6" role="dialog" aria-modal="true">
-          <div className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-t-lg bg-cream-100 p-5 shadow-xl sm:rounded-lg">
+          <div className="max-h-[92vh] w-full max-w-2xl overflow-y-auto border border-line bg-canvas p-6">
             <div className="mb-4 flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-wide text-gold-700">Product enquiry</p>

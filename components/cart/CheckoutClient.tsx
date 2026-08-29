@@ -144,39 +144,83 @@ export default function CheckoutClient() {
   return (
     <Container className="py-12 sm:py-16">
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
-      <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
-        <form onSubmit={submitCheckout} className="space-y-6">
+      <div className="grid gap-12 lg:grid-cols-[1fr_22rem] lg:gap-16">
+        <form onSubmit={submitCheckout} className="flex flex-col gap-10">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">Checkout</p>
-            <h1 className="mt-3 font-display text-4xl text-navy-950">Secure corporate checkout</h1>
+            <span className="type-eyebrow">Checkout</span>
+            <h1 className="type-h1 mt-4">Secure corporate checkout</h1>
           </div>
-          <section className="rounded-2xl bg-white p-6 ring-1 ring-navy-950/5">
-            <h2 className="font-display text-2xl text-navy-950">Contact information</h2>
-            <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              <input required name="email" type="email" placeholder="Work email" className="rounded-xl border border-navy-950/10 px-4 py-3 outline-none focus:border-navy-900" />
-              <input required name="phone" placeholder="Mobile number" className="rounded-xl border border-navy-950/10 px-4 py-3 outline-none focus:border-navy-900" />
-              <input required name="company" placeholder="Company name" className="rounded-xl border border-navy-950/10 px-4 py-3 outline-none focus:border-navy-900 sm:col-span-2" />
+
+          <section>
+            <h2 className="type-eyebrow">Contact information</h2>
+            <div className="mt-5 grid gap-5 border-t border-line pt-6 sm:grid-cols-2">
+              <div className="field">
+                <label className="field-label" htmlFor="email">Work email</label>
+                <input required id="email" name="email" type="email" autoComplete="email" className="field-input" />
+              </div>
+              <div className="field">
+                <label className="field-label" htmlFor="phone">Mobile number</label>
+                <input required id="phone" name="phone" type="tel" autoComplete="tel" className="field-input" />
+              </div>
+              <div className="field sm:col-span-2">
+                <label className="field-label" htmlFor="company">Company name</label>
+                <input required id="company" name="company" autoComplete="organization" className="field-input" />
+              </div>
             </div>
           </section>
-          <section className="rounded-2xl bg-white p-6 ring-1 ring-navy-950/5">
-            <h2 className="font-display text-2xl text-navy-950">Shipping address</h2>
-            <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              <input required name="name" placeholder="Recipient name" className="rounded-xl border border-navy-950/10 px-4 py-3 outline-none focus:border-navy-900" />
-              <input required name="postalCode" placeholder="PIN code" className="rounded-xl border border-navy-950/10 px-4 py-3 outline-none focus:border-navy-900" />
-              <input required name="address" placeholder="Address line" className="rounded-xl border border-navy-950/10 px-4 py-3 outline-none focus:border-navy-900 sm:col-span-2" />
-              <input required name="city" placeholder="City" className="rounded-xl border border-navy-950/10 px-4 py-3 outline-none focus:border-navy-900" />
-              <input required name="state" placeholder="State" className="rounded-xl border border-navy-950/10 px-4 py-3 outline-none focus:border-navy-900" />
+
+          <section>
+            <h2 className="type-eyebrow">Shipping address</h2>
+            <div className="mt-5 grid gap-5 border-t border-line pt-6 sm:grid-cols-2">
+              <div className="field">
+                <label className="field-label" htmlFor="name">Recipient name</label>
+                <input required id="name" name="name" autoComplete="name" className="field-input" />
+              </div>
+              <div className="field">
+                <label className="field-label" htmlFor="postalCode">PIN code</label>
+                <input required id="postalCode" name="postalCode" inputMode="numeric" autoComplete="postal-code" className="field-input" />
+              </div>
+              <div className="field sm:col-span-2">
+                <label className="field-label" htmlFor="address">Address</label>
+                <input required id="address" name="address" autoComplete="street-address" className="field-input" />
+              </div>
+              <div className="field">
+                <label className="field-label" htmlFor="city">City</label>
+                <input required id="city" name="city" autoComplete="address-level2" className="field-input" />
+              </div>
+              <div className="field">
+                <label className="field-label" htmlFor="state">State</label>
+                <input required id="state" name="state" autoComplete="address-level1" className="field-input" />
+              </div>
             </div>
           </section>
-          {error ? <p className="rounded-xl bg-red-50 p-4 text-sm text-red-700">{error}</p> : null}
-          <button disabled={pending || items.length === 0} className="rounded-full bg-navy-900 px-8 py-3 text-sm font-semibold text-cream-100 hover:bg-navy-800 disabled:opacity-60">
-            {pending ? "Creating secure order..." : "Continue to Payment"}
+
+          {error ? (
+            <p role="alert" className="field-error border-l-2 border-current pl-4">
+              {error}
+            </p>
+          ) : null}
+
+          {items.length === 0 ? (
+            <p className="type-body">
+              Your cart is empty.{" "}
+              <Link href="/shop" className="link-underline text-navy-950">Explore gifts</Link> to
+              continue.
+            </p>
+          ) : null}
+
+          <button
+            type="submit"
+            disabled={pending || items.length === 0}
+            className="btn btn-primary self-start"
+          >
+            {pending ? "Creating secure order…" : "Continue to Payment"}
           </button>
         </form>
 
-        <aside className="h-fit rounded-2xl bg-white p-6 ring-1 ring-navy-950/5">
-          <h2 className="font-display text-2xl text-navy-950">Review</h2>
-          <div className="mt-5 space-y-4">
+        <aside className="h-fit lg:sticky lg:top-32">
+          <h2 className="type-eyebrow">Review</h2>
+          <div className="mt-5 flex flex-col gap-4 border-t border-line pt-5">
             {items.map((item) => (
               <div key={`${item.id}-${item.personalizationText ?? ""}-${item.logoUrl ?? ""}-${item.giftWrap ? "wrap" : "plain"}`} className="space-y-1 text-sm">
                 <div className="flex justify-between gap-4">
@@ -189,24 +233,30 @@ export default function CheckoutClient() {
               </div>
             ))}
           </div>
-          <div className="mt-6 border-t border-navy-950/10 pt-5">
-            <div className="flex justify-between text-sm text-ink-700">
-              <span>Merchandise</span>
-              <span>{formatPrice(merchandiseSubtotal)}</span>
+          <dl className="mt-6 border-t border-line pt-4 text-sm">
+            <div className="flex justify-between gap-4 py-2">
+              <dt className="text-ink-700">Merchandise</dt>
+              <dd className="text-navy-950">{formatPrice(merchandiseSubtotal)}</dd>
             </div>
-            <div className="mt-2 flex justify-between text-sm text-ink-700">
-              <span>Gift wrap</span>
-              <span>{formatPrice(giftWrapTotal)}</span>
+            <div className="flex justify-between gap-4 py-2">
+              <dt className="text-ink-700">Gift wrap</dt>
+              <dd className="text-navy-950">{formatPrice(giftWrapTotal)}</dd>
             </div>
-            <div className="mt-4 flex justify-between font-semibold text-navy-950">
-              <span>Subtotal</span>
-              <span>{formatPrice(subtotal)}</span>
+            <div className="mt-2 flex justify-between gap-4 border-t border-line pt-4">
+              <dt className="font-semibold text-navy-950">Subtotal</dt>
+              <dd className="font-display text-xl text-navy-950">{formatPrice(subtotal)}</dd>
             </div>
-            <p className="mt-3 text-xs text-ink-500">Final shipping, GST, discounts, and payment status are verified server-side.</p>
-          </div>
-          <div className="mt-5 rounded-lg border border-navy-950/10 bg-cream-100 p-4">
-            <p className="text-sm font-semibold text-navy-950">Need help with a large corporate order?</p>
-            <Link href="/bulk-enquiry" className="mt-2 inline-flex w-full items-center justify-center rounded-full border border-navy-950/20 px-4 py-2 text-sm font-semibold text-navy-950 hover:bg-white">
+          </dl>
+          <p className="type-meta mt-3">
+            Final shipping, GST, discounts and payment status are verified server-side.
+          </p>
+
+          <div className="mt-8 border-t border-line pt-6">
+            <p className="text-sm font-medium text-navy-950">Need a larger corporate order?</p>
+            <Link
+              href="/bulk-enquiry"
+              className="link-underline mt-2 inline-block text-sm font-semibold text-navy-950"
+            >
               Talk to our team
             </Link>
           </div>

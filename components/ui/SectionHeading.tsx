@@ -18,34 +18,17 @@ export default function SectionHeading({
   return (
     <div
       className={cn(
-        "flex flex-col gap-3",
-        align === "center" && "items-center text-center",
+        "flex max-w-3xl flex-col gap-4",
+        align === "center" && "mx-auto items-center text-center",
         className,
       )}
     >
       {eyebrow && (
-        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-500">
-          {eyebrow}
-        </span>
+        <span className={cn("type-eyebrow", tone === "dark" && "text-gold-300")}>{eyebrow}</span>
       )}
-      <h2
-        className={cn(
-          "font-display text-3xl leading-tight sm:text-4xl",
-          tone === "dark" ? "text-cream-100" : "text-navy-950",
-        )}
-      >
-        {title}
-      </h2>
+      <h2 className={cn("type-h2", tone === "dark" && "text-cream-100")}>{title}</h2>
       {description && (
-        <p
-          className={cn(
-            "max-w-2xl text-base",
-            tone === "dark" ? "text-cream-100/70" : "text-ink-700",
-            align === "center" && "mx-auto",
-          )}
-        >
-          {description}
-        </p>
+        <p className={cn("type-lead", tone === "dark" && "text-cream-100/70")}>{description}</p>
       )}
     </div>
   );

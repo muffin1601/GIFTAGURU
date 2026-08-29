@@ -11,7 +11,7 @@ export default async function AdminCouponsPage() {
         <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">Sales</p>
         <h1 className="mt-2 font-display text-4xl text-navy-950">Coupons</h1>
       </div>
-      <section className="rounded-lg bg-white p-5 ring-1 ring-navy-950/5">
+      <section className="panel p-5">
         <h2 className="font-display text-2xl text-navy-950">Create or update coupon</h2>
         <ActionForm action={createCouponAction} submitLabel="Save coupon" className="mt-4 grid gap-3 md:grid-cols-3">
           <AdminInput name="code" placeholder="Code" required />
@@ -26,7 +26,7 @@ export default async function AdminCouponsPage() {
       </section>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {coupons.map((coupon) => (
-          <section key={coupon.id} className="rounded-lg bg-white p-5 ring-1 ring-navy-950/5">
+          <section key={coupon.id} className="panel p-5">
             <h2 className="font-display text-xl text-navy-950">{coupon.code}</h2>
             <p className="mt-1 text-sm text-ink-600">{coupon.type} · {Number(coupon.value)} · {coupon.isActive ? "active" : "inactive"}</p>
             <p className="mt-2 text-sm">Used {coupon.usedCount}{coupon.maxUses ? ` / ${coupon.maxUses}` : ""}</p>

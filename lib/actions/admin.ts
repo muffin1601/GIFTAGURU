@@ -314,6 +314,51 @@ export async function deletePriceTierAction(_state: { error?: string; success?: 
   return { success: "Price tier removed." };
 }
 
+const updateCustomerRoleSchema = z.object({
+  profileId: z.string().uuid(),
+  role: z.enum(["customer", "admin", "super_admin"]),
+});
+
+export async function updateCustomerRoleAction(
+  _state: { error?: string; success?: string },
+  formData: FormData,
+) {
+  const admin = await requireAdmin();
+  // Only a super_admin can grant or revoke admin access -- an ordinary admin
+  // could otherwise promote themselves or anyone else to super_admin.
+  if (admin.role !== "super_admin") {
+    return { error: "Only a super admin can change account roles." };
+  }
+
+  const parsed = updateCustomerRoleSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid role." };
+
+  if (parsed.data.profileId === admin.id && parsed.data.role !== "super_admin") {
+    return { error: "You cannot remove your own super admin access." };
+  }
+
+  const target = await prisma.profile.findUnique({ where: { id: parsed.data.profileId } });
+  if (!target) return { error: "Account not found." };
+
+  if (target.role === "super_admin" && parsed.data.role !== "super_admin") {
+    const remaining = await prisma.profile.count({
+      where: { role: "super_admin", id: { not: target.id } },
+    });
+    if (remaining === 0) {
+      return { error: "At least one super admin must remain." };
+    }
+  }
+
+  await prisma.profile.update({
+    where: { id: parsed.data.profileId },
+    data: { role: parsed.data.role },
+  });
+
+  revalidatePath(`/admin/customers/${parsed.data.profileId}`);
+  revalidatePath("/admin/customers");
+  return { success: `Role updated to ${parsed.data.role.replaceAll("_", " ")}.` };
+}
+
 function statusToDelivery(status: string, fallback: "pending" | "ready_to_ship" | "shipped" | "out_for_delivery" | "delivered" | "failed" | "returned" | "cancelled") {
   if (status === "ready_to_ship") return "ready_to_ship";
   if (status === "shipped") return "shipped";

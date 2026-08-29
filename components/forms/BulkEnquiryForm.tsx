@@ -1,11 +1,32 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, MessageCircle, Send } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
+import Container from "@/components/ui/Container";
+import SocialIcon from "@/components/ui/SocialIcon";
 
 interface BulkEnquiryFormProps {
   productInterest?: string;
 }
+
+/** Field order matches the shape of a real corporate enquiry. */
+const fields = [
+  { id: "bulk-name", name: "fullName", label: "Full name", required: true },
+  { id: "bulk-email", name: "email", label: "Work email", required: true, type: "email" },
+  { id: "bulk-phone", name: "phone", label: "Phone / WhatsApp", required: true, type: "tel" },
+  { id: "bulk-company", name: "companyName", label: "Company name" },
+  { id: "bulk-product", name: "productInterest", label: "Product interest" },
+  { id: "bulk-quantity", name: "quantity", label: "Quantity", type: "number", min: 5 },
+  { id: "bulk-budget", name: "budgetRange", label: "Budget range" },
+  { id: "bulk-occasion", name: "occasion", label: "Occasion" },
+] satisfies {
+  id: string;
+  name: string;
+  label: string;
+  required?: boolean;
+  type?: string;
+  min?: number;
+}[];
 
 export default function BulkEnquiryForm({ productInterest = "" }: BulkEnquiryFormProps) {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -39,44 +60,96 @@ export default function BulkEnquiryForm({ productInterest = "" }: BulkEnquiryFor
   }
 
   return (
-    <section className="bg-cream-100 py-14 sm:py-16">
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
+    <section className="section bg-sunken">
+      <Container className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">Bulk Enquiry</p>
-          <h2 className="mt-3 font-display text-3xl text-navy-950">Tell us what you need</h2>
-          <p className="mt-4 text-ink-700">
-            Share quantity, budget, occasion, and product preference. The request is saved for admin follow-up.
+          <span className="type-eyebrow">Bulk Enquiry</span>
+          <h2 className="type-h2 mt-4">Tell us what you need</h2>
+          <p className="type-lead mt-5">
+            Share quantity, budget, occasion and product preference. Our corporate gifting team
+            typically responds within one business day.
           </p>
         </div>
-        <form onSubmit={submit} className="grid gap-4 rounded-lg bg-white p-6 ring-1 ring-navy-950/5 sm:grid-cols-2">
-          <input required name="fullName" placeholder="Full name" className="rounded-xl border border-navy-950/10 px-4 py-3 outline-none focus:border-navy-900" />
-          <input required name="email" type="email" placeholder="Work email" className="rounded-xl border border-navy-950/10 px-4 py-3 outline-none focus:border-navy-900" />
-          <input required name="phone" placeholder="Phone / WhatsApp" className="rounded-xl border border-navy-950/10 px-4 py-3 outline-none focus:border-navy-900" />
-          <input name="companyName" placeholder="Company name" className="rounded-xl border border-navy-950/10 px-4 py-3 outline-none focus:border-navy-900" />
-          <input name="productInterest" defaultValue={productInterest} placeholder="Product interest" className="rounded-xl border border-navy-950/10 px-4 py-3 outline-none focus:border-navy-900" />
-          <input name="quantity" type="number" min={5} placeholder="Quantity" className="rounded-xl border border-navy-950/10 px-4 py-3 outline-none focus:border-navy-900" />
-          <input name="budgetRange" placeholder="Budget range" className="rounded-xl border border-navy-950/10 px-4 py-3 outline-none focus:border-navy-900" />
-          <input name="occasion" placeholder="Occasion" className="rounded-xl border border-navy-950/10 px-4 py-3 outline-none focus:border-navy-900" />
-          <textarea name="message" rows={4} placeholder="Requirements" className="resize-none rounded-xl border border-navy-950/10 px-4 py-3 outline-none focus:border-navy-900 sm:col-span-2" />
-          {message ? (
-            <p className={`rounded-xl p-3 text-sm sm:col-span-2 ${status === "error" ? "bg-red-50 text-red-700" : "bg-green-50 text-green-700"}`}>
-              {message}
+
+        {status === "success" ? (
+          // A confirmed enquiry replaces the form so the outcome is unmistakable.
+          <div className="panel p-8 sm:p-10">
+            <Check className="h-6 w-6 text-gold-600" strokeWidth={1.25} aria-hidden="true" />
+            <h3 className="type-h3 mt-4">Enquiry received</h3>
+            <p className="type-body mt-2 max-w-md" role="status">
+              {message ?? "Bulk enquiry received."}
             </p>
-          ) : null}
-          <div className="flex flex-wrap gap-3 sm:col-span-2">
-            <button disabled={status === "loading"} className="inline-flex items-center justify-center gap-2 rounded-full bg-navy-900 px-6 py-3 text-sm font-semibold text-cream-100 hover:bg-navy-800 disabled:opacity-60">
-              {status === "loading" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              Submit Enquiry
-            </button>
-            {whatsappUrl ? (
-              <a href={whatsappUrl} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full border border-navy-950/15 px-6 py-3 text-sm font-semibold text-navy-950 hover:bg-cream-200">
-                <MessageCircle className="h-4 w-4" />
-                Continue on WhatsApp
-              </a>
-            ) : null}
+            <div className="mt-7 flex flex-wrap gap-3">
+              {whatsappUrl ? (
+                <a href={whatsappUrl} target="_blank" rel="noreferrer" className="btn btn-primary">
+                  <SocialIcon platform="whatsapp" />
+                  Continue on WhatsApp
+                </a>
+              ) : null}
+              <button
+                type="button"
+                onClick={() => {
+                  setStatus("idle");
+                  setMessage(null);
+                  setWhatsappUrl(null);
+                }}
+                className="btn btn-secondary"
+              >
+                Send another enquiry
+              </button>
+            </div>
           </div>
-        </form>
-      </div>
+        ) : (
+          <form onSubmit={submit} className="panel grid gap-x-6 gap-y-5 p-6 sm:grid-cols-2 sm:p-8">
+            {fields.map(({ id, name, label, required, type, min }) => (
+              <div key={name} className="field">
+                <label className="field-label" htmlFor={id}>
+                  {label}
+                  {required ? <span aria-hidden="true"> *</span> : null}
+                  {required ? <span className="sr-only"> (required)</span> : null}
+                </label>
+                <input
+                  id={id}
+                  name={name}
+                  type={type ?? "text"}
+                  min={min}
+                  required={required}
+                  defaultValue={name === "productInterest" ? productInterest : undefined}
+                  className="field-input"
+                />
+              </div>
+            ))}
+
+            <div className="field sm:col-span-2">
+              <label className="field-label" htmlFor="bulk-message">
+                Requirements
+              </label>
+              <textarea
+                id="bulk-message"
+                name="message"
+                rows={5}
+                className="field-input resize-none"
+              />
+            </div>
+
+            {message && status === "error" ? (
+              <p role="alert" className="field-error border-l-2 border-current pl-4 sm:col-span-2">
+                {message}
+              </p>
+            ) : null}
+
+            <div className="flex flex-wrap items-center gap-4 sm:col-span-2">
+              <button type="submit" disabled={status === "loading"} className="btn btn-primary">
+                {status === "loading" ? (
+                  <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.5} aria-hidden="true" />
+                ) : null}
+                {status === "loading" ? "Sending…" : "Submit Enquiry"}
+              </button>
+              <span className="type-meta">Fields marked with * are required.</span>
+            </div>
+          </form>
+        )}
+      </Container>
     </section>
   );
 }

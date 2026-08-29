@@ -35,26 +35,38 @@ export default function CollectionsDropdown() {
         aria-expanded={open}
         aria-haspopup="menu"
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex items-center gap-1 text-sm font-medium text-navy-950 transition-colors hover:text-gold-600"
+        className="inline-flex items-center gap-1 text-[0.8125rem] font-medium uppercase tracking-[0.08em] text-navy-950 transition-colors duration-200 hover:text-gold-600"
       >
         Collections
-        <ChevronDown className="h-4 w-4" aria-hidden="true" />
+        <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" strokeWidth={1.5} />
       </button>
+
       {open ? (
-        <div className="absolute left-0 top-full mt-5 grid w-[520px] grid-cols-2 gap-3 rounded-lg bg-white p-3 shadow-xl ring-1 ring-navy-950/10">
+        // A hairline border defines the overlay instead of a drop shadow.
+        <div className="absolute left-1/2 top-full z-50 mt-6 grid w-[560px] -translate-x-1/2 grid-cols-2 gap-x-8 gap-y-6 border border-line bg-surface p-7">
           {categories.map((category) => (
             <Link
               key={category.slug}
               href={`/categories/${category.slug}`}
               onClick={() => setOpen(false)}
-              className="grid grid-cols-[76px_1fr] gap-3 rounded-lg p-2 hover:bg-cream-100"
+              className="group grid grid-cols-[84px_1fr] gap-4"
             >
-              <span className="relative aspect-[4/3] overflow-hidden rounded-md bg-cream-200">
-                <Image src={category.image} alt={category.name} fill className="object-cover" sizes="76px" />
+              <span className="relative aspect-[4/3] overflow-hidden border border-line bg-sunken">
+                <Image
+                  src={category.image}
+                  alt=""
+                  fill
+                  className="object-cover transition-opacity duration-200 group-hover:opacity-90"
+                  sizes="84px"
+                />
               </span>
               <span className="min-w-0">
-                <span className="block text-sm font-semibold text-navy-950">{category.name}</span>
-                <span className="mt-1 line-clamp-2 block text-xs leading-5 text-ink-600">{category.tagline}</span>
+                <span className="block font-display text-[0.9375rem] text-navy-950 transition-colors duration-200 group-hover:text-gold-600">
+                  {category.name}
+                </span>
+                <span className="mt-1 line-clamp-2 block text-xs leading-5 text-ink-500">
+                  {category.tagline}
+                </span>
               </span>
             </Link>
           ))}

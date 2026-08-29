@@ -9,7 +9,7 @@ export default async function AdminEmailCampaignsPage() {
         <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">Marketing</p>
         <h1 className="mt-2 font-display text-4xl text-navy-950">Email events</h1>
       </div>
-      <div className="overflow-hidden rounded-lg bg-white ring-1 ring-navy-950/5">
+      <div className="panel overflow-x-auto">
         <table className="min-w-full text-left text-sm">
           <thead className="bg-cream-200 text-xs uppercase tracking-wide text-ink-600">
             <tr><th className="px-4 py-3">Type</th><th className="px-4 py-3">Recipient</th><th className="px-4 py-3">Subject</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Date</th></tr>

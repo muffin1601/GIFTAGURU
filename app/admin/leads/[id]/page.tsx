@@ -13,7 +13,7 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
-      <section className="rounded-lg bg-white p-6 ring-1 ring-navy-950/5">
+      <section className="panel p-6">
         <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">{lead.type.replaceAll("_", " ")}</p>
         <h1 className="mt-2 font-display text-4xl text-navy-950">{lead.name}</h1>
         <dl className="mt-6 grid gap-4 text-sm sm:grid-cols-2">
@@ -29,10 +29,10 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
         <div className="mt-6 rounded-lg bg-cream-100 p-4 text-sm text-ink-800">{lead.message}</div>
         <div className="mt-6 flex flex-wrap gap-3">
           <a href={buildWhatsAppUrl(`Hi ${lead.name}, following up on your Gifta Guru enquiry.`)} target="_blank" rel="noreferrer" className="rounded-full bg-[#25D366] px-5 py-2.5 text-sm font-semibold text-white">WhatsApp</a>
-          <a href={`mailto:${lead.email}`} className="rounded-full border border-navy-950/15 px-5 py-2.5 text-sm font-semibold text-navy-950">Email</a>
+          <a href={`mailto:${lead.email}`} className="btn btn-secondary">Email</a>
         </div>
       </section>
-      <aside className="rounded-lg bg-white p-6 ring-1 ring-navy-950/5">
+      <aside className="panel p-6">
         <h2 className="font-display text-2xl text-navy-950">Manage lead</h2>
         <ActionForm action={updateLeadAction} submitLabel="Update lead" className="mt-4 grid gap-3">
           <input type="hidden" name="id" value={lead.id} />

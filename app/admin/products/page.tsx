@@ -18,7 +18,7 @@ export default async function AdminProductsPage() {
         <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">Catalog</p>
         <h1 className="mt-2 font-display text-4xl text-navy-950">Products</h1>
       </div>
-      <div className="overflow-hidden rounded-lg bg-white ring-1 ring-navy-950/5">
+      <div className="panel overflow-x-auto">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left text-sm">
             <thead className="bg-cream-200 text-xs uppercase tracking-wide text-ink-600">

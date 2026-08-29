@@ -23,7 +23,7 @@ export default function MobileNav({ links }: { links: NavLink[] }) {
       {open &&
         createPortal(
           <div className="fixed inset-0 z-50 bg-navy-950/40" role="dialog" aria-modal="true">
-            <div className="absolute inset-y-0 right-0 flex w-full max-w-sm flex-col gap-6 bg-cream-100 p-6 shadow-xl">
+            <div className="absolute inset-y-0 right-0 flex w-full max-w-sm flex-col gap-6 border-l border-line bg-canvas p-6">
               <div className="flex items-center justify-between">
                 <span className="font-display text-lg text-navy-950">Menu</span>
                 <button
@@ -32,7 +32,7 @@ export default function MobileNav({ links }: { links: NavLink[] }) {
                   aria-label="Close menu"
                   className="inline-flex items-center justify-center rounded-full p-2 text-navy-950 hover:bg-navy-950/5"
                 >
-                  <X className="h-6 w-6" aria-hidden="true" />
+                  <X className="h-6 w-6" aria-hidden="true" strokeWidth={1.5} />
                 </button>
               </div>
               <nav className="flex flex-col gap-1">
@@ -54,7 +54,7 @@ export default function MobileNav({ links }: { links: NavLink[] }) {
                   aria-label="Search"
                   className="inline-flex items-center gap-2 text-sm font-medium text-navy-950"
                 >
-                  <Search className="h-5 w-5" aria-hidden="true" />
+                  <Search className="h-5 w-5" aria-hidden="true" strokeWidth={1.5} />
                   Search
                 </Link>
                 <Link

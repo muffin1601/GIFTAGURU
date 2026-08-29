@@ -15,7 +15,7 @@ export default async function AdminPaymentsPage() {
         <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">Sales</p>
         <h1 className="mt-2 font-display text-4xl text-navy-950">Payments</h1>
       </div>
-      <div className="overflow-hidden rounded-lg bg-white ring-1 ring-navy-950/5">
+      <div className="panel overflow-x-auto">
         <table className="min-w-full text-left text-sm">
           <thead className="bg-cream-200 text-xs uppercase tracking-wide text-ink-600">
             <tr><th className="px-4 py-3">Order</th><th className="px-4 py-3">Razorpay order</th><th className="px-4 py-3">Payment ID</th><th className="px-4 py-3">Amount</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Date</th></tr>

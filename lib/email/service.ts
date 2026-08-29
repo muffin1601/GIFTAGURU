@@ -1,6 +1,6 @@
 import "server-only";
 
-import { siteUrl } from "@/lib/env";
+import { isEmailConfigured, siteUrl } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { STORE_CONTACT } from "@/lib/config/store";
 import { adminNotificationTemplate, orderEmailTemplate, type EmailOrder } from "@/lib/email/templates";
@@ -23,7 +23,7 @@ export async function sendTransactionalEmail(input: SendEmailInput) {
   const existing = await prisma.emailEvent.findUnique({ where: { eventKey: input.eventKey } }).catch(() => null);
   if (existing?.status === "sent" || existing?.status === "skipped") return existing;
 
-  if (!apiKey) {
+  if (!isEmailConfigured()) {
     console.info(`Email skipped; RESEND_API_KEY is not configured. event=${input.eventKey}`);
     return prisma.emailEvent.upsert({
       where: { eventKey: input.eventKey },

@@ -38,7 +38,7 @@ export default async function AccountOrderDetailPage({ params }: { params: Promi
           <p className="text-sm">Delivery: {order.deliveryStatus}</p>
           <p className="text-sm">Courier: {order.courierName ?? "Pending"}</p>
           <p className="text-sm">Tracking: {order.trackingNumber ?? "Pending"}</p>
-          {order.trackingUrl ? <Link href={order.trackingUrl} target="_blank" className="mt-4 inline-flex rounded-full bg-navy-900 px-5 py-2 text-sm font-semibold text-cream-100">Track shipment</Link> : null}
+          {order.trackingUrl ? <Link href={order.trackingUrl} target="_blank" className="btn btn-primary mt-4">Track shipment</Link> : null}
           <h3 className="mt-6 font-semibold text-navy-950">Items</h3>
           <div className="mt-3 space-y-2">
             {order.items.map((item) => (

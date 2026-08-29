@@ -11,7 +11,7 @@ export const LOGO_UPLOAD_ALLOWED_MIME_TYPES = ["image/png", "image/jpeg", "image
 export const STORE_CONTACT = {
   phone: "87507 08222",
   phoneHref: "+918750708222",
-  email: "mfglobalservices18@gmail.com",
+  email: "giftaguru27@gmail.com",
   whatsappNumber: "918750708222",
   address: "F90/1, Beside ESIC Hospital, Okhla Industrial Area Phase 1, New Delhi - 110020, India",
 };

@@ -3,6 +3,7 @@ import { Fraunces, Manrope } from "next/font/google";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { CartProvider } from "@/components/cart/CartProvider";
+import StorefrontOnly from "@/components/layout/StorefrontOnly";
 import FloatingCommunication from "@/components/lead/FloatingCommunication";
 import { siteUrl } from "@/lib/env";
 import "./globals.css";
@@ -28,13 +29,23 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${manrope.variable}`}>
+    // data-scroll-behavior is required by Next when the html element sets
+    // scroll-behavior: smooth, otherwise route transitions animate the scroll.
+    <html
+      lang="en"
+      data-scroll-behavior="smooth"
+      className={`${fraunces.variable} ${manrope.variable}`}
+    >
       <body className="flex min-h-screen flex-col antialiased">
         <CartProvider>
-          <Header />
+          <StorefrontOnly>
+            <Header />
+          </StorefrontOnly>
           <main className="flex-1">{children}</main>
-          <Footer />
-          <FloatingCommunication />
+          <StorefrontOnly>
+            <Footer />
+            <FloatingCommunication />
+          </StorefrontOnly>
         </CartProvider>
       </body>
     </html>

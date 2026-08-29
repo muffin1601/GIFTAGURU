@@ -16,7 +16,7 @@ export default async function AdminBulkEnquiriesPage() {
       </div>
       <div className="grid gap-4 xl:grid-cols-2">
         {enquiries.map((enquiry) => (
-          <section key={enquiry.id} className="rounded-lg bg-white p-5 ring-1 ring-navy-950/5">
+          <section key={enquiry.id} className="panel p-5">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <h2 className="font-display text-xl text-navy-950">{enquiry.fullName}</h2>
@@ -26,8 +26,8 @@ export default async function AdminBulkEnquiriesPage() {
                 {enquiry.message ? <p className="mt-2 text-sm text-ink-700">{enquiry.message}</p> : null}
               </div>
               <div className="flex gap-2">
-                <a href={buildWhatsAppUrl(`Hi ${enquiry.fullName}, following up on your Gifta Guru bulk enquiry.`)} target="_blank" rel="noreferrer" className="rounded-full border border-navy-950/15 px-4 py-2 text-sm font-semibold">WhatsApp</a>
-                <a href={`mailto:${enquiry.email}`} className="rounded-full border border-navy-950/15 px-4 py-2 text-sm font-semibold">Email</a>
+                <a href={buildWhatsAppUrl(`Hi ${enquiry.fullName}, following up on your Gifta Guru bulk enquiry.`)} target="_blank" rel="noreferrer" className="btn btn-secondary">WhatsApp</a>
+                <a href={`mailto:${enquiry.email}`} className="btn btn-secondary">Email</a>
               </div>
             </div>
             <ActionForm action={updateBulkQuoteAction} submitLabel="Update enquiry" className="mt-4 grid gap-3">

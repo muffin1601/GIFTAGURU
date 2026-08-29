@@ -46,7 +46,7 @@ export default async function AccountPage() {
           { href: "/account/wishlist", title: "Wishlist", copy: "Saved gift sets for future campaigns.", Icon: Heart },
           { href: "/account", title: "Profile", copy: "Business profile and account preferences.", Icon: UserRound },
         ].map(({ href, title, copy, Icon }) => (
-          <Link key={title} href={href} className="rounded-2xl bg-white p-6 ring-1 ring-navy-950/5 transition-shadow hover:shadow-lg">
+          <Link key={title} href={href} className="panel p-6 transition-colors duration-200 hover:border-line-strong">
             <Icon className="h-5 w-5 text-gold-600" />
             <h2 className="mt-4 font-display text-xl text-navy-950">{title}</h2>
             <p className="mt-2 text-sm text-ink-700">{copy}</p>

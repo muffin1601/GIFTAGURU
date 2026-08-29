@@ -1,20 +1,52 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+   GIFTA GURU DESIGN SYSTEM
+   Premium editorial. Hierarchy comes from whitespace, typography, tonal
+   contrast and hairline borders -- never from shadows, glow or scale.
+   ========================================================================== */
+
 :root {
+  /* --- Brand ------------------------------------------------------------ */
   --color-navy-950: #0a1a30;
   --color-navy-900: #0d2142;
   --color-navy-800: #12325f;
   --color-navy-700: #1a4478;
-  --color-gold-600: #a9821c;
-  --color-gold-500: #c9a227;
-  --color-gold-400: #d9b94f;
+  --color-gold-700: #75590f;
+  --color-gold-600: #8f6d16;
+  --color-gold-500: #a9821c;
+  --color-gold-400: #c9a227;
   --color-gold-300: #e6cd7c;
-  --color-cream-100: #fbf8f2;
-  --color-cream-200: #f7f1e6;
-  --color-cream-300: #efe4cf;
-  --color-ink-900: #17181a;
-  --color-ink-700: #43474d;
-  --color-ink-500: #6b7076;
+
+  /* --- Surfaces ---------------------------------------------------------
+     canvas  = the warm off-white page ground
+     surface = white panels sitting on the canvas
+     sunken  = subtly deeper band used to separate sections without a border */
+  --color-canvas: #fbf9f5;
+  --color-surface: #ffffff;
+  --color-sunken: #f4f0e8;
+  --color-cream-100: #fbf9f5;
+  --color-cream-200: #f4f0e8;
+  --color-cream-300: #e8e1d3;
+
+  /* --- Text -------------------------------------------------------------- */
+  --color-ink-900: #16181b;
+  --color-ink-800: #2c2f34;
+  --color-ink-700: #4a4d53;
+  --color-ink-600: #5d6167;
+  --color-ink-500: #74787e;
+
+  /* --- Lines ------------------------------------------------------------
+     Hairlines do the work that shadows would normally do. Keep them faint. */
+  --color-line: #e7e1d5;
+  --color-line-strong: #d5ccba;
+
+  /* --- Motion -----------------------------------------------------------
+     One duration and one easing across the whole site. */
+  --ease-ui: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 150ms;
+  --dur-base: 220ms;
+  --dur-slow: 300ms;
 }
 
 @theme inline {
@@ -22,26 +54,287 @@
   --color-navy-900: var(--color-navy-900);
   --color-navy-800: var(--color-navy-800);
   --color-navy-700: var(--color-navy-700);
+  --color-gold-700: var(--color-gold-700);
   --color-gold-600: var(--color-gold-600);
   --color-gold-500: var(--color-gold-500);
   --color-gold-400: var(--color-gold-400);
   --color-gold-300: var(--color-gold-300);
+  --color-canvas: var(--color-canvas);
+  --color-surface: var(--color-surface);
+  --color-sunken: var(--color-sunken);
   --color-cream-100: var(--color-cream-100);
   --color-cream-200: var(--color-cream-200);
   --color-cream-300: var(--color-cream-300);
   --color-ink-900: var(--color-ink-900);
+  --color-ink-800: var(--color-ink-800);
   --color-ink-700: var(--color-ink-700);
+  --color-ink-600: var(--color-ink-600);
   --color-ink-500: var(--color-ink-500);
+  --color-line: var(--color-line);
+  --color-line-strong: var(--color-line-strong);
   --font-display: var(--font-fraunces);
   --font-sans: var(--font-manrope);
 }
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--color-cream-100);
+  background: var(--color-canvas);
   color: var(--color-ink-900);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-synthesis-weight: none;
+}
+
+/* Display type is set tighter and optically lighter than the UI sans. */
+.font-display {
+  letter-spacing: -0.015em;
+}
+
+/* One focus ring for the entire site. Never removed for aesthetics. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-navy-900);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Respect the OS setting. Motion is decoration here, never information. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@layer components {
+  /* --- Typography ------------------------------------------------------- */
+  .type-eyebrow {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-gold-600);
+  }
+
+  .type-h1 {
+    font-family: var(--font-display), Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(2.125rem, 1.4rem + 3vw, 3.75rem);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--color-navy-950);
+  }
+
+  .type-h2 {
+    font-family: var(--font-display), Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(1.75rem, 1.25rem + 2vw, 2.75rem);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    color: var(--color-navy-950);
+  }
+
+  .type-h3 {
+    font-family: var(--font-display), Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.5rem);
+    line-height: 1.25;
+    color: var(--color-navy-950);
+  }
+
+  .type-lead {
+    font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+    line-height: 1.65;
+    color: var(--color-ink-700);
+  }
+
+  .type-body {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--color-ink-700);
+  }
+
+  .type-meta {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--color-ink-500);
+  }
+
+  /* --- Section rhythm ---------------------------------------------------
+     Every storefront section uses one of these two, so vertical spacing is
+     consistent across pages instead of ad hoc per component. */
+  .section {
+    padding-block: clamp(3.5rem, 2rem + 6vw, 7rem);
+  }
+
+  .section-tight {
+    padding-block: clamp(2.5rem, 1.5rem + 4vw, 4.5rem);
+  }
+
+  /* --- Buttons ----------------------------------------------------------
+     No gradient, no shadow, no scale. Hover is a colour/border change only. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+    transition:
+      background-color var(--dur-base) var(--ease-ui),
+      border-color var(--dur-base) var(--ease-ui),
+      color var(--dur-base) var(--ease-ui);
+    cursor: pointer;
+  }
+
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    background-color: var(--color-navy-950);
+    border-color: var(--color-navy-950);
+    color: #fff;
+  }
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--color-navy-800);
+    border-color: var(--color-navy-800);
+  }
+
+  .btn-secondary {
+    background-color: transparent;
+    border-color: var(--color-line-strong);
+    color: var(--color-navy-950);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    border-color: var(--color-navy-950);
+  }
+
+  .btn-ghost {
+    padding-inline: 0;
+    background: none;
+    border-color: transparent;
+    color: var(--color-navy-950);
+  }
+  .btn-ghost:hover:not(:disabled) {
+    color: var(--color-gold-600);
+  }
+
+  /* Inline text link with an underline that grows rather than a colour flash. */
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 1px;
+    transition: background-size var(--dur-base) var(--ease-ui);
+  }
+  .link-underline:hover {
+    background-size: 100% 1px;
+  }
+
+  /* --- Forms ------------------------------------------------------------ */
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4375rem;
+  }
+
+  .field-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-700);
+  }
+
+  .field-input {
+    width: 100%;
+    padding: 0.8125rem 0.9375rem;
+    font-size: 0.9375rem;
+    color: var(--color-ink-900);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+    transition:
+      border-color var(--dur-base) var(--ease-ui),
+      background-color var(--dur-base) var(--ease-ui);
+  }
+  .field-input::placeholder {
+    color: var(--color-ink-500);
+  }
+  .field-input:hover:not(:disabled) {
+    border-color: var(--color-line-strong);
+  }
+  .field-input:focus {
+    border-color: var(--color-navy-900);
+  }
+  .field-input:disabled {
+    background-color: var(--color-sunken);
+    color: var(--color-ink-500);
+    cursor: not-allowed;
+  }
+  .field-input[aria-invalid="true"] {
+    border-color: #a4292b;
+  }
+
+  .field-error {
+    font-size: 0.8125rem;
+    color: #a4292b;
+  }
+
+  .field-hint {
+    font-size: 0.8125rem;
+    color: var(--color-ink-500);
+  }
+
+  /* --- Surfaces ---------------------------------------------------------
+     A "panel" is defined by a hairline, not a shadow or a large radius. */
+  .panel {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+  }
+
+  .rule {
+    border: 0;
+    border-top: 1px solid var(--color-line);
+  }
+
+  /* --- Status ----------------------------------------------------------- */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: 1px solid var(--color-line-strong);
+    color: var(--color-ink-700);
+  }
+  .badge-positive {
+    border-color: #b6cdb8;
+    color: #2f6135;
+  }
+  .badge-attention {
+    border-color: #e0c98d;
+    color: #8a6a14;
+  }
+  .badge-critical {
+    border-color: #e0b3b3;
+    color: #a4292b;
+  }
 }

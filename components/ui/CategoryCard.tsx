@@ -1,27 +1,32 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { Category } from "@/types";
 
 export default function CategoryCard({ category }: { category: Category }) {
   return (
-    <Link
-      href={`/categories/${category.slug}`}
-      className="group relative block overflow-hidden rounded-2xl shadow-sm ring-1 ring-navy-950/5 transition-shadow duration-300 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-900"
-    >
-      <div className="relative aspect-[16/9] w-full overflow-hidden">
+    <Link href={`/categories/${category.slug}`} className="group block">
+      <div className="relative aspect-[4/3] overflow-hidden border border-line bg-sunken">
         <Image
           src={category.image}
-          alt={category.tagline}
+          alt=""
           fill
-          sizes="(min-width: 1024px) 50vw, 100vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          className="object-cover transition-opacity duration-300 group-hover:opacity-90"
         />
       </div>
-      <span className="absolute bottom-4 right-4 inline-flex translate-y-2 items-center gap-1 rounded-full bg-cream-100/95 px-4 py-2 text-sm font-semibold text-navy-950 opacity-0 shadow-md transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-        View Collection
-        <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-      </span>
+
+      <div className="flex items-start justify-between gap-6 pt-5">
+        <div>
+          <h3 className="font-display text-xl text-navy-950">{category.name}</h3>
+          <p className="type-body mt-1.5 max-w-sm">{category.tagline}</p>
+        </div>
+        {/* The arrow shifts a few pixels on hover -- no scale, no shadow. */}
+        <ArrowRight
+          className="mt-1.5 h-4 w-4 shrink-0 text-navy-950 transition-transform duration-200 group-hover:translate-x-1"
+          aria-hidden="true" strokeWidth={1.5}
+        />
+      </div>
     </Link>
   );
 }

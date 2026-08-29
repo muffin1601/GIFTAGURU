@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
 import { cartItemUnitPrice, useCart } from "@/components/cart/CartProvider";
@@ -11,17 +11,25 @@ import { GIFT_WRAP_PRICE, MIN_ORDER_QUANTITY_MESSAGE } from "@/lib/config/store"
 import { formatPrice } from "@/lib/utils";
 
 export default function CartPageClient() {
-  const { items, merchandiseSubtotal, giftWrapTotal, subtotal, updateQuantity, removeItem } = useCart();
+  const { items, merchandiseSubtotal, giftWrapTotal, subtotal, updateQuantity, removeItem } =
+    useCart();
   const [quantityMessage, setQuantityMessage] = useState<string | null>(null);
 
   if (items.length === 0) {
     return (
-      <Container className="py-20">
-        <div className="mx-auto max-w-xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">Cart</p>
-          <h1 className="mt-3 font-display text-4xl text-navy-950">Your gifting cart is empty</h1>
-          <p className="mt-4 text-ink-700">Explore corporate collections and add gifts for quote-ready checkout.</p>
-          <Button href="/shop" className="mt-8">Browse Gifts</Button>
+      <Container className="py-24 sm:py-32">
+        <div className="max-w-lg">
+          <span className="type-eyebrow">Cart</span>
+          <h1 className="type-h1 mt-4">Your gifting journey starts here.</h1>
+          <p className="type-lead mt-5">
+            Browse our corporate collections and add gifts for quote-ready checkout.
+          </p>
+          <div className="mt-9 flex flex-wrap gap-3">
+            <Button href="/shop">Explore Gifts</Button>
+            <Button href="/bulk-enquiry" variant="secondary">
+              Request a Quote
+            </Button>
+          </div>
         </div>
       </Container>
     );
@@ -29,74 +37,125 @@ export default function CartPageClient() {
 
   return (
     <Container className="py-12 sm:py-16">
-      <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
-        <section>
-          <h1 className="font-display text-4xl text-navy-950">Cart</h1>
-          <div className="mt-8 divide-y divide-navy-950/10 rounded-2xl bg-white ring-1 ring-navy-950/5">
+      <h1 className="type-h1">Cart</h1>
+
+      <div className="mt-10 grid gap-12 lg:grid-cols-[1fr_22rem] lg:gap-16">
+        <section aria-label="Cart items">
+          <div className="border-t border-line">
             {items.map((item) => (
-              <div key={`${item.id}-${item.personalizationText ?? ""}-${item.logoUrl ?? ""}-${item.giftWrap ? "wrap" : "plain"}`} className="grid gap-5 p-5 sm:grid-cols-[110px_1fr_auto]">
-                <Link href={`/products/${item.slug}`} className="relative aspect-square overflow-hidden rounded-xl bg-cream-200">
-                  {item.image ? <Image src={item.image} alt={item.name} fill className="object-contain p-3" /> : null}
+              <div
+                key={`${item.id}-${item.personalizationText ?? ""}-${item.logoUrl ?? ""}-${item.giftWrap ? "wrap" : "plain"}`}
+                className="grid gap-5 border-b border-line py-6 sm:grid-cols-[96px_1fr_auto]"
+              >
+                <Link
+                  href={`/products/${item.slug}`}
+                  className="relative aspect-square overflow-hidden border border-line bg-surface"
+                >
+                  {item.image ? (
+                    <Image src={item.image} alt="" fill sizes="96px" className="object-contain p-2" />
+                  ) : null}
                 </Link>
-                <div>
-                  <Link href={`/products/${item.slug}`} className="font-display text-xl text-navy-950 hover:text-gold-600">
+
+                <div className="min-w-0">
+                  <Link
+                    href={`/products/${item.slug}`}
+                    className="link-underline font-display text-lg text-navy-950"
+                  >
                     {item.name}
                   </Link>
-                  <p className="mt-1 text-sm text-ink-700">Minimum order: {item.minQuantity} units</p>
-                  {item.personalizationText ? <p className="mt-1 text-sm text-ink-600">Text: {item.personalizationText}</p> : null}
-                  {item.logoFileName ? <p className="mt-1 text-sm text-ink-600">Logo: {item.logoFileName}</p> : null}
-                  {item.giftWrap ? <p className="mt-1 text-sm text-ink-600">Gift wrap: {formatPrice(GIFT_WRAP_PRICE)}</p> : null}
-                  <p className="mt-2 font-semibold text-navy-950">{formatPrice(cartItemUnitPrice(item))} / unit</p>
+                  <p className="type-meta mt-1">Minimum order: {item.minQuantity} units</p>
+                  {item.personalizationText ? (
+                    <p className="type-meta mt-1">Text: {item.personalizationText}</p>
+                  ) : null}
+                  {item.logoFileName ? (
+                    <p className="type-meta mt-1">Logo: {item.logoFileName}</p>
+                  ) : null}
+                  {item.giftWrap ? (
+                    <p className="type-meta mt-1">Gift wrap: {formatPrice(GIFT_WRAP_PRICE)}</p>
+                  ) : null}
+                  <p className="mt-2.5 text-sm font-semibold text-navy-950">
+                    {formatPrice(cartItemUnitPrice(item))} / unit
+                  </p>
                 </div>
-                <div className="flex items-center gap-3 sm:flex-col sm:items-end">
-                  <div className="inline-flex h-10 items-center rounded-full border border-navy-950/15 bg-white">
+
+                <div className="flex items-center justify-between gap-4 sm:flex-col sm:items-end sm:justify-start">
+                  <div className="inline-flex h-10 items-center border border-line bg-surface">
                     <button
                       type="button"
-                      aria-label="Decrease quantity"
-                      className="px-3"
+                      aria-label={`Decrease quantity of ${item.name}`}
+                      className="px-3 text-navy-950 transition-colors duration-200 hover:text-gold-600"
                       onClick={() => {
-                        if (item.quantity - 1 < item.minQuantity) setQuantityMessage(MIN_ORDER_QUANTITY_MESSAGE);
+                        if (item.quantity - 1 < item.minQuantity)
+                          setQuantityMessage(MIN_ORDER_QUANTITY_MESSAGE);
                         updateQuantity(item.id, item.quantity - 1);
                       }}
                     >
-                      <Minus className="h-4 w-4" />
+                      <Minus className="h-4 w-4" aria-hidden="true" strokeWidth={1.5} />
                     </button>
-                    <span className="min-w-10 text-center text-sm font-semibold">{item.quantity}</span>
-                    <button type="button" aria-label="Increase quantity" className="px-3" onClick={() => updateQuantity(item.id, item.quantity + 1)}>
-                      <Plus className="h-4 w-4" />
+                    <span className="min-w-10 text-center text-sm font-semibold">
+                      {item.quantity}
+                    </span>
+                    <button
+                      type="button"
+                      aria-label={`Increase quantity of ${item.name}`}
+                      className="px-3 text-navy-950 transition-colors duration-200 hover:text-gold-600"
+                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                    >
+                      <Plus className="h-4 w-4" aria-hidden="true" strokeWidth={1.5} />
                     </button>
                   </div>
-                  <button type="button" onClick={() => removeItem(item.id)} className="inline-flex items-center gap-1 text-sm font-semibold text-ink-500 hover:text-navy-950">
-                    <Trash2 className="h-4 w-4" />
+                  <button
+                    type="button"
+                    onClick={() => removeItem(item.id)}
+                    className="link-underline text-xs font-semibold uppercase tracking-[0.08em] text-ink-500"
+                  >
                     Remove
                   </button>
                 </div>
               </div>
             ))}
           </div>
-          {quantityMessage ? <p className="mt-4 rounded-xl bg-red-50 p-4 text-sm text-red-700">{quantityMessage}</p> : null}
+
+          {quantityMessage ? (
+            <p role="alert" className="field-error mt-5">
+              {quantityMessage}
+            </p>
+          ) : null}
         </section>
 
-        <aside className="h-fit rounded-2xl bg-navy-950 p-6 text-cream-100">
-          <h2 className="font-display text-2xl">Order Summary</h2>
-          <div className="mt-6 space-y-3 text-sm">
-            <div className="flex justify-between"><span>Merchandise</span><span>{formatPrice(merchandiseSubtotal)}</span></div>
-            <div className="flex justify-between"><span>Gift wrap</span><span>{formatPrice(giftWrapTotal)}</span></div>
-            <div className="flex justify-between"><span>Shipping</span><span>Calculated after address</span></div>
-            <div className="flex justify-between"><span>GST</span><span>Calculated securely</span></div>
-          </div>
-          <div className="mt-6 flex justify-between border-t border-white/15 pt-5 text-lg font-semibold">
-            <span>Estimated total</span>
-            <span>{formatPrice(subtotal)}</span>
-          </div>
-          <Button href="/checkout" className="mt-6 w-full bg-gold-500 text-navy-950 hover:bg-gold-400">
+        <aside className="h-fit lg:sticky lg:top-32" aria-label="Order summary">
+          <h2 className="type-eyebrow">Order Summary</h2>
+
+          <dl className="mt-5 border-t border-line text-sm">
+            {[
+              ["Merchandise", formatPrice(merchandiseSubtotal)],
+              ["Gift wrap", formatPrice(giftWrapTotal)],
+              ["Shipping", "Calculated after address"],
+              ["GST", "Calculated at checkout"],
+            ].map(([term, value]) => (
+              <div key={term} className="flex justify-between gap-4 border-b border-line py-3">
+                <dt className="text-ink-700">{term}</dt>
+                <dd className="text-right text-navy-950">{value}</dd>
+              </div>
+            ))}
+            <div className="flex justify-between gap-4 py-4">
+              <dt className="font-semibold text-navy-950">Estimated total</dt>
+              <dd className="font-display text-xl text-navy-950">{formatPrice(subtotal)}</dd>
+            </div>
+          </dl>
+
+          <Button href="/checkout" className="mt-3 w-full">
             Continue to Checkout
           </Button>
-          <div className="mt-5 rounded-lg border border-white/10 bg-white/5 p-4">
-            <p className="text-sm font-semibold">Need help with a large corporate order?</p>
-            <Button href="/bulk-enquiry" variant="ghost" className="mt-2 w-full text-cream-100 hover:text-gold-300">
+
+          <div className="mt-8 border-t border-line pt-6">
+            <p className="text-sm font-medium text-navy-950">Need a larger corporate order?</p>
+            <p className="type-body mt-1.5">
+              Our gifting team can price volumes, branding and multi-city dispatch.
+            </p>
+            <Link href="/bulk-enquiry" className="link-underline mt-3 inline-block text-sm font-semibold text-navy-950">
               Talk to our team
-            </Button>
+            </Link>
           </div>
         </aside>
       </div>

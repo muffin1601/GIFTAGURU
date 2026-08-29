@@ -3,10 +3,16 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Gift, Heart, Loader2, MessageCircle, Minus, Plus, Truck, Upload, X, Zap } from "lucide-react";
+import { Loader2, MessageCircle, Minus, Plus, Upload, X } from "lucide-react";
 import type { Product } from "@/types";
 import { useCart } from "@/components/cart/CartProvider";
-import { GIFT_WRAP_PRICE, MIN_ORDER_QUANTITY, MIN_ORDER_QUANTITY_MESSAGE, PERSONALIZATION_MAX_LENGTH, buildWhatsAppUrl } from "@/lib/config/store";
+import {
+  GIFT_WRAP_PRICE,
+  MIN_ORDER_QUANTITY,
+  MIN_ORDER_QUANTITY_MESSAGE,
+  PERSONALIZATION_MAX_LENGTH,
+  buildWhatsAppUrl,
+} from "@/lib/config/store";
 import { checkDeliveryAvailability, DELIVERY_WINDOW } from "@/lib/services/delivery";
 import { formatPrice } from "@/lib/utils";
 import { resolveUnitPrice } from "@/lib/pricing";
@@ -32,7 +38,9 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
   const [deliveryMessage, setDeliveryMessage] = useState(DELIVERY_WINDOW);
   const [cartMessage, setCartMessage] = useState<string | null>(null);
   const validQuantity = quantity >= minimumQuantity;
-  const whatsappHref = buildWhatsAppUrl(`Hi Gifta Guru, I want to enquire about ${product.name}. Quantity: ${quantity}.`);
+  const whatsappHref = buildWhatsAppUrl(
+    `Hi Gifta Guru, I want to enquire about ${product.name}. Quantity: ${quantity}.`,
+  );
   const unitPrice = resolveUnitPrice(product.price ?? 0, product.priceTiers, quantity);
   const lineTotal = unitPrice * quantity;
 
@@ -76,12 +84,20 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
   }
 
   return (
-    <div className="space-y-5">
+    <div className="flex flex-col gap-8">
+      {/* Quantity ---------------------------------------------------------- */}
       <div>
-        <label className="text-sm font-semibold text-navy-950" htmlFor="quantity">Quantity</label>
-        <div className="mt-2 inline-flex h-12 items-center rounded-full border border-navy-950/15 bg-white">
-          <button type="button" aria-label="Decrease quantity" className="px-4" onClick={() => setQuantity((value) => Math.max(minimumQuantity, value - 1))}>
-            <Minus className="h-4 w-4" />
+        <label className="field-label" htmlFor="quantity">
+          Quantity
+        </label>
+        <div className="mt-2.5 inline-flex h-12 items-center border border-line bg-surface">
+          <button
+            type="button"
+            aria-label="Decrease quantity"
+            className="px-4 text-navy-950 transition-colors duration-200 hover:text-gold-600"
+            onClick={() => setQuantity((value) => Math.max(minimumQuantity, value - 1))}
+          >
+            <Minus className="h-4 w-4" aria-hidden="true" strokeWidth={1.5} />
           </button>
           <input
             id="quantity"
@@ -91,105 +107,169 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
             onChange={(event) => setQuantity(Number(event.target.value))}
             className="w-20 bg-transparent text-center text-sm font-semibold outline-none"
           />
-          <button type="button" aria-label="Increase quantity" className="px-4" onClick={() => setQuantity((value) => value + 1)}>
-            <Plus className="h-4 w-4" />
+          <button
+            type="button"
+            aria-label="Increase quantity"
+            className="px-4 text-navy-950 transition-colors duration-200 hover:text-gold-600"
+            onClick={() => setQuantity((value) => value + 1)}
+          >
+            <Plus className="h-4 w-4" aria-hidden="true" strokeWidth={1.5} />
           </button>
         </div>
-        <p className="mt-2 text-sm text-ink-600">MOQ: {minimumQuantity} products</p>
+
+        <p className="field-hint mt-2.5">Minimum order quantity: {minimumQuantity} units</p>
+
         {validQuantity ? (
           <p className="mt-2 text-sm font-semibold text-navy-950">
             {formatPrice(unitPrice)} / unit &middot; {formatPrice(lineTotal)} total for {quantity}
           </p>
-        ) : null}
-        {!validQuantity ? <p className="mt-2 text-sm text-red-700">{MIN_ORDER_QUANTITY_MESSAGE}</p> : null}
+        ) : (
+          <p className="field-error mt-2">{MIN_ORDER_QUANTITY_MESSAGE}</p>
+        )}
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        <label className="rounded-lg border border-navy-950/10 bg-white p-4">
-          <span className="block text-sm font-semibold text-navy-950">Company logo</span>
-          <input
-            type="file"
-            accept=".png,.jpg,.jpeg"
-            onChange={(event) => void uploadLogo(event.target.files?.[0])}
-            className="mt-3 block w-full text-sm text-ink-700 file:mr-3 file:rounded-full file:border-0 file:bg-cream-200 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-navy-950"
-          />
-          {logoState === "uploading" ? <span className="mt-2 flex items-center gap-2 text-xs text-ink-500"><Loader2 className="h-3 w-3 animate-spin" /> Uploading...</span> : null}
-          {logoState === "success" && logo ? (
-            <span className="mt-2 flex items-center justify-between gap-3 text-xs text-green-700">
-              <span><Upload className="mr-1 inline h-3 w-3" /> {logo.fileName}</span>
-              <button type="button" onClick={() => { setLogo(null); setLogoState("idle"); }} className="inline-flex items-center gap-1 font-semibold text-ink-500 hover:text-navy-950">
-                <X className="h-3 w-3" /> Remove
-              </button>
+      {/* Customization ----------------------------------------------------- */}
+      <div className="border-t border-line pt-8">
+        <h2 className="type-eyebrow">Customize for your company</h2>
+        <p className="type-body mt-2 max-w-md">
+          Upload logo artwork, add personalization text and choose wrap preferences. We share a
+          branding proof before production.
+        </p>
+
+        <div className="mt-6 flex flex-col gap-5">
+          <div className="field">
+            <label className="field-label" htmlFor="logo">
+              Company logo
+            </label>
+            <input
+              id="logo"
+              type="file"
+              accept=".png,.jpg,.jpeg"
+              onChange={(event) => void uploadLogo(event.target.files?.[0])}
+              className="field-input file:mr-3 file:border file:border-line file:bg-sunken file:px-3 file:py-1.5 file:text-xs file:font-semibold file:uppercase file:tracking-wide file:text-navy-950"
+            />
+            {logoState === "uploading" ? (
+              <span className="field-hint flex items-center gap-2">
+                <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" strokeWidth={1.5} /> Uploading&hellip;
+              </span>
+            ) : null}
+            {logoState === "success" && logo ? (
+              <span className="flex items-center justify-between gap-3 text-xs text-navy-950">
+                <span className="flex items-center gap-1.5">
+                  <Upload className="h-3 w-3" aria-hidden="true" strokeWidth={1.5} /> {logo.fileName}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLogo(null);
+                    setLogoState("idle");
+                  }}
+                  className="inline-flex items-center gap-1 font-semibold text-ink-500 transition-colors duration-200 hover:text-navy-950"
+                >
+                  <X className="h-3 w-3" aria-hidden="true" strokeWidth={1.5} /> Remove
+                </button>
+              </span>
+            ) : null}
+            {logoError ? <span className="field-error">{logoError}</span> : null}
+          </div>
+
+          <div className="field">
+            <label className="field-label" htmlFor="personalization">
+              Personalization text
+            </label>
+            <input
+              id="personalization"
+              value={personalizationText}
+              maxLength={PERSONALIZATION_MAX_LENGTH}
+              onChange={(event) => setPersonalizationText(event.target.value)}
+              placeholder={`Up to ${PERSONALIZATION_MAX_LENGTH} characters`}
+              className="field-input"
+            />
+            <span className="field-hint">
+              {personalizationText.length}/{PERSONALIZATION_MAX_LENGTH}
             </span>
-          ) : null}
-          {logoError ? <span className="mt-2 block text-xs text-red-700">{logoError}</span> : null}
-        </label>
-        <label className="rounded-lg border border-navy-950/10 bg-white p-4">
-          <span className="block text-sm font-semibold text-navy-950">Personalization text</span>
-          <input
-            value={personalizationText}
-            maxLength={PERSONALIZATION_MAX_LENGTH}
-            onChange={(event) => setPersonalizationText(event.target.value)}
-            placeholder="Max 10 chars"
-            className="mt-3 w-full rounded-xl border border-navy-950/10 px-3 py-2 text-sm outline-none focus:border-navy-900"
-          />
-          <span className="mt-2 block text-xs text-ink-500">{personalizationText.length}/{PERSONALIZATION_MAX_LENGTH}</span>
-        </label>
+          </div>
+
+          <label className="flex items-center justify-between gap-4 border-y border-line py-4">
+            <span>
+              <span className="block text-sm font-medium text-navy-950">Gift wrap</span>
+              <span className="field-hint">{formatPrice(GIFT_WRAP_PRICE)} per cart item</span>
+            </span>
+            <input
+              type="checkbox"
+              checked={giftWrap}
+              onChange={(event) => setGiftWrap(event.target.checked)}
+              className="h-4 w-4 shrink-0 accent-navy-950"
+            />
+          </label>
+        </div>
       </div>
 
-      <label className="flex items-center justify-between gap-4 rounded-lg border border-navy-950/10 bg-white p-4">
-        <span className="flex items-center gap-3">
-          <Gift className="h-5 w-5 text-gold-600" aria-hidden="true" />
-          <span>
-            <span className="block text-sm font-semibold text-navy-950">Gift wrap</span>
-            <span className="text-sm text-ink-600">{formatPrice(GIFT_WRAP_PRICE)} per cart item</span>
-          </span>
-        </span>
-        <input type="checkbox" checked={giftWrap} onChange={(event) => setGiftWrap(event.target.checked)} className="h-5 w-5 accent-navy-950" />
-      </label>
-
-      <div className="rounded-lg border border-navy-950/10 bg-white p-4">
-        <label className="text-sm font-semibold text-navy-950" htmlFor="pinCode">Delivery PIN code</label>
-        <div className="mt-3 flex gap-2">
+      {/* Delivery ---------------------------------------------------------- */}
+      <div className="field">
+        <label className="field-label" htmlFor="pinCode">
+          Delivery PIN code
+        </label>
+        <div className="flex gap-2">
           <input
             id="pinCode"
             value={pinCode}
             onChange={(event) => setPinCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
             placeholder="6-digit PIN"
             inputMode="numeric"
-            className="min-w-0 flex-1 rounded-xl border border-navy-950/10 px-3 py-2 text-sm outline-none focus:border-navy-900"
+            className="field-input min-w-0 flex-1"
           />
-          <button type="button" onClick={() => setDeliveryMessage(checkDeliveryAvailability(pinCode).message)} className="rounded-full bg-cream-200 px-4 text-sm font-semibold text-navy-950 hover:bg-cream-300">
+          <button
+            type="button"
+            onClick={() => setDeliveryMessage(checkDeliveryAvailability(pinCode).message)}
+            className="btn btn-secondary shrink-0"
+          >
             Check
           </button>
         </div>
-        <p className="mt-2 flex items-center gap-2 text-sm text-ink-600"><Truck className="h-4 w-4 text-gold-600" /> {deliveryMessage}</p>
+        <p className="field-hint">{deliveryMessage}</p>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        <button type="button" onClick={addConfiguredItem} className="inline-flex items-center justify-center gap-2 rounded-full bg-navy-900 px-6 py-3 text-sm font-semibold text-cream-100 transition-colors hover:bg-navy-800 disabled:opacity-50">
+      {/* Actions ----------------------------------------------------------- */}
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <button type="button" onClick={addConfiguredItem} className="btn btn-primary flex-1">
           Add to Cart
         </button>
-        <button type="button" onClick={() => { if (addConfiguredItem()) router.push("/checkout"); }} className="inline-flex items-center justify-center gap-2 rounded-full bg-gold-500 px-6 py-3 text-sm font-semibold text-navy-950 transition-colors hover:bg-gold-400">
-          <Zap className="h-4 w-4" />
+        <button
+          type="button"
+          onClick={() => {
+            if (addConfiguredItem()) router.push("/checkout");
+          }}
+          className="btn btn-secondary flex-1"
+        >
           Buy Now
         </button>
       </div>
-      {cartMessage ? <p className="text-sm font-medium text-navy-950">{cartMessage}</p> : null}
-      <div className="flex flex-wrap gap-4">
+
+      {cartMessage ? (
+        <p role="status" className="text-sm font-medium text-navy-950">
+          {cartMessage}
+        </p>
+      ) : null}
+
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-line pt-6 text-sm font-medium">
         <ProductEnquiryButton product={product} />
-        <Link href={`/bulk-enquiry?product=${encodeURIComponent(product.name)}`} className="inline-flex items-center gap-2 text-sm font-semibold text-navy-950 hover:text-gold-600">
-          Bulk Enquiry
+        <Link
+          href={`/bulk-enquiry?product=${encodeURIComponent(product.name)}`}
+          className="link-underline text-navy-950"
+        >
+          Request a Quote
         </Link>
-        <a href={whatsappHref} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm font-semibold text-navy-950 hover:text-gold-600">
-          <MessageCircle className="h-4 w-4" />
-          WhatsApp Enquiry
+        <a
+          href={whatsappHref}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1.5 text-navy-950 transition-colors duration-200 hover:text-gold-600"
+        >
+          <MessageCircle className="h-4 w-4" aria-hidden="true" strokeWidth={1.5} />
+          WhatsApp
         </a>
       </div>
-      <button type="button" className="inline-flex items-center gap-2 text-sm font-semibold text-navy-950 hover:text-gold-600">
-        <Heart className="h-4 w-4" />
-        Save to Wishlist
-      </button>
     </div>
   );
 }

@@ -25,7 +25,7 @@ export default async function AdminSettingsPage() {
         <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">Store</p>
         <h1 className="mt-2 font-display text-4xl text-navy-950">Store settings</h1>
       </div>
-      <section className="rounded-lg bg-white p-5 ring-1 ring-navy-950/5">
+      <section className="panel p-5">
         <ActionForm action={updateStoreSettingsAction} submitLabel="Save settings" className="grid gap-4 md:grid-cols-2">
           {Object.entries(defaults).map(([key, fallback]) => (
             <label key={key} className="space-y-1 text-sm font-medium text-navy-950">

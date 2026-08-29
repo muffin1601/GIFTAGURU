@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CheckCircle2, Clock, PackageCheck, ShieldCheck, Star } from "lucide-react";
+import { Clock, PackageCheck, ShieldCheck, Star } from "lucide-react";
 import Container from "@/components/ui/Container";
 import ProductCard from "@/components/ui/ProductCard";
 import ProductGallery from "@/components/product/ProductGallery";
@@ -52,108 +52,139 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
-      <Container className="py-8 sm:py-12">
-        <nav className="flex flex-wrap gap-2 text-sm text-ink-500" aria-label="Breadcrumb">
+      <Container className="py-6 pb-28 sm:py-10 lg:pb-16">
+        <nav className="type-meta flex flex-wrap items-center gap-2" aria-label="Breadcrumb">
           <Link href="/" className="hover:text-navy-950">Home</Link>
-          <span>/</span>
+          <span aria-hidden="true">/</span>
           <Link href="/shop" className="hover:text-navy-950">Shop</Link>
-          <span>/</span>
+          <span aria-hidden="true">/</span>
           <span className="text-navy-950">{product.name}</span>
         </nav>
 
-        <div className="mt-8 grid gap-10 lg:grid-cols-2">
+        <div className="mt-8 grid gap-10 lg:mt-12 lg:grid-cols-2 lg:gap-16">
           <ProductGallery images={product.images} name={product.name} />
 
+          {/* Whitespace and hairlines separate the purchase sections -- the
+              panel is deliberately not wrapped in one large card. */}
           <section>
-            <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">
-              {product.categoryName ?? "Corporate Gifts"}
-            </p>
-            <h1 className="mt-3 font-display text-4xl text-navy-950 sm:text-5xl">{product.name}</h1>
-            <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-ink-700">
-              <span className="inline-flex items-center gap-1">
-                <Star className="h-4 w-4 fill-gold-500 text-gold-500" />
-                {product.avgRating || 4.8} ({product.reviewCount || 24} reviews)
-              </span>
-              <span className="inline-flex items-center gap-1 text-emerald-700">
-                <CheckCircle2 className="h-4 w-4" />
-                In stock for bulk orders
-              </span>
-            </div>
-            <p className="mt-5 text-lg leading-8 text-ink-700">{product.description}</p>
+            <p className="type-eyebrow">{product.categoryName ?? "Corporate Gifts"}</p>
+            <h1 className="type-h1 mt-4">{product.name}</h1>
 
-            <div className="mt-6 flex items-end gap-3">
-              <span className="text-3xl font-bold text-navy-950">{formatPrice(product.basePrice)}</span>
-              {product.compareAtPrice ? (
-                <span className="pb-1 text-lg text-ink-500 line-through">{formatPrice(product.compareAtPrice)}</span>
-              ) : null}
-              <span className="pb-1 text-sm text-ink-500">excl. GST</span>
-            </div>
-
-            {product.priceTiers.length > 0 ? (
-              <div className="mt-5 rounded-2xl border border-navy-950/10 bg-cream-100/60 p-1.5">
-                <div className="flex items-center justify-between px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-ink-500">
-                  <span>Quantity</span>
-                  <span>Price per unit</span>
-                </div>
-                <div className="divide-y divide-navy-950/8 overflow-hidden rounded-xl bg-white ring-1 ring-navy-950/5">
-                  <div className="flex items-center justify-between px-4 py-3 text-sm">
-                    <span className="text-ink-700">1 &ndash; {product.priceTiers[0].minQuantity - 1}</span>
-                    <span className="font-semibold text-navy-950">{formatPrice(product.basePrice)}</span>
-                  </div>
-                  {product.priceTiers.map((tier, index) => {
-                    const next = product.priceTiers[index + 1];
-                    return (
-                      <div key={tier.minQuantity} className="flex items-center justify-between px-4 py-3 text-sm">
-                        <span className="text-ink-700">{tier.minQuantity}{next ? ` – ${next.minQuantity - 1}` : "+"}</span>
-                        <span className="font-semibold text-gold-700">{formatPrice(tier.unitPrice)}</span>
-                      </div>
-                    );
-                  })}
-                </div>
+            {/* Ratings render only when real review data exists. */}
+            {product.reviewCount > 0 && product.avgRating ? (
+              <div className="mt-4 flex items-center gap-1.5 text-sm text-ink-700">
+                <Star className="h-4 w-4 fill-gold-500 text-gold-500" aria-hidden="true" strokeWidth={1.5} />
+                {product.avgRating.toFixed(1)} ({product.reviewCount}{" "}
+                {product.reviewCount === 1 ? "review" : "reviews"})
               </div>
             ) : null}
 
-            <div className="mt-8 rounded-2xl bg-cream-200 p-5">
-              <h2 className="font-display text-2xl text-navy-950">Customize for your company</h2>
-              <p className="mt-2 text-sm text-ink-700">
-                Upload logo artwork, add personalization text, choose wrap preferences, and request branding proof before production.
-              </p>
+            <p className="type-lead mt-5">{product.description}</p>
+
+            <div className="mt-8 flex flex-wrap items-baseline gap-x-3 gap-y-1 border-t border-line pt-8">
+              <span className="font-display text-3xl text-navy-950">
+                {formatPrice(product.basePrice)}
+              </span>
+              {product.compareAtPrice ? (
+                <span className="text-base text-ink-500 line-through">
+                  {formatPrice(product.compareAtPrice)}
+                </span>
+              ) : null}
+              <span className="type-meta">excl. GST</span>
             </div>
 
-            <div className="mt-8">
+            {product.priceTiers.length > 0 ? (
+              <div className="mt-8">
+                <h2 className="type-eyebrow">Volume Pricing</h2>
+                <table className="mt-4 w-full text-sm">
+                  <caption className="sr-only">Price per unit by order quantity</caption>
+                  <thead>
+                    <tr className="border-b border-line text-left">
+                      <th scope="col" className="type-meta pb-2 font-normal">Quantity</th>
+                      <th scope="col" className="type-meta pb-2 text-right font-normal">
+                        Price per unit
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-line">
+                      <td className="py-3 text-ink-700">
+                        1 &ndash; {product.priceTiers[0].minQuantity - 1}
+                      </td>
+                      <td className="py-3 text-right font-semibold text-navy-950">
+                        {formatPrice(product.basePrice)}
+                      </td>
+                    </tr>
+                    {product.priceTiers.map((tier, index) => {
+                      const next = product.priceTiers[index + 1];
+                      return (
+                        <tr key={tier.minQuantity} className="border-b border-line">
+                          <td className="py-3 text-ink-700">
+                            {tier.minQuantity}
+                            {next ? ` – ${next.minQuantity - 1}` : "+"}
+                          </td>
+                          <td className="py-3 text-right font-semibold text-gold-600">
+                            {formatPrice(tier.unitPrice)}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                <p className="type-meta mt-3">
+                  Need a larger quantity?{" "}
+                  <Link href="/bulk-enquiry" className="link-underline text-navy-950">
+                    Request a quote
+                  </Link>
+                  .
+                </p>
+              </div>
+            ) : null}
+
+            <div className="mt-10 border-t border-line pt-8">
               <ProductPurchasePanel product={cardProduct} />
             </div>
           </section>
         </div>
 
-        <div className="mt-14 grid gap-6 lg:grid-cols-3">
+        <div className="mt-16 grid gap-x-12 gap-y-8 border-t border-line pt-10 sm:grid-cols-3">
           {[
             { title: "Estimated delivery", copy: DELIVERY_WINDOW, Icon: Clock },
-            { title: "Secure fulfillment", copy: "Server-side pricing and payment verification architecture", Icon: ShieldCheck },
-            { title: "Bulk support", copy: "Dedicated assistance for custom quantities and packaging", Icon: PackageCheck },
+            { title: "Secure fulfilment", copy: "Server-side pricing and payment verification.", Icon: ShieldCheck },
+            { title: "Bulk support", copy: "Dedicated assistance for custom quantities and packaging.", Icon: PackageCheck },
           ].map(({ title, copy, Icon }) => (
-            <div key={title} className="rounded-2xl bg-white p-6 ring-1 ring-navy-950/5">
-              <Icon className="h-5 w-5 text-gold-600" />
-              <h2 className="mt-4 font-display text-xl text-navy-950">{title}</h2>
-              <p className="mt-2 text-sm text-ink-700">{copy}</p>
+            <div key={title}>
+              <Icon className="h-5 w-5 text-gold-600" strokeWidth={1.25} aria-hidden="true" />
+              <h2 className="mt-3 font-display text-lg text-navy-950">{title}</h2>
+              <p className="type-body mt-1.5">{copy}</p>
             </div>
           ))}
         </div>
 
-        <section className="mt-14">
-          <h2 className="font-display text-3xl text-navy-950">Product Details</h2>
-          <div className="mt-5">
+        <section className="mt-16 border-t border-line pt-10">
+          <h2 className="type-h2">Product details</h2>
+          <div className="mt-8 max-w-3xl">
             <ProductDetailAccordion
               sections={[
                 {
                   id: "specifications",
                   title: "Specifications",
                   content: (
-                    <dl className="grid gap-3 sm:grid-cols-2">
-                      <div className="flex justify-between gap-4"><dt>Minimum quantity</dt><dd className="font-medium text-navy-950">{MIN_ORDER_QUANTITY} units</dd></div>
-                      <div className="flex justify-between gap-4"><dt>Customization</dt><dd className="font-medium text-navy-950">{product.isCustomizable ? "Available" : "Not available"}</dd></div>
-                      <div className="flex justify-between gap-4"><dt>Gift wrap</dt><dd className="font-medium text-navy-950">{formatPrice(GIFT_WRAP_PRICE)}</dd></div>
-                      <div className="flex justify-between gap-4"><dt>Logo proof</dt><dd className="font-medium text-navy-950">Shared before production</dd></div>
+                    <dl className="grid gap-x-12 sm:grid-cols-2">
+                      {[
+                        ["Minimum quantity", `${MIN_ORDER_QUANTITY} units`],
+                        ["Customization", product.isCustomizable ? "Available" : "Not available"],
+                        ["Gift wrap", formatPrice(GIFT_WRAP_PRICE)],
+                        ["Logo proof", "Shared before production"],
+                      ].map(([term, value]) => (
+                        <div
+                          key={term}
+                          className="flex justify-between gap-6 border-b border-line py-2.5"
+                        >
+                          <dt>{term}</dt>
+                          <dd className="text-right font-medium text-navy-950">{value}</dd>
+                        </div>
+                      ))}
                     </dl>
                   ),
                 },
@@ -184,9 +215,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           </div>
         </section>
 
-        <section className="mt-14">
-          <h2 className="font-display text-3xl text-navy-950">Related Products</h2>
-          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <section className="mt-16 border-t border-line pt-10">
+          <h2 className="type-h2">Related products</h2>
+          <div className="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
             {related.filter((item) => item.slug !== product.slug).slice(0, 4).map((item) => (
               <ProductCard key={item.id} product={item} />
             ))}
@@ -194,8 +225,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         </section>
       </Container>
 
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-navy-950/10 bg-cream-100/95 p-3 backdrop-blur lg:hidden">
-        <AddToCartButton product={cardProduct} className="w-full rounded-full bg-navy-900 px-6 py-3 text-sm font-semibold text-cream-100" />
+      {/* Sticky mobile purchase bar. The page adds matching bottom padding so
+          it never covers the last section. */}
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-canvas px-4 py-3 lg:hidden">
+        <AddToCartButton product={cardProduct} className="btn btn-primary w-full" />
       </div>
     </>
   );

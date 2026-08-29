@@ -19,43 +19,85 @@ export default function AuthForm({
   const [state, formAction, pending] = useActionState(action, {});
 
   return (
-    <div className="mx-auto max-w-md rounded-2xl bg-white p-8 ring-1 ring-navy-950/5">
-      <h1 className="font-display text-3xl text-navy-950">{title}</h1>
-      <p className="mt-2 text-sm text-ink-700">{subtitle}</p>
-      <form action={formAction} className="mt-8 space-y-4">
+    <div className="mx-auto max-w-md">
+      <h1 className="type-h2">{title}</h1>
+      <p className="type-body mt-3">{subtitle}</p>
+
+      <form action={formAction} className="mt-9 flex flex-col gap-5">
         {mode === "signup" ? (
-          <label className="block text-sm font-semibold text-navy-950">
-            Full name
-            <input name="fullName" required className="mt-2 w-full rounded-xl border border-navy-950/10 px-4 py-3 font-normal outline-none focus:border-navy-900" />
-          </label>
+          <div className="field">
+            <label className="field-label" htmlFor="fullName">Full name</label>
+            <input id="fullName" name="fullName" required autoComplete="name" className="field-input" />
+          </div>
         ) : null}
+
         {mode !== "reset" ? (
-          <label className="block text-sm font-semibold text-navy-950">
-            Email
-            <input type="email" name="email" required className="mt-2 w-full rounded-xl border border-navy-950/10 px-4 py-3 font-normal outline-none focus:border-navy-900" />
-          </label>
+          <div className="field">
+            <label className="field-label" htmlFor="email">Email</label>
+            <input id="email" type="email" name="email" required autoComplete="email" className="field-input" />
+          </div>
         ) : null}
+
         {mode === "login" || mode === "signup" || mode === "reset" ? (
-          <label className="block text-sm font-semibold text-navy-950">
-            Password
-            <input type="password" name="password" required minLength={8} className="mt-2 w-full rounded-xl border border-navy-950/10 px-4 py-3 font-normal outline-none focus:border-navy-900" />
-          </label>
+          <div className="field">
+            <label className="field-label" htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              required
+              minLength={8}
+              autoComplete={mode === "login" ? "current-password" : "new-password"}
+              className="field-input"
+            />
+            {mode !== "login" ? (
+              <span className="field-hint">At least 8 characters.</span>
+            ) : null}
+          </div>
         ) : null}
+
         {mode === "reset" ? (
-          <label className="block text-sm font-semibold text-navy-950">
-            Confirm password
-            <input type="password" name="confirmPassword" required minLength={8} className="mt-2 w-full rounded-xl border border-navy-950/10 px-4 py-3 font-normal outline-none focus:border-navy-900" />
-          </label>
+          <div className="field">
+            <label className="field-label" htmlFor="confirmPassword">Confirm password</label>
+            <input
+              id="confirmPassword"
+              type="password"
+              name="confirmPassword"
+              required
+              minLength={8}
+              autoComplete="new-password"
+              className="field-input"
+            />
+          </div>
         ) : null}
-        {state.error ? <p className="rounded-xl bg-red-50 p-3 text-sm text-red-700">{state.error}</p> : null}
-        {state.success ? <p className="rounded-xl bg-emerald-50 p-3 text-sm text-emerald-700">{state.success}</p> : null}
-        <button disabled={pending} className="w-full rounded-full bg-navy-900 px-6 py-3 text-sm font-semibold text-cream-100 hover:bg-navy-800 disabled:opacity-60">
-          {pending ? "Please wait..." : title}
+
+        {state.error ? (
+          <p role="alert" className="field-error border-l-2 border-current pl-4">
+            {state.error}
+          </p>
+        ) : null}
+        {state.success ? (
+          <p role="status" className="border-l-2 border-gold-500 pl-4 text-sm text-navy-950">
+            {state.success}
+          </p>
+        ) : null}
+
+        <button type="submit" disabled={pending} className="btn btn-primary mt-1 w-full">
+          {pending ? "Please wait…" : title}
         </button>
       </form>
-      <div className="mt-6 flex justify-between text-sm font-semibold text-navy-950">
-        {mode !== "login" ? <Link href="/login">Log in</Link> : <Link href="/signup">Create account</Link>}
-        {mode !== "forgot" && mode !== "reset" ? <Link href="/forgot-password">Forgot password?</Link> : null}
+
+      <div className="mt-8 flex justify-between gap-4 border-t border-line pt-6 text-sm font-medium">
+        {mode !== "login" ? (
+          <Link href="/login" className="link-underline text-navy-950">Log in</Link>
+        ) : (
+          <Link href="/signup" className="link-underline text-navy-950">Create account</Link>
+        )}
+        {mode !== "forgot" && mode !== "reset" ? (
+          <Link href="/forgot-password" className="link-underline text-navy-950">
+            Forgot password?
+          </Link>
+        ) : null}
       </div>
     </div>
   );

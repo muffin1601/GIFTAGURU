@@ -18,7 +18,7 @@ export default async function AdminInventoryPage() {
         {inventory.map((item) => {
           const low = item.quantityAvailable <= item.lowStockThreshold;
           return (
-            <section key={item.id} className={`rounded-lg bg-white p-5 ring-1 ${low ? "ring-red-200" : "ring-navy-950/5"}`}>
+            <section key={item.id} className={`bg-surface p-5 border ${low ? "border-red-300" : "border-line"}`}>
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <h2 className="font-display text-xl text-navy-950">{item.variant.product.name}</h2>

@@ -9,7 +9,7 @@ export default async function AdminSubscribersPage() {
         <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">Marketing</p>
         <h1 className="mt-2 font-display text-4xl text-navy-950">Subscribers</h1>
       </div>
-      <div className="rounded-lg bg-white p-5 ring-1 ring-navy-950/5">
+      <div className="panel p-5">
         <div className="divide-y divide-navy-950/10">
           {subscribers.map((subscriber) => (
             <div key={subscriber.id} className="flex items-center justify-between gap-4 py-3 text-sm">

@@ -15,7 +15,7 @@ export default async function AdminCollectionsPage() {
       </div>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {collections.map((collection) => (
-          <section key={collection.id} className="overflow-hidden rounded-lg bg-white ring-1 ring-navy-950/5">
+          <section key={collection.id} className="panel overflow-x-auto">
             <div className="relative aspect-[4/3] bg-cream-200">
               {collection.imageUrl ? <Image src={collection.imageUrl} alt={collection.name} fill sizes="(min-width: 1280px) 25vw, 50vw" className="object-cover" /> : null}
             </div>

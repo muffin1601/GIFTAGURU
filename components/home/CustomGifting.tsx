@@ -1,49 +1,66 @@
 import Image from "next/image";
-import { Stamp, Box, MessageSquareText, ListChecks, FileText } from "lucide-react";
+import { Box, FileText, ListChecks, MessageSquareText, Stamp } from "lucide-react";
 import Container from "@/components/ui/Container";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Button from "@/components/ui/Button";
 
 const features = [
-  { icon: Stamp, label: "Add your company branding" },
-  { icon: Box, label: "Customize gift boxes and packaging" },
-  { icon: MessageSquareText, label: "Add personalized messages" },
-  { icon: ListChecks, label: "Select products for your gift set" },
-  { icon: FileText, label: "Request a bulk quote in minutes" },
+  { label: "Add your company branding", Icon: Stamp },
+  { label: "Customize gift boxes and packaging", Icon: Box },
+  { label: "Add personalized messages", Icon: MessageSquareText },
+  { label: "Select products for your gift set", Icon: ListChecks },
+  { label: "Request a bulk quote in minutes", Icon: FileText },
 ];
 
-export default function CustomGifting() {
+/**
+ * Rendered on both the homepage and /custom-gifts. The CTA must therefore be
+ * configurable: with a hardcoded /custom-gifts href it linked to the page the
+ * visitor was already on, so the button did nothing on /custom-gifts.
+ */
+export default function CustomGifting({
+  ctaHref = "/custom-gifts",
+  ctaLabel = "Explore Custom Branding",
+}: {
+  ctaHref?: string;
+  ctaLabel?: string;
+} = {}) {
   return (
-    <section className="bg-cream-200 py-16 sm:py-20">
-      <Container className="grid gap-12 lg:grid-cols-2 lg:items-center">
-        <div className="relative order-last overflow-hidden rounded-3xl shadow-xl ring-1 ring-navy-950/10 lg:order-first">
+    <section className="section">
+      <Container className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+        <div className="relative order-last aspect-[4/3] overflow-hidden border border-line bg-sunken lg:order-first">
           <Image
             src="/SBanners/SBanners/LUXURY.png"
             alt="Custom branded corporate gift boxes"
-            width={1774}
-            height={890}
-            className="h-full w-full object-cover"
+            fill
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            className="object-cover"
           />
         </div>
-        <div className="flex flex-col gap-6">
+
+        <div className="flex flex-col gap-8">
           <SectionHeading
             eyebrow="Custom Corporate Gifting"
             title="Make every gift unmistakably yours"
-            description="Design a gifting experience around your brand, your message, and your budget."
+            description="Design a gifting experience around your brand, your message and your budget."
           />
-          <ul className="flex flex-col gap-4">
-            {features.map(({ icon: Icon, label }) => (
-              <li key={label} className="flex items-center gap-3">
-                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-navy-900/5 text-navy-900">
-                  <Icon className="h-4 w-4" aria-hidden="true" />
-                </span>
-                <span className="text-sm font-medium text-navy-950">{label}</span>
+          <ul className="flex flex-col">
+            {features.map(({ label, Icon }) => (
+              <li
+                key={label}
+                className="flex items-center gap-3.5 border-b border-line py-3.5 text-sm text-navy-950 first:border-t"
+              >
+                <Icon
+                  className="h-[1.15rem] w-[1.15rem] shrink-0 text-gold-600"
+                  strokeWidth={1.25}
+                  aria-hidden="true"
+                />
+                {label}
               </li>
             ))}
           </ul>
           <div>
-            <Button href="/custom-gifts" variant="primary">
-              Start a Corporate Inquiry
+            <Button href={ctaHref} variant="primary">
+              {ctaLabel}
             </Button>
           </div>
         </div>
