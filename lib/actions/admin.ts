@@ -268,6 +268,52 @@ export async function updateStoreSettingsAction(_state: { error?: string; succes
   return { success: "Store settings updated." };
 }
 
+const addPriceTierSchema = z.object({
+  productId: z.string().uuid(),
+  minQuantity: z.coerce.number().int().min(1),
+  unitPrice: z.coerce.number().min(0),
+});
+
+export async function addPriceTierAction(_state: { error?: string; success?: string }, formData: FormData) {
+  await requireAdmin();
+  const parsed = addPriceTierSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid price tier." };
+
+  const product = await prisma.product.findUnique({ where: { id: parsed.data.productId }, select: { basePrice: true, slug: true } });
+  if (!product) return { error: "Product not found." };
+  if (parsed.data.unitPrice >= Number(product.basePrice)) {
+    return { error: "Tier price must be lower than the base price to reward higher quantities." };
+  }
+
+  await prisma.productPriceTier.upsert({
+    where: { productId_minQuantity: { productId: parsed.data.productId, minQuantity: parsed.data.minQuantity } },
+    update: { unitPrice: parsed.data.unitPrice },
+    create: { productId: parsed.data.productId, minQuantity: parsed.data.minQuantity, unitPrice: parsed.data.unitPrice },
+  });
+
+  revalidatePath(`/admin/products/${parsed.data.productId}`);
+  revalidatePath(`/products/${product.slug}`);
+  return { success: "Price tier saved." };
+}
+
+const deletePriceTierSchema = z.object({
+  tierId: z.string().uuid(),
+  productId: z.string().uuid(),
+});
+
+export async function deletePriceTierAction(_state: { error?: string; success?: string }, formData: FormData) {
+  await requireAdmin();
+  const parsed = deletePriceTierSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: "Invalid price tier." };
+
+  const product = await prisma.product.findUnique({ where: { id: parsed.data.productId }, select: { slug: true } });
+  await prisma.productPriceTier.delete({ where: { id: parsed.data.tierId } }).catch(() => null);
+
+  revalidatePath(`/admin/products/${parsed.data.productId}`);
+  if (product) revalidatePath(`/products/${product.slug}`);
+  return { success: "Price tier removed." };
+}
+
 function statusToDelivery(status: string, fallback: "pending" | "ready_to_ship" | "shipped" | "out_for_delivery" | "delivered" | "failed" | "returned" | "cancelled") {
   if (status === "ready_to_ship") return "ready_to_ship";
   if (status === "shipped") return "shipped";

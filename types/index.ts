@@ -21,6 +21,7 @@ export interface Product {
   featured: boolean;
   image?: string;
   inStock?: boolean;
+  priceTiers?: { minQuantity: number; unitPrice: number }[];
 }
 
 export interface Solution {

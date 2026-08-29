@@ -2,11 +2,29 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Script from "next/script";
 import Container from "@/components/ui/Container";
-import { useCart } from "@/components/cart/CartProvider";
+import { cartItemUnitPrice, useCart } from "@/components/cart/CartProvider";
 import { GIFT_WRAP_PRICE, MIN_ORDER_QUANTITY_MESSAGE } from "@/lib/config/store";
 import { isValidIndianPinCode } from "@/lib/services/delivery";
 import { formatPrice } from "@/lib/utils";
+
+interface RazorpayResponse {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}
+
+interface RazorpayInstance {
+  open: () => void;
+}
+
+declare global {
+  interface Window {
+    Razorpay?: new (options: Record<string, unknown>) => RazorpayInstance;
+  }
+}
 
 export default function CheckoutClient() {
   const router = useRouter();
@@ -49,7 +67,16 @@ export default function CheckoutClient() {
         checkout: Object.fromEntries(formData),
       }),
     });
-    const payload = await response.json() as { orderId?: string; error?: string; demo?: boolean };
+    const payload = (await response.json()) as {
+      orderId?: string;
+      databaseOrderId?: string;
+      razorpayOrderId?: string;
+      amount?: number;
+      currency?: string;
+      keyId?: string;
+      error?: string;
+      demo?: boolean;
+    };
 
     if (!response.ok) {
       setError(payload.error ?? "Unable to create payment order.");
@@ -57,12 +84,66 @@ export default function CheckoutClient() {
       return;
     }
 
+    // Demo mode: no Razorpay credentials configured, order was saved with pending payment.
+    if (payload.demo || !payload.razorpayOrderId || !payload.keyId) {
+      clearCart();
+      router.push(`/order-confirmation/${payload.orderId ?? "quote-request"}`);
+      return;
+    }
+
+    if (!window.Razorpay) {
+      setError("Payment gateway failed to load. Please refresh and try again.");
+      setPending(false);
+      return;
+    }
+
+    const razorpay = new window.Razorpay({
+      key: payload.keyId,
+      order_id: payload.razorpayOrderId,
+      amount: payload.amount,
+      currency: payload.currency,
+      name: "Gifta Guru",
+      description: "Corporate gifting order",
+      prefill: {
+        name: String(formData.get("name") ?? ""),
+        email: String(formData.get("email") ?? ""),
+        contact: String(formData.get("phone") ?? ""),
+      },
+      notes: { orderNumber: payload.orderId ?? "" },
+      handler: (razorpayResponse: RazorpayResponse) => {
+        void verifyPayment(razorpayResponse, payload.orderId ?? "quote-request");
+      },
+      modal: {
+        ondismiss: () => {
+          setPending(false);
+          setError("Payment was not completed. Your order is saved and you can retry from your account or contact us for help.");
+        },
+      },
+    });
+
+    razorpay.open();
+  }
+
+  async function verifyPayment(razorpayResponse: RazorpayResponse, orderNumber: string) {
+    const response = await fetch("/api/razorpay/verify", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(razorpayResponse),
+    });
+
+    if (!response.ok) {
+      setPending(false);
+      setError("We couldn't verify your payment automatically. Contact us with your order reference and we'll confirm it manually.");
+      return;
+    }
+
     clearCart();
-    router.push(`/order-confirmation/${payload.orderId ?? "quote-request"}`);
+    router.push(`/order-confirmation/${orderNumber}`);
   }
 
   return (
     <Container className="py-12 sm:py-16">
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
         <form onSubmit={submitCheckout} className="space-y-6">
           <div>
@@ -100,7 +181,7 @@ export default function CheckoutClient() {
               <div key={`${item.id}-${item.personalizationText ?? ""}-${item.logoUrl ?? ""}-${item.giftWrap ? "wrap" : "plain"}`} className="space-y-1 text-sm">
                 <div className="flex justify-between gap-4">
                   <span>{item.name} x {item.quantity}</span>
-                  <span className="font-semibold">{formatPrice(item.price * item.quantity + (item.giftWrap ? GIFT_WRAP_PRICE : 0))}</span>
+                  <span className="font-semibold">{formatPrice(cartItemUnitPrice(item) * item.quantity + (item.giftWrap ? GIFT_WRAP_PRICE : 0))}</span>
                 </div>
                 {item.personalizationText ? <p className="text-xs text-ink-500">Text: {item.personalizationText}</p> : null}
                 {item.logoFileName ? <p className="text-xs text-ink-500">Logo: {item.logoFileName}</p> : null}
@@ -122,6 +203,12 @@ export default function CheckoutClient() {
               <span>{formatPrice(subtotal)}</span>
             </div>
             <p className="mt-3 text-xs text-ink-500">Final shipping, GST, discounts, and payment status are verified server-side.</p>
+          </div>
+          <div className="mt-5 rounded-lg border border-navy-950/10 bg-cream-100 p-4">
+            <p className="text-sm font-semibold text-navy-950">Need help with a large corporate order?</p>
+            <Link href="/bulk-enquiry" className="mt-2 inline-flex w-full items-center justify-center rounded-full border border-navy-950/20 px-4 py-2 text-sm font-semibold text-navy-950 hover:bg-white">
+              Talk to our team
+            </Link>
           </div>
         </aside>
       </div>

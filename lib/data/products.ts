@@ -75,6 +75,7 @@ interface ProductDetailRow {
   product_collection_mappings:
     | { collections: { slug: string; name: string } | { slug: string; name: string }[] | null }[]
     | null;
+  product_price_tiers: { min_quantity: number; unit_price: number }[] | null;
 }
 
 function mapListRow(row: ProductListRow): Product {
@@ -336,6 +337,7 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
         collections: {
           include: { collection: { select: { slug: true, name: true } } },
         },
+        priceTiers: { orderBy: { minQuantity: "asc" } },
       },
     });
 
@@ -381,6 +383,10 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
         extraPrice: toNumber(customization.extraPrice),
       })),
       collections: product.collections.map(({ collection }) => collection),
+      priceTiers: product.priceTiers.map((tier) => ({
+        minQuantity: tier.minQuantity,
+        unitPrice: toNumber(tier.unitPrice),
+      })),
     };
   }
 
@@ -421,6 +427,7 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
       ],
       customizations: [],
       collections: [],
+      priceTiers: [],
     };
   }
 
@@ -434,7 +441,8 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
        product_images(url, alt_text, sort_order),
        product_variants(id, name, sku, price_override, compare_at_price, option1_name, option1_value, option2_name, option2_value, is_default, inventory(quantity_available)),
        product_customizations(customization_type, label, is_required, extra_price),
-       product_collection_mappings(collections(slug, name))`,
+       product_collection_mappings(collections(slug, name)),
+       product_price_tiers(min_quantity, unit_price)`,
     )
     .eq("slug", slug)
     .eq("status", "active")
@@ -477,6 +485,7 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
       ],
       customizations: [],
       collections: [],
+      priceTiers: [],
     };
   }
 
@@ -528,5 +537,8 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
     collections: (row.product_collection_mappings ?? [])
       .map((m) => (Array.isArray(m.collections) ? m.collections[0] : m.collections))
       .filter((c): c is { slug: string; name: string } => Boolean(c)),
+    priceTiers: (row.product_price_tiers ?? [])
+      .map((tier) => ({ minQuantity: tier.min_quantity, unitPrice: tier.unit_price }))
+      .sort((a, b) => a.minQuantity - b.minQuantity),
   };
 }

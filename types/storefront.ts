@@ -49,4 +49,5 @@ export interface StorefrontProductDetail {
   variants: StorefrontVariant[];
   customizations: { type: string; label: string; required: boolean; extraPrice: number }[];
   collections: { slug: string; name: string }[];
+  priceTiers: { minQuantity: number; unitPrice: number }[];
 }

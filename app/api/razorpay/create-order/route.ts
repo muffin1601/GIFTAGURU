@@ -4,6 +4,7 @@ import { randomUUID } from "crypto";
 import { isDatabaseConfigured, isRazorpayConfigured } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { GIFT_WRAP_PRICE, MIN_ORDER_QUANTITY, MIN_ORDER_QUANTITY_MESSAGE, PERSONALIZATION_MAX_LENGTH } from "@/lib/config/store";
+import { resolveUnitPrice } from "@/lib/pricing";
 import { isValidIndianPinCode } from "@/lib/services/delivery";
 import { sendAdminNewOrderEmail, sendCustomizationRequestEmail, sendOrderReceivedEmail } from "@/lib/email/service";
 
@@ -77,6 +78,7 @@ export async function POST(request: Request) {
         take: 1,
         include: { inventory: true },
       },
+      priceTiers: true,
     },
   });
 
@@ -95,7 +97,9 @@ export async function POST(request: Request) {
     if (available < quantity) {
       throw new Error(`${product.name} has only ${available} unit(s) available.`);
     }
-    const unitPrice = Number(variant.priceOverride ?? product.basePrice);
+    const baseUnitPrice = Number(variant.priceOverride ?? product.basePrice);
+    const tiers = product.priceTiers.map((tier) => ({ minQuantity: tier.minQuantity, unitPrice: Number(tier.unitPrice) }));
+    const unitPrice = resolveUnitPrice(baseUnitPrice, tiers, quantity);
     const giftWrapTotal = item.giftWrap ? GIFT_WRAP_PRICE : 0;
     return {
       product,

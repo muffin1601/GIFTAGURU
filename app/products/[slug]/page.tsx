@@ -6,9 +6,10 @@ import Container from "@/components/ui/Container";
 import ProductCard from "@/components/ui/ProductCard";
 import ProductGallery from "@/components/product/ProductGallery";
 import ProductPurchasePanel from "@/components/product/ProductPurchasePanel";
+import ProductDetailAccordion from "@/components/product/ProductDetailAccordion";
 import AddToCartButton from "@/components/cart/AddToCartButton";
 import { getProductBySlug, searchProducts } from "@/lib/data/products";
-import { GIFT_WRAP_PRICE, MIN_ORDER_QUANTITY } from "@/lib/config/store";
+import { GIFT_WRAP_PRICE, MIN_ORDER_QUANTITY, PERSONALIZATION_MAX_LENGTH } from "@/lib/config/store";
 import { DELIVERY_WINDOW } from "@/lib/services/delivery";
 import { formatPrice } from "@/lib/utils";
 import type { Product } from "@/types";
@@ -45,6 +46,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     featured: true,
     image: product.images[0]?.url,
     inStock: product.variants.some((variant) => variant.inStock),
+    priceTiers: product.priceTiers,
   };
   const related = await searchProducts({ categorySlug: product.categorySlug ?? undefined, limit: 4 });
 
@@ -87,6 +89,30 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               <span className="pb-1 text-sm text-ink-500">excl. GST</span>
             </div>
 
+            {product.priceTiers.length > 0 ? (
+              <div className="mt-5 rounded-2xl border border-navy-950/10 bg-cream-100/60 p-1.5">
+                <div className="flex items-center justify-between px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-ink-500">
+                  <span>Quantity</span>
+                  <span>Price per unit</span>
+                </div>
+                <div className="divide-y divide-navy-950/8 overflow-hidden rounded-xl bg-white ring-1 ring-navy-950/5">
+                  <div className="flex items-center justify-between px-4 py-3 text-sm">
+                    <span className="text-ink-700">1 &ndash; {product.priceTiers[0].minQuantity - 1}</span>
+                    <span className="font-semibold text-navy-950">{formatPrice(product.basePrice)}</span>
+                  </div>
+                  {product.priceTiers.map((tier, index) => {
+                    const next = product.priceTiers[index + 1];
+                    return (
+                      <div key={tier.minQuantity} className="flex items-center justify-between px-4 py-3 text-sm">
+                        <span className="text-ink-700">{tier.minQuantity}{next ? ` – ${next.minQuantity - 1}` : "+"}</span>
+                        <span className="font-semibold text-gold-700">{formatPrice(tier.unitPrice)}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : null}
+
             <div className="mt-8 rounded-2xl bg-cream-200 p-5">
               <h2 className="font-display text-2xl text-navy-950">Customize for your company</h2>
               <p className="mt-2 text-sm text-ink-700">
@@ -116,25 +142,45 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
         <section className="mt-14">
           <h2 className="font-display text-3xl text-navy-950">Product Details</h2>
-          <div className="mt-5 grid gap-5 lg:grid-cols-2">
-            <div className="rounded-2xl bg-white p-6 ring-1 ring-navy-950/5">
-              <h3 className="font-semibold text-navy-950">Specifications</h3>
-              <dl className="mt-4 grid gap-3 text-sm text-ink-700">
-                <div className="flex justify-between gap-4"><dt>Minimum quantity</dt><dd>{MIN_ORDER_QUANTITY} units</dd></div>
-                <div className="flex justify-between gap-4"><dt>Customization</dt><dd>{product.isCustomizable ? "Available" : "Not available"}</dd></div>
-                <div className="flex justify-between gap-4"><dt>Gift wrap</dt><dd>{formatPrice(GIFT_WRAP_PRICE)}</dd></div>
-                <div className="flex justify-between gap-4"><dt>Logo proof</dt><dd>Shared before production</dd></div>
-              </dl>
-            </div>
-            <div className="rounded-2xl bg-white p-6 ring-1 ring-navy-950/5">
-              <h3 className="font-semibold text-navy-950">Customization Options</h3>
-              <ul className="mt-4 space-y-3 text-sm text-ink-700">
-                <li>Company logo embossing or print where applicable</li>
-                <li>Personalization text up to 10 characters</li>
-                <li>Gift wrap and branded presentation boxes</li>
-                <li>Bulk quote support for high-volume orders</li>
-              </ul>
-            </div>
+          <div className="mt-5">
+            <ProductDetailAccordion
+              sections={[
+                {
+                  id: "specifications",
+                  title: "Specifications",
+                  content: (
+                    <dl className="grid gap-3 sm:grid-cols-2">
+                      <div className="flex justify-between gap-4"><dt>Minimum quantity</dt><dd className="font-medium text-navy-950">{MIN_ORDER_QUANTITY} units</dd></div>
+                      <div className="flex justify-between gap-4"><dt>Customization</dt><dd className="font-medium text-navy-950">{product.isCustomizable ? "Available" : "Not available"}</dd></div>
+                      <div className="flex justify-between gap-4"><dt>Gift wrap</dt><dd className="font-medium text-navy-950">{formatPrice(GIFT_WRAP_PRICE)}</dd></div>
+                      <div className="flex justify-between gap-4"><dt>Logo proof</dt><dd className="font-medium text-navy-950">Shared before production</dd></div>
+                    </dl>
+                  ),
+                },
+                {
+                  id: "customization",
+                  title: "What's Included & Customization",
+                  content: (
+                    <ul className="space-y-3">
+                      <li>Company logo embossing or print where applicable</li>
+                      <li>Personalization text up to {PERSONALIZATION_MAX_LENGTH} characters</li>
+                      <li>Gift wrap and branded presentation boxes</li>
+                      <li>Bulk quote support for high-volume orders</li>
+                    </ul>
+                  ),
+                },
+                {
+                  id: "shipping",
+                  title: "Shipping & Returns",
+                  content: (
+                    <div className="space-y-3">
+                      <p>{DELIVERY_WINDOW}. Final shipping charges are calculated securely at checkout based on your delivery address and order size.</p>
+                      <p>Customized and personalized orders are made to your specification and are not eligible for return once production has started. Contact our team before placing a bulk order if you have questions.</p>
+                    </div>
+                  ),
+                },
+              ]}
+            />
           </div>
         </section>
 

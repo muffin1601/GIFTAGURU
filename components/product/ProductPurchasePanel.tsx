@@ -9,6 +9,7 @@ import { useCart } from "@/components/cart/CartProvider";
 import { GIFT_WRAP_PRICE, MIN_ORDER_QUANTITY, MIN_ORDER_QUANTITY_MESSAGE, PERSONALIZATION_MAX_LENGTH, buildWhatsAppUrl } from "@/lib/config/store";
 import { checkDeliveryAvailability, DELIVERY_WINDOW } from "@/lib/services/delivery";
 import { formatPrice } from "@/lib/utils";
+import { resolveUnitPrice } from "@/lib/pricing";
 import ProductEnquiryButton from "@/components/lead/ProductEnquiryButton";
 
 interface UploadedLogo {
@@ -32,6 +33,8 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
   const [cartMessage, setCartMessage] = useState<string | null>(null);
   const validQuantity = quantity >= minimumQuantity;
   const whatsappHref = buildWhatsAppUrl(`Hi Gifta Guru, I want to enquire about ${product.name}. Quantity: ${quantity}.`);
+  const unitPrice = resolveUnitPrice(product.price ?? 0, product.priceTiers, quantity);
+  const lineTotal = unitPrice * quantity;
 
   const cartOptions = {
     quantity,
@@ -93,6 +96,11 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
           </button>
         </div>
         <p className="mt-2 text-sm text-ink-600">MOQ: {minimumQuantity} products</p>
+        {validQuantity ? (
+          <p className="mt-2 text-sm font-semibold text-navy-950">
+            {formatPrice(unitPrice)} / unit &middot; {formatPrice(lineTotal)} total for {quantity}
+          </p>
+        ) : null}
         {!validQuantity ? <p className="mt-2 text-sm text-red-700">{MIN_ORDER_QUANTITY_MESSAGE}</p> : null}
       </div>
 

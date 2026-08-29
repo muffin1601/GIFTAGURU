@@ -1,10 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Search, UserRound } from "lucide-react";
+import { Phone, Search, UserRound } from "lucide-react";
 import Container from "@/components/ui/Container";
 import MobileNav from "@/components/layout/MobileNav";
 import CartLink from "@/components/cart/CartLink";
 import CollectionsDropdown from "@/components/layout/CollectionsDropdown";
+import { STORE_CONTACT } from "@/lib/config/store";
 
 const mobileLinks = [
   { label: "Home", href: "/" },
@@ -18,6 +19,15 @@ const mobileLinks = [
 export default function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-navy-950/10 bg-cream-100/95 backdrop-blur">
+      <div className="hidden border-b border-navy-950/10 bg-navy-950 text-cream-100/85 lg:block">
+        <Container className="flex h-9 items-center justify-between text-xs tracking-wide">
+          <span>Premium corporate gifting, curated for modern businesses.</span>
+          <a href={`tel:${STORE_CONTACT.phoneHref}`} className="inline-flex items-center gap-1.5 hover:text-gold-300">
+            <Phone className="h-3.5 w-3.5" aria-hidden="true" />
+            {STORE_CONTACT.phone}
+          </a>
+        </Container>
+      </div>
       <Container className="grid h-20 grid-cols-[auto_1fr_auto] items-center gap-4">
         <Link href="/" className="flex min-w-0 items-center" aria-label="Gifta Guru home">
           <Image src="/SBanners/SBanners/NEW LOGO.png" alt="Gifta Guru" width={210} height={94} className="h-14 w-auto shrink-0 sm:h-16" preload />
@@ -31,11 +41,14 @@ export default function Header() {
             Shop
           </Link>
           <CollectionsDropdown />
-          <Link href="/bulk-enquiry" className="text-sm font-medium text-navy-950 transition-colors hover:text-gold-600">
-            Bulk Orders
-          </Link>
           <Link href="/contact" className="text-sm font-medium text-navy-950 transition-colors hover:text-gold-600">
             Contact
+          </Link>
+          <Link
+            href="/bulk-enquiry"
+            className="rounded-full border border-navy-950/15 px-4 py-2 text-sm font-semibold text-navy-950 transition-colors hover:border-gold-500 hover:bg-gold-500/10 hover:text-gold-700"
+          >
+            Request a Quote
           </Link>
         </nav>
 

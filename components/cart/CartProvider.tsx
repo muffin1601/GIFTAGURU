@@ -3,19 +3,26 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { Product } from "@/types";
 import { GIFT_WRAP_PRICE, MIN_ORDER_QUANTITY } from "@/lib/config/store";
+import { resolveUnitPrice, type PriceTier } from "@/lib/pricing";
 
 export interface CartItem {
   id: string;
   slug: string;
   name: string;
   image?: string;
+  /** Base (1-unit) price. The effective per-unit price is derived from priceTiers + quantity. */
   price: number;
+  priceTiers?: PriceTier[];
   quantity: number;
   minQuantity: number;
   personalizationText?: string;
   logoUrl?: string;
   logoFileName?: string;
   giftWrap?: boolean;
+}
+
+export function cartItemUnitPrice(item: CartItem): number {
+  return resolveUnitPrice(item.price, item.priceTiers, item.quantity);
 }
 
 export interface AddCartItemOptions {
@@ -59,7 +66,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo<CartContextValue>(() => {
     const count = items.reduce((sum, item) => sum + item.quantity, 0);
-    const merchandiseSubtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const merchandiseSubtotal = items.reduce((sum, item) => sum + cartItemUnitPrice(item) * item.quantity, 0);
     const giftWrapTotal = items.reduce((sum, item) => sum + (item.giftWrap ? GIFT_WRAP_PRICE : 0), 0);
     const subtotal = merchandiseSubtotal + giftWrapTotal;
 
@@ -108,6 +115,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
               name: product.name,
               image: product.image,
               price,
+              priceTiers: product.priceTiers,
               quantity: Math.max(quantity, minQuantity),
               minQuantity,
               personalizationText: normalizedOptions.personalizationText?.trim() || undefined,

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
-import { useCart } from "@/components/cart/CartProvider";
+import { cartItemUnitPrice, useCart } from "@/components/cart/CartProvider";
 import { GIFT_WRAP_PRICE, MIN_ORDER_QUANTITY_MESSAGE } from "@/lib/config/store";
 import { formatPrice } from "@/lib/utils";
 
@@ -46,7 +46,7 @@ export default function CartPageClient() {
                   {item.personalizationText ? <p className="mt-1 text-sm text-ink-600">Text: {item.personalizationText}</p> : null}
                   {item.logoFileName ? <p className="mt-1 text-sm text-ink-600">Logo: {item.logoFileName}</p> : null}
                   {item.giftWrap ? <p className="mt-1 text-sm text-ink-600">Gift wrap: {formatPrice(GIFT_WRAP_PRICE)}</p> : null}
-                  <p className="mt-2 font-semibold text-navy-950">{formatPrice(item.price)}</p>
+                  <p className="mt-2 font-semibold text-navy-950">{formatPrice(cartItemUnitPrice(item))} / unit</p>
                 </div>
                 <div className="flex items-center gap-3 sm:flex-col sm:items-end">
                   <div className="inline-flex h-10 items-center rounded-full border border-navy-950/15 bg-white">

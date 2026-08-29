@@ -29,6 +29,7 @@ export default async function AdminProductsPage() {
                 <th className="px-4 py-3">MOQ</th>
                 <th className="px-4 py-3">Status</th>
                 <th className="px-4 py-3">Inventory</th>
+                <th className="px-4 py-3">Pricing</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-navy-950/10">
@@ -45,6 +46,7 @@ export default async function AdminProductsPage() {
                     <td className="px-4 py-3">{product.minOrderQuantity}</td>
                     <td className="px-4 py-3">{product.status}</td>
                     <td className="px-4 py-3"><Link href="/admin/inventory" className="font-semibold text-gold-700">{stock} units</Link></td>
+                    <td className="px-4 py-3"><Link href={`/admin/products/${product.id}`} className="font-semibold text-gold-700">Manage tiers</Link></td>
                   </tr>
                 );
               })}
