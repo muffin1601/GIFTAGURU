@@ -54,6 +54,9 @@ export default function Header() {
         </Link>
 
         <nav className="hidden items-center justify-center gap-8 lg:flex">
+          <Link href="/" className={navLinkClass}>
+            Home
+          </Link>
           <Link href="/shop" className={navLinkClass}>
             Shop
           </Link>

@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Button from "@/components/ui/Button";
-import Container from "@/components/ui/Container";
 import { cn } from "@/lib/utils";
 
 const slides = [
@@ -61,75 +61,100 @@ export default function Hero() {
 
     const timer = window.setInterval(() => {
       setActiveIndex((index) => (index + 1) % slides.length);
-    }, 7000);
+    }, 6000);
 
     return () => window.clearInterval(timer);
   }, [paused]);
 
+  const goTo = (index: number) => {
+    setActiveIndex((index + slides.length) % slides.length);
+  };
+
   return (
     <section
-      className="border-b border-line"
+      className="relative w-full overflow-hidden border-b border-line"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <Container className="grid items-center gap-10 py-12 sm:py-16 lg:grid-cols-2 lg:gap-16 lg:py-24">
-        {/* Text sits on the page ground, so contrast never depends on an
-            overlay sitting on top of photography. */}
-        <div className="max-w-xl">
-          <span className="type-eyebrow">{active.eyebrow}</span>
-          <h1 className="type-h1 mt-5">{active.title}</h1>
-          <p className="type-lead mt-6">{active.description}</p>
+      <div className="relative aspect-[16/9] w-full sm:aspect-[21/9] lg:aspect-[2.75/1]">
+        <div
+          className="flex h-full transition-transform duration-700 ease-in-out"
+          style={{
+            width: `${slides.length * 100}%`,
+            transform: `translateX(-${activeIndex * (100 / slides.length)}%)`,
+          }}
+        >
+          {slides.map((slide, index) => (
+            <div key={slide.image} className="relative h-full shrink-0" style={{ width: `${100 / slides.length}%` }}>
+              <Image
+                src={slide.image}
+                alt={index === activeIndex ? slide.alt : ""}
+                fill
+                sizes="100vw"
+                priority={index === 0}
+                aria-hidden={index !== activeIndex}
+                className="object-cover"
+              />
+            </div>
+          ))}
+        </div>
 
-          <div className="mt-9 flex flex-wrap gap-3">
-            <Button href={active.href} variant="primary">
-              Explore Collection
-            </Button>
-            <Button href="/bulk-enquiry" variant="secondary">
-              Request a Quote
-            </Button>
-          </div>
+        {/* Copy sits directly on each banner's plain left-hand ground -- no
+            overlay needed since every slide keeps that area clear. */}
+        <div className="absolute inset-0 flex items-center">
+          <div className="mx-auto w-full max-w-[84rem] px-5 sm:px-8 lg:px-12">
+            <div className="max-w-xl">
+              <span className="type-eyebrow text-gold-600">{active.eyebrow}</span>
+              <h1 className="type-h1 mt-3 text-navy-950 sm:mt-4">{active.title}</h1>
+              <p className="type-lead mt-3 hidden text-ink-600 sm:block">{active.description}</p>
 
-          {/* Named collections rather than anonymous dots -- the control tells
-              you what you are switching to. */}
-          <div className="mt-12 flex flex-wrap items-center gap-x-7 gap-y-3 border-t border-line pt-5">
-            {slides.map((slide, index) => (
-              <button
-                key={slide.href}
-                type="button"
-                onClick={() => setActiveIndex(index)}
-                aria-current={index === activeIndex}
-                className={cn(
-                  "border-b pb-1 text-xs font-semibold uppercase tracking-[0.1em] transition-colors duration-200",
-                  index === activeIndex
-                    ? "border-gold-500 text-navy-950"
-                    : "border-transparent text-ink-500 hover:text-navy-950",
-                )}
-              >
-                {slide.label}
-              </button>
-            ))}
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Button href={active.href} variant="primary">
+                  Explore Collection
+                </Button>
+                <Button href="/bulk-enquiry" variant="secondary">
+                  Request a Quote
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Crossfade only. No transform, no overlay, no shadow. */}
-        <div className="relative aspect-[5/4] w-full overflow-hidden border border-line bg-sunken lg:aspect-[4/3]">
+        {/* Arrow controls. */}
+        <button
+          type="button"
+          onClick={() => goTo(activeIndex - 1)}
+          aria-label="Previous slide"
+          className="absolute left-3 top-1/2 hidden -translate-y-1/2 items-center justify-center border border-cream-100/40 bg-navy-950/30 p-2 text-cream-100 backdrop-blur-sm transition-colors duration-200 hover:bg-navy-950/60 sm:inline-flex"
+        >
+          <ChevronLeft className="h-5 w-5" strokeWidth={1.5} />
+        </button>
+        <button
+          type="button"
+          onClick={() => goTo(activeIndex + 1)}
+          aria-label="Next slide"
+          className="absolute right-3 top-1/2 hidden -translate-y-1/2 items-center justify-center border border-cream-100/40 bg-navy-950/30 p-2 text-cream-100 backdrop-blur-sm transition-colors duration-200 hover:bg-navy-950/60 sm:inline-flex"
+        >
+          <ChevronRight className="h-5 w-5" strokeWidth={1.5} />
+        </button>
+
+        {/* Dot indicators. */}
+        <div className="absolute right-5 top-5 flex items-center gap-2 sm:right-8 lg:right-12">
           {slides.map((slide, index) => (
-            <Image
-              key={slide.image}
-              src={slide.image}
-              alt={index === activeIndex ? slide.alt : ""}
-              fill
-              sizes="(min-width: 1024px) 50vw, 100vw"
-              priority={index === 0}
-              aria-hidden={index !== activeIndex}
+            <button
+              key={slide.href}
+              type="button"
+              onClick={() => goTo(index)}
+              aria-current={index === activeIndex}
+              aria-label={`Show ${slide.label} slide`}
               className={cn(
-                "object-cover transition-opacity duration-500",
-                index === activeIndex ? "opacity-100" : "opacity-0",
+                "h-2 rounded-full transition-all duration-300",
+                index === activeIndex ? "w-6 bg-gold-400" : "w-2 bg-cream-100/50 hover:bg-cream-100/80",
               )}
             />
           ))}
         </div>
-      </Container>
+      </div>
     </section>
   );
 }

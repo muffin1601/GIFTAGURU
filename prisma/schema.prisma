@@ -179,6 +179,7 @@ model Profile {
   customizationRequests CustomizationRequest[]
   discountUsage         DiscountUsage[]
   reviews               Review[]
+  auditLogs             AuditLog[]
 
   @@map("profiles")
 }
@@ -211,6 +212,7 @@ model Category {
   description String?
   imageUrl    String?   @map("image_url")
   sortOrder   Int       @default(0) @map("sort_order")
+  isActive    Boolean   @default(true) @map("is_active")
   createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   products    Product[]
@@ -226,6 +228,7 @@ model Collection {
   description String?
   imageUrl    String?                    @map("image_url")
   isFeatured  Boolean                    @default(false) @map("is_featured")
+  isPublished Boolean                    @default(true) @map("is_published")
   sortOrder   Int                        @default(0) @map("sort_order")
   createdAt   DateTime                   @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt   DateTime                   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
@@ -233,6 +236,50 @@ model Collection {
   leads       Lead[]
 
   @@map("collections")
+}
+
+model Faq {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  question    String
+  answer      String
+  sortOrder   Int      @default(0) @map("sort_order")
+  isPublished Boolean  @default(true) @map("is_published")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("faqs")
+}
+
+model Testimonial {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  role        String?
+  company     String?
+  quote       String
+  imageUrl    String?  @map("image_url")
+  sortOrder   Int      @default(0) @map("sort_order")
+  isPublished Boolean  @default(true) @map("is_published")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("testimonials")
+}
+
+model AuditLog {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  actorId    String?  @map("actor_id") @db.Uuid
+  actorEmail String   @map("actor_email")
+  action     String
+  entityType String   @map("entity_type")
+  entityId   String?  @map("entity_id")
+  before     Json?
+  after      Json?
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  actor      Profile? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
 }
 
 model Product {
