@@ -66,7 +66,7 @@ export default async function AdminOrdersPage({
       <div className="panel overflow-x-auto">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left text-sm">
-            <thead className="bg-cream-200 text-xs uppercase tracking-wide text-ink-600">
+            <thead className="bg-sunken text-xs uppercase tracking-wide text-ink-600">
               <tr>
                 <th className="px-4 py-3">Order ID</th>
                 <th className="px-4 py-3">Customer</th>
@@ -77,7 +77,7 @@ export default async function AdminOrdersPage({
                 <th className="px-4 py-3">Date</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-navy-950/10">
+            <tbody className="divide-y divide-line">
               {orders.map((order) => {
                 const address = order.shippingAddress as { name?: string } | null;
                 return (

@@ -2,8 +2,8 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { Product } from "@/types";
-import { GIFT_WRAP_PRICE, MIN_ORDER_QUANTITY } from "@/lib/config/store";
 import { resolveUnitPrice, type PriceTier } from "@/lib/pricing";
+import type { StoreSettings } from "@/lib/data/store-settings";
 
 export interface CartItem {
   id: string;
@@ -33,7 +33,7 @@ export interface AddCartItemOptions {
   giftWrap?: boolean;
 }
 
-interface CartContextValue {
+interface CartContextValue extends StoreSettings {
   items: CartItem[];
   count: number;
   merchandiseSubtotal: number;
@@ -47,7 +47,17 @@ interface CartContextValue {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-export function CartProvider({ children }: { children: React.ReactNode }) {
+export function CartProvider({
+  children,
+  settings,
+}: {
+  children: React.ReactNode;
+  /** Fetched server-side (app/layout.tsx) from the same source the Razorpay
+   * order route uses, so what the customer sees here always matches what
+   * they're actually charged. */
+  settings: StoreSettings;
+}) {
+  const { minOrderQuantity, giftWrapPrice } = settings;
   const [items, setItems] = useState<CartItem[]>([]);
   const [hydrated, setHydrated] = useState(false);
 
@@ -67,10 +77,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo<CartContextValue>(() => {
     const count = items.reduce((sum, item) => sum + item.quantity, 0);
     const merchandiseSubtotal = items.reduce((sum, item) => sum + cartItemUnitPrice(item) * item.quantity, 0);
-    const giftWrapTotal = items.reduce((sum, item) => sum + (item.giftWrap ? GIFT_WRAP_PRICE : 0), 0);
+    const giftWrapTotal = items.reduce((sum, item) => sum + (item.giftWrap ? giftWrapPrice : 0), 0);
     const subtotal = merchandiseSubtotal + giftWrapTotal;
 
     return {
+      ...settings,
       items,
       count,
       merchandiseSubtotal,
@@ -78,9 +89,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       subtotal,
       addItem(product, options) {
         const normalizedOptions = typeof options === "number" ? { quantity: options } : options ?? {};
-        const quantity = normalizedOptions.quantity ?? MIN_ORDER_QUANTITY;
+        const quantity = normalizedOptions.quantity ?? minOrderQuantity;
         const price = product.price ?? 0;
-        const minQuantity = Math.max(product.minQuantity, MIN_ORDER_QUANTITY);
+        const minQuantity = Math.max(product.minQuantity, minOrderQuantity);
         const customizationKey = JSON.stringify({
           id: product.id,
           personalizationText: normalizedOptions.personalizationText?.trim() || undefined,
@@ -102,7 +113,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           if (existing) {
             return current.map((item) =>
               item === existing
-                ? { ...item, quantity: Math.max(item.quantity + quantity, item.minQuantity, MIN_ORDER_QUANTITY) }
+                ? { ...item, quantity: Math.max(item.quantity + quantity, item.minQuantity, minOrderQuantity) }
                 : item,
             );
           }
@@ -129,7 +140,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       updateQuantity(id, quantity) {
         setItems((current) =>
           current.map((item) =>
-            item.id === id ? { ...item, quantity: Math.max(quantity, item.minQuantity, MIN_ORDER_QUANTITY) } : item,
+            item.id === id ? { ...item, quantity: Math.max(quantity, item.minQuantity, minOrderQuantity) } : item,
           ),
         );
       },
@@ -140,7 +151,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         setItems([]);
       },
     };
-  }, [items]);
+  }, [items, settings, minOrderQuantity, giftWrapPrice]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

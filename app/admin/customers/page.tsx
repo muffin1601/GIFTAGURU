@@ -17,7 +17,7 @@ export default async function AdminCustomersPage() {
       <div className="panel overflow-x-auto">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left text-sm">
-            <thead className="bg-cream-200 text-xs uppercase tracking-wide text-ink-600">
+            <thead className="bg-sunken text-xs uppercase tracking-wide text-ink-600">
               <tr>
                 <th className="px-4 py-3">Customer</th>
                 <th className="px-4 py-3">Role</th>
@@ -27,7 +27,7 @@ export default async function AdminCustomersPage() {
                 <th className="px-4 py-3">Created</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-navy-950/10">
+            <tbody className="divide-y divide-line">
               {customers.map((customer) => {
                 const spent = customer.orders.reduce((sum, order) => sum + Number(order.total), 0);
                 return (

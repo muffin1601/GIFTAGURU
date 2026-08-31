@@ -293,13 +293,27 @@ export async function createCouponAction(_state: { error?: string; success?: str
   return { success: "Coupon saved." };
 }
 
+// Every key here is actually read back by lib/data/store-settings.ts and used
+// to price checkout server-side (or shown as informational shipping copy).
+// Previously this list also included store_name/contact_phone/whatsapp_number/
+// support_email, which nothing ever read -- the form silently discarded them.
+const NUMERIC_STORE_SETTINGS = ["minimum_quantity", "gift_wrap_price", "free_shipping_threshold", "shipping_charge"];
+const TEXT_STORE_SETTINGS = ["shipping_message", "shipping_timeline"];
+
 export async function updateStoreSettingsAction(_state: { error?: string; success?: string }, formData: FormData) {
   const admin = await requireAdmin();
-  const entries = ["store_name", "contact_phone", "whatsapp_number", "support_email", "minimum_quantity", "gift_wrap_price", "shipping_message", "shipping_timeline"];
+  const entries = [...NUMERIC_STORE_SETTINGS, ...TEXT_STORE_SETTINGS];
+
+  for (const key of NUMERIC_STORE_SETTINGS) {
+    const raw = formData.get(key);
+    if (raw !== null && !Number.isFinite(Number(raw))) {
+      return { error: `${key.replaceAll("_", " ")} must be a number.` };
+    }
+  }
 
   await prisma.$transaction(entries.map((key) => {
     const rawValue = String(formData.get(key) ?? "");
-    const numeric = ["minimum_quantity", "gift_wrap_price"].includes(key);
+    const numeric = NUMERIC_STORE_SETTINGS.includes(key);
     return prisma.storeSetting.upsert({
       where: { key },
       update: { value: numeric ? Number(rawValue) : rawValue },
@@ -309,6 +323,7 @@ export async function updateStoreSettingsAction(_state: { error?: string; succes
 
   await logAdminAction(admin, { action: "store_settings.updated", entityType: "store_setting", after: Object.fromEntries(entries.map((key) => [key, formData.get(key)])) });
   revalidatePath("/admin/settings");
+  revalidatePath("/", "layout");
   return { success: "Store settings updated." };
 }
 

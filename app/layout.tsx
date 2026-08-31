@@ -6,6 +6,7 @@ import { CartProvider } from "@/components/cart/CartProvider";
 import StorefrontOnly from "@/components/layout/StorefrontOnly";
 import FloatingCommunication from "@/components/lead/FloatingCommunication";
 import { siteUrl } from "@/lib/env";
+import { getStoreSettings } from "@/lib/data/store-settings";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -27,7 +28,9 @@ export const metadata: Metadata = {
     "Gifta Guru is a premium corporate gifting platform for employee onboarding, appreciation, client gifting, and bulk corporate orders across India.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const storeSettings = await getStoreSettings();
+
   return (
     // data-scroll-behavior is required by Next when the html element sets
     // scroll-behavior: smooth, otherwise route transitions animate the scroll.
@@ -37,7 +40,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${fraunces.variable} ${manrope.variable}`}
     >
       <body className="flex min-h-screen flex-col antialiased">
-        <CartProvider>
+        <CartProvider settings={storeSettings}>
           <StorefrontOnly>
             <Header />
           </StorefrontOnly>

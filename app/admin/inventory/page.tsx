@@ -24,7 +24,7 @@ export default async function AdminInventoryPage() {
                   <h2 className="font-display text-xl text-navy-950">{item.variant.product.name}</h2>
                   <p className="mt-1 text-sm text-ink-600">{item.variant.sku} · {item.variant.name}</p>
                 </div>
-                <span className={`rounded-full px-3 py-1 text-xs font-semibold ${low ? "bg-red-50 text-red-700" : "bg-green-50 text-green-700"}`}>
+                <span className={`badge ${low ? "badge-critical" : "badge-positive"}`}>
                   {low ? "Low stock" : "In stock"}
                 </span>
               </div>

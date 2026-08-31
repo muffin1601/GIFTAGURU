@@ -17,10 +17,10 @@ export default async function AdminPaymentsPage() {
       </div>
       <div className="panel overflow-x-auto">
         <table className="min-w-full text-left text-sm">
-          <thead className="bg-cream-200 text-xs uppercase tracking-wide text-ink-600">
+          <thead className="bg-sunken text-xs uppercase tracking-wide text-ink-600">
             <tr><th className="px-4 py-3">Order</th><th className="px-4 py-3">Razorpay order</th><th className="px-4 py-3">Payment ID</th><th className="px-4 py-3">Amount</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Date</th></tr>
           </thead>
-          <tbody className="divide-y divide-navy-950/10">
+          <tbody className="divide-y divide-line">
             {payments.map((payment) => (
               <tr key={payment.id}>
                 <td className="px-4 py-3"><Link href={`/admin/orders/${payment.order.orderNumber}`} className="font-semibold text-navy-950">{payment.order.orderNumber}</Link><p className="text-ink-500">{payment.order.email}</p></td>

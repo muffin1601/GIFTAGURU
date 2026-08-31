@@ -38,10 +38,10 @@ export default async function AdminLeadsPage({
       <div className="panel overflow-x-auto">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left text-sm">
-            <thead className="bg-cream-200 text-xs uppercase tracking-wide text-ink-600">
+            <thead className="bg-sunken text-xs uppercase tracking-wide text-ink-600">
               <tr><th className="px-4 py-3">Name</th><th className="px-4 py-3">Company</th><th className="px-4 py-3">Contact</th><th className="px-4 py-3">Type</th><th className="px-4 py-3">Source</th><th className="px-4 py-3">Qty</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Date</th></tr>
             </thead>
-            <tbody className="divide-y divide-navy-950/10">
+            <tbody className="divide-y divide-line">
               {leads.map((lead) => (
                 <tr key={lead.id}>
                   <td className="px-4 py-3"><Link href={`/admin/leads/${lead.id}`} className="font-semibold text-navy-950">{lead.name}</Link></td>

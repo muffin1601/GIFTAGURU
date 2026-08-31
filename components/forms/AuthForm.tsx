@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
+import PasswordField from "@/components/ui/PasswordField";
 
 type AuthState = { error?: string; success?: string };
 
@@ -39,36 +40,26 @@ export default function AuthForm({
         ) : null}
 
         {mode === "login" || mode === "signup" || mode === "reset" ? (
-          <div className="field">
-            <label className="field-label" htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              name="password"
-              required
-              minLength={8}
-              autoComplete={mode === "login" ? "current-password" : "new-password"}
-              className="field-input"
-            />
-            {mode !== "login" ? (
-              <span className="field-hint">At least 8 characters.</span>
-            ) : null}
-          </div>
+          <PasswordField
+            id="password"
+            name="password"
+            label="Password"
+            required
+            minLength={8}
+            autoComplete={mode === "login" ? "current-password" : "new-password"}
+            hint={mode !== "login" ? "At least 8 characters." : undefined}
+          />
         ) : null}
 
         {mode === "reset" ? (
-          <div className="field">
-            <label className="field-label" htmlFor="confirmPassword">Confirm password</label>
-            <input
-              id="confirmPassword"
-              type="password"
-              name="confirmPassword"
-              required
-              minLength={8}
-              autoComplete="new-password"
-              className="field-input"
-            />
-          </div>
+          <PasswordField
+            id="confirmPassword"
+            name="confirmPassword"
+            label="Confirm password"
+            required
+            minLength={8}
+            autoComplete="new-password"
+          />
         ) : null}
 
         {state.error ? (

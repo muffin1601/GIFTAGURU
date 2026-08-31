@@ -11,10 +11,10 @@ export default async function AdminEmailCampaignsPage() {
       </div>
       <div className="panel overflow-x-auto">
         <table className="min-w-full text-left text-sm">
-          <thead className="bg-cream-200 text-xs uppercase tracking-wide text-ink-600">
+          <thead className="bg-sunken text-xs uppercase tracking-wide text-ink-600">
             <tr><th className="px-4 py-3">Type</th><th className="px-4 py-3">Recipient</th><th className="px-4 py-3">Subject</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Date</th></tr>
           </thead>
-          <tbody className="divide-y divide-navy-950/10">
+          <tbody className="divide-y divide-line">
             {events.map((event) => (
               <tr key={event.id}>
                 <td className="px-4 py-3">{event.type}</td>

@@ -26,9 +26,16 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
           <Info label="Product" value={lead.productName ?? "N/A"} />
           <Info label="Collection" value={lead.collectionName ?? "N/A"} />
         </dl>
-        <div className="mt-6 rounded-lg bg-cream-100 p-4 text-sm text-ink-800">{lead.message}</div>
+        <div className="mt-6 border border-line bg-sunken p-4 text-sm text-ink-800">{lead.message}</div>
         <div className="mt-6 flex flex-wrap gap-3">
-          <a href={buildWhatsAppUrl(`Hi ${lead.name}, following up on your Gifta Guru enquiry.`)} target="_blank" rel="noreferrer" className="rounded-full bg-[#25D366] px-5 py-2.5 text-sm font-semibold text-white">WhatsApp</a>
+          <a
+            href={buildWhatsAppUrl(`Hi ${lead.name}, following up on your Gifta Guru enquiry.`)}
+            target="_blank"
+            rel="noreferrer"
+            className="btn border-[#25D366] bg-[#25D366] text-white hover:border-[#1ebc59] hover:bg-[#1ebc59]"
+          >
+            WhatsApp
+          </a>
           <a href={`mailto:${lead.email}`} className="btn btn-secondary">Email</a>
         </div>
       </section>

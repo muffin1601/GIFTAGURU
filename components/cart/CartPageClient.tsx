@@ -7,12 +7,19 @@ import { Minus, Plus } from "lucide-react";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
 import { cartItemUnitPrice, useCart } from "@/components/cart/CartProvider";
-import { GIFT_WRAP_PRICE, MIN_ORDER_QUANTITY_MESSAGE } from "@/lib/config/store";
 import { formatPrice } from "@/lib/utils";
 
 export default function CartPageClient() {
-  const { items, merchandiseSubtotal, giftWrapTotal, subtotal, updateQuantity, removeItem } =
-    useCart();
+  const {
+    items,
+    merchandiseSubtotal,
+    giftWrapTotal,
+    subtotal,
+    giftWrapPrice,
+    minOrderQuantityMessage,
+    updateQuantity,
+    removeItem,
+  } = useCart();
   const [quantityMessage, setQuantityMessage] = useState<string | null>(null);
 
   if (items.length === 0) {
@@ -71,7 +78,7 @@ export default function CartPageClient() {
                     <p className="type-meta mt-1">Logo: {item.logoFileName}</p>
                   ) : null}
                   {item.giftWrap ? (
-                    <p className="type-meta mt-1">Gift wrap: {formatPrice(GIFT_WRAP_PRICE)}</p>
+                    <p className="type-meta mt-1">Gift wrap: {formatPrice(giftWrapPrice)}</p>
                   ) : null}
                   <p className="mt-2.5 text-sm font-semibold text-navy-950">
                     {formatPrice(cartItemUnitPrice(item))} / unit
@@ -86,7 +93,7 @@ export default function CartPageClient() {
                       className="px-3 text-navy-950 transition-colors duration-200 hover:text-gold-600"
                       onClick={() => {
                         if (item.quantity - 1 < item.minQuantity)
-                          setQuantityMessage(MIN_ORDER_QUANTITY_MESSAGE);
+                          setQuantityMessage(minOrderQuantityMessage);
                         updateQuantity(item.id, item.quantity - 1);
                       }}
                     >

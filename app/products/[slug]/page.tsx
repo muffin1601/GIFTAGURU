@@ -9,7 +9,8 @@ import ProductPurchasePanel from "@/components/product/ProductPurchasePanel";
 import ProductDetailAccordion from "@/components/product/ProductDetailAccordion";
 import AddToCartButton from "@/components/cart/AddToCartButton";
 import { getProductBySlug, searchProducts } from "@/lib/data/products";
-import { GIFT_WRAP_PRICE, MIN_ORDER_QUANTITY, PERSONALIZATION_MAX_LENGTH } from "@/lib/config/store";
+import { PERSONALIZATION_MAX_LENGTH } from "@/lib/config/store";
+import { getStoreSettings } from "@/lib/data/store-settings";
 import { DELIVERY_WINDOW } from "@/lib/services/delivery";
 import { formatPrice } from "@/lib/utils";
 import type { Product } from "@/types";
@@ -32,7 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const [product, settings] = await Promise.all([getProductBySlug(slug), getStoreSettings()]);
   if (!product) notFound();
 
   const cardProduct: Product = {
@@ -42,7 +43,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     category: product.categorySlug ?? "corporate-gifts",
     description: product.description ?? "",
     price: product.basePrice,
-    minQuantity: MIN_ORDER_QUANTITY,
+    minQuantity: settings.minOrderQuantity,
     featured: true,
     image: product.images[0]?.url,
     inStock: product.variants.some((variant) => variant.inStock),
@@ -172,9 +173,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                   content: (
                     <dl className="grid gap-x-12 sm:grid-cols-2">
                       {[
-                        ["Minimum quantity", `${MIN_ORDER_QUANTITY} units`],
+                        ["Minimum quantity", `${settings.minOrderQuantity} units`],
                         ["Customization", product.isCustomizable ? "Available" : "Not available"],
-                        ["Gift wrap", formatPrice(GIFT_WRAP_PRICE)],
+                        ["Gift wrap", formatPrice(settings.giftWrapPrice)],
                         ["Logo proof", "Shared before production"],
                       ].map(([term, value]) => (
                         <div

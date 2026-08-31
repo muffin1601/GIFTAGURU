@@ -10,7 +10,7 @@ export default async function AdminSubscribersPage() {
         <h1 className="mt-2 font-display text-4xl text-navy-950">Subscribers</h1>
       </div>
       <div className="panel p-5">
-        <div className="divide-y divide-navy-950/10">
+        <div className="divide-y divide-line">
           {subscribers.map((subscriber) => (
             <div key={subscriber.id} className="flex items-center justify-between gap-4 py-3 text-sm">
               <span className="font-medium text-navy-950">{subscriber.email}</span>

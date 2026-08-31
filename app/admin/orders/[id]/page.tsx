@@ -79,7 +79,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
 
           <section className="panel p-5">
             <h2 className="font-display text-2xl text-navy-950">Order items</h2>
-            <div className="mt-4 divide-y divide-navy-950/10">
+            <div className="mt-4 divide-y divide-line">
               {order.items.map((item) => {
                 const customization = item.customization as {
                   personalizationText?: string | null;
@@ -91,7 +91,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
                 const image = item.product?.images[0]?.url;
                 return (
                   <div key={item.id} className="grid gap-4 py-4 md:grid-cols-[88px_1fr_auto]">
-                    <div className="relative aspect-square overflow-hidden rounded-lg bg-cream-200">
+                    <div className="relative aspect-square overflow-hidden border border-line bg-sunken">
                       {image ? <Image src={image} alt={item.productName} fill sizes="88px" className="object-contain p-2" /> : null}
                     </div>
                     <div className="text-sm">

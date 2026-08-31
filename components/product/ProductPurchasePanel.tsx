@@ -6,13 +6,7 @@ import { useRouter } from "next/navigation";
 import { Loader2, MessageCircle, Minus, Plus, Upload, X } from "lucide-react";
 import type { Product } from "@/types";
 import { useCart } from "@/components/cart/CartProvider";
-import {
-  GIFT_WRAP_PRICE,
-  MIN_ORDER_QUANTITY,
-  MIN_ORDER_QUANTITY_MESSAGE,
-  PERSONALIZATION_MAX_LENGTH,
-  buildWhatsAppUrl,
-} from "@/lib/config/store";
+import { PERSONALIZATION_MAX_LENGTH, buildWhatsAppUrl } from "@/lib/config/store";
 import { checkDeliveryAvailability, DELIVERY_WINDOW } from "@/lib/services/delivery";
 import { formatPrice } from "@/lib/utils";
 import { resolveUnitPrice } from "@/lib/pricing";
@@ -26,8 +20,8 @@ interface UploadedLogo {
 
 export default function ProductPurchasePanel({ product }: { product: Product }) {
   const router = useRouter();
-  const { addItem } = useCart();
-  const minimumQuantity = Math.max(product.minQuantity, MIN_ORDER_QUANTITY);
+  const { addItem, giftWrapPrice, minOrderQuantity, minOrderQuantityMessage } = useCart();
+  const minimumQuantity = Math.max(product.minQuantity, minOrderQuantity);
   const [quantity, setQuantity] = useState(minimumQuantity);
   const [personalizationText, setPersonalizationText] = useState("");
   const [giftWrap, setGiftWrap] = useState(false);
@@ -54,7 +48,7 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
 
   function addConfiguredItem() {
     if (!validQuantity) {
-      setCartMessage(MIN_ORDER_QUANTITY_MESSAGE);
+      setCartMessage(minOrderQuantityMessage);
       return false;
     }
     addItem(product, cartOptions);
@@ -124,7 +118,7 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
             {formatPrice(unitPrice)} / unit &middot; {formatPrice(lineTotal)} total for {quantity}
           </p>
         ) : (
-          <p className="field-error mt-2">{MIN_ORDER_QUANTITY_MESSAGE}</p>
+          <p className="field-error mt-2">{minOrderQuantityMessage}</p>
         )}
       </div>
 
@@ -193,7 +187,7 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
           <label className="flex items-center justify-between gap-4 border-y border-line py-4">
             <span>
               <span className="block text-sm font-medium text-navy-950">Gift wrap</span>
-              <span className="field-hint">{formatPrice(GIFT_WRAP_PRICE)} per cart item</span>
+              <span className="field-hint">{formatPrice(giftWrapPrice)} per cart item</span>
             </span>
             <input
               type="checkbox"

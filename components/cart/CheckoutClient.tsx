@@ -6,7 +6,6 @@ import Link from "next/link";
 import Script from "next/script";
 import Container from "@/components/ui/Container";
 import { cartItemUnitPrice, useCart } from "@/components/cart/CartProvider";
-import { GIFT_WRAP_PRICE, MIN_ORDER_QUANTITY_MESSAGE } from "@/lib/config/store";
 import { isValidIndianPinCode } from "@/lib/services/delivery";
 import { formatPrice } from "@/lib/utils";
 
@@ -28,7 +27,8 @@ declare global {
 
 export default function CheckoutClient() {
   const router = useRouter();
-  const { items, merchandiseSubtotal, giftWrapTotal, subtotal, clearCart } = useCart();
+  const { items, merchandiseSubtotal, giftWrapTotal, subtotal, giftWrapPrice, minOrderQuantityMessage, clearCart } =
+    useCart();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -41,7 +41,7 @@ export default function CheckoutClient() {
     const postalCode = String(formData.get("postalCode") ?? "");
 
     if (items.some((item) => item.quantity < item.minQuantity)) {
-      setError(MIN_ORDER_QUANTITY_MESSAGE);
+      setError(minOrderQuantityMessage);
       setPending(false);
       return;
     }
@@ -225,11 +225,11 @@ export default function CheckoutClient() {
               <div key={`${item.id}-${item.personalizationText ?? ""}-${item.logoUrl ?? ""}-${item.giftWrap ? "wrap" : "plain"}`} className="space-y-1 text-sm">
                 <div className="flex justify-between gap-4">
                   <span>{item.name} x {item.quantity}</span>
-                  <span className="font-semibold">{formatPrice(cartItemUnitPrice(item) * item.quantity + (item.giftWrap ? GIFT_WRAP_PRICE : 0))}</span>
+                  <span className="font-semibold">{formatPrice(cartItemUnitPrice(item) * item.quantity + (item.giftWrap ? giftWrapPrice : 0))}</span>
                 </div>
                 {item.personalizationText ? <p className="text-xs text-ink-500">Text: {item.personalizationText}</p> : null}
                 {item.logoFileName ? <p className="text-xs text-ink-500">Logo: {item.logoFileName}</p> : null}
-                {item.giftWrap ? <p className="text-xs text-ink-500">Gift wrap: {formatPrice(GIFT_WRAP_PRICE)}</p> : null}
+                {item.giftWrap ? <p className="text-xs text-ink-500">Gift wrap: {formatPrice(giftWrapPrice)}</p> : null}
               </div>
             ))}
           </div>

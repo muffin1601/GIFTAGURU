@@ -3,7 +3,8 @@ import Razorpay from "razorpay";
 import { randomUUID } from "crypto";
 import { isDatabaseConfigured, isRazorpayConfigured } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
-import { GIFT_WRAP_PRICE, MIN_ORDER_QUANTITY, MIN_ORDER_QUANTITY_MESSAGE, PERSONALIZATION_MAX_LENGTH } from "@/lib/config/store";
+import { PERSONALIZATION_MAX_LENGTH } from "@/lib/config/store";
+import { getStoreSettings } from "@/lib/data/store-settings";
 import { resolveUnitPrice } from "@/lib/pricing";
 import { isValidIndianPinCode } from "@/lib/services/delivery";
 import { sendAdminNewOrderEmail, sendCustomizationRequestEmail, sendOrderReceivedEmail } from "@/lib/email/service";
@@ -41,9 +42,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Enter a valid 6-digit Indian PIN code." }, { status: 400 });
   }
 
-  const invalidQuantity = body.items.some((item) => item.quantity < MIN_ORDER_QUANTITY);
+  // Authoritative: whatever admin has configured in /admin/settings, not the
+  // bundled defaults, governs what the customer is actually charged.
+  const settings = await getStoreSettings();
+
+  const invalidQuantity = body.items.some((item) => item.quantity < settings.minOrderQuantity);
   if (invalidQuantity) {
-    return NextResponse.json({ error: MIN_ORDER_QUANTITY_MESSAGE }, { status: 400 });
+    return NextResponse.json({ error: settings.minOrderQuantityMessage }, { status: 400 });
   }
 
   const invalidPersonalization = body.items.some(
@@ -92,7 +97,7 @@ export async function POST(request: Request) {
     const variant = product.variants[0];
     if (!variant) throw new Error(`Product ${product.slug} has no variant.`);
     if (!variant.inventory) throw new Error(`Product ${product.slug} has no inventory record.`);
-    const quantity = Math.max(item.quantity, product.minOrderQuantity, MIN_ORDER_QUANTITY);
+    const quantity = Math.max(item.quantity, product.minOrderQuantity, settings.minOrderQuantity);
     const available = variant.inventory.quantityAvailable - variant.inventory.quantityReserved;
     if (available < quantity) {
       throw new Error(`${product.name} has only ${available} unit(s) available.`);
@@ -100,7 +105,7 @@ export async function POST(request: Request) {
     const baseUnitPrice = Number(variant.priceOverride ?? product.basePrice);
     const tiers = product.priceTiers.map((tier) => ({ minQuantity: tier.minQuantity, unitPrice: Number(tier.unitPrice) }));
     const unitPrice = resolveUnitPrice(baseUnitPrice, tiers, quantity);
-    const giftWrapTotal = item.giftWrap ? GIFT_WRAP_PRICE : 0;
+    const giftWrapTotal = item.giftWrap ? settings.giftWrapPrice : 0;
     return {
       product,
       variant,
@@ -116,7 +121,7 @@ export async function POST(request: Request) {
   });
 
   const subtotal = lineItems.reduce((sum, item) => sum + item.lineTotal, 0);
-  const shippingTotal = subtotal >= 50000 ? 0 : 500;
+  const shippingTotal = subtotal >= settings.freeShippingThreshold ? 0 : settings.shippingCharge;
   const taxTotal = Math.round(subtotal * 0.18);
   const total = subtotal + shippingTotal + taxTotal;
 
@@ -170,7 +175,7 @@ export async function POST(request: Request) {
               logoUrl: item.logoUrl || null,
               logoFileName: item.logoFileName || null,
               giftWrap: item.giftWrap,
-              giftWrapPrice: item.giftWrap ? GIFT_WRAP_PRICE : 0,
+              giftWrapPrice: item.giftWrap ? settings.giftWrapPrice : 0,
             },
             lineTotal: item.lineTotal,
           })),

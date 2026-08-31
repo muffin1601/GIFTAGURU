@@ -3,7 +3,7 @@ import "server-only";
 import { isEmailConfigured, siteUrl } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { STORE_CONTACT } from "@/lib/config/store";
-import { adminNotificationTemplate, confirmSignupEmailTemplate, orderEmailTemplate, type EmailOrder } from "@/lib/email/templates";
+import { adminNotificationTemplate, confirmSignupEmailTemplate, escapeHtml, orderEmailTemplate, type EmailOrder } from "@/lib/email/templates";
 
 type SendEmailInput = {
   eventKey: string;
@@ -136,10 +136,10 @@ export async function sendAdminNewOrderEmail(orderId: string) {
     subject: `New order ${order.orderNumber}`,
     orderId,
     html: adminNotificationTemplate("New order received", [
-      `Order: ${order.orderNumber}`,
-      `Customer: ${order.email} / ${order.phone}`,
+      `Order: ${escapeHtml(order.orderNumber)}`,
+      `Customer: ${escapeHtml(order.email)} / ${escapeHtml(order.phone)}`,
       `Amount: ${formatNumber(order.total)}`,
-      `Admin link: ${siteUrl()}/admin/orders/${order.orderNumber}`,
+      `Admin link: ${siteUrl()}/admin/orders/${encodeURIComponent(order.orderNumber)}`,
     ]),
   });
 }
@@ -154,7 +154,7 @@ export async function sendBulkEnquiryEmail(enquiryId: string) {
     to: enquiry.email,
     subject: "Bulk enquiry received",
     html: adminNotificationTemplate("Bulk enquiry received", [
-      `Hi ${enquiry.fullName}, we have received your bulk gifting enquiry.`,
+      `Hi ${escapeHtml(enquiry.fullName)}, we have received your bulk gifting enquiry.`,
       "Our team will contact you shortly with next steps.",
     ]),
   });
@@ -165,9 +165,9 @@ export async function sendBulkEnquiryEmail(enquiryId: string) {
     to: process.env.ADMIN_EMAIL || STORE_CONTACT.email,
     subject: "New bulk enquiry",
     html: adminNotificationTemplate("New bulk enquiry", [
-      `Customer: ${enquiry.fullName}`,
-      `Company: ${enquiry.companyName ?? "N/A"}`,
-      `Product: ${enquiry.productInterest ?? "N/A"}`,
+      `Customer: ${escapeHtml(enquiry.fullName)}`,
+      `Company: ${enquiry.companyName ? escapeHtml(enquiry.companyName) : "N/A"}`,
+      `Product: ${enquiry.productInterest ? escapeHtml(enquiry.productInterest) : "N/A"}`,
       `Quantity: ${enquiry.quantity ?? "N/A"}`,
     ]),
   });
@@ -197,10 +197,10 @@ export async function sendLeadEmails(leadId: string) {
     to: lead.email,
     subject: "Thanks for contacting Gifta Guru",
     html: adminNotificationTemplate("Thanks for contacting Gifta Guru", [
-      `Hi ${lead.name}, thank you for reaching out to Gifta Guru.`,
+      `Hi ${escapeHtml(lead.name)}, thank you for reaching out to Gifta Guru.`,
       "We have received your enquiry and our corporate gifting team will contact you shortly.",
-      `Requirement: ${lead.message}`,
-      lead.quantity ? `Estimated quantity: ${lead.quantity}` : "",
+      `Requirement: ${escapeHtml(lead.message)}`,
+      lead.quantity ? `Estimated quantity: ${escapeHtml(lead.quantity)}` : "",
     ].filter(Boolean)),
   });
 
@@ -210,15 +210,15 @@ export async function sendLeadEmails(leadId: string) {
     to: process.env.ADMIN_EMAIL || STORE_CONTACT.email,
     subject: `New ${lead.type.replaceAll("_", " ")} lead`,
     html: adminNotificationTemplate("New lead received", [
-      `Lead type: ${lead.type}`,
-      `Source: ${lead.source}`,
-      `Customer: ${lead.name}`,
-      `Company: ${lead.company ?? "N/A"}`,
-      `Email: ${lead.email}`,
-      `Phone: ${lead.phone}`,
-      `Quantity: ${lead.quantity ?? "N/A"}`,
-      `Product: ${lead.productName ?? "N/A"}`,
-      `Requirement: ${lead.message}`,
+      `Lead type: ${escapeHtml(lead.type)}`,
+      `Source: ${escapeHtml(lead.source)}`,
+      `Customer: ${escapeHtml(lead.name)}`,
+      `Company: ${lead.company ? escapeHtml(lead.company) : "N/A"}`,
+      `Email: ${escapeHtml(lead.email)}`,
+      `Phone: ${escapeHtml(lead.phone)}`,
+      `Quantity: ${lead.quantity ? escapeHtml(lead.quantity) : "N/A"}`,
+      `Product: ${lead.productName ? escapeHtml(lead.productName) : "N/A"}`,
+      `Requirement: ${escapeHtml(lead.message)}`,
       `Admin link: ${siteUrl()}/admin/leads/${lead.id}`,
     ]),
   });

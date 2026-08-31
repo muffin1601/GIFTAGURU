@@ -66,7 +66,7 @@ export default async function AdminCustomerDetailPage({ params }: { params: Prom
       </div>
       <section className="panel p-5">
         <h2 className="font-display text-2xl text-navy-950">Order history</h2>
-        <div className="mt-4 divide-y divide-navy-950/10">
+        <div className="mt-4 divide-y divide-line">
           {customer.orders.map((order) => (
             <Link key={order.id} href={`/admin/orders/${order.orderNumber}`} className="grid gap-2 py-3 text-sm md:grid-cols-[140px_1fr_120px_120px]">
               <span className="font-semibold text-navy-950">{order.orderNumber}</span>

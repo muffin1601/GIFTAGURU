@@ -81,6 +81,23 @@ function shell(eyebrow: string, title: string, body: string) {
 </html>`;
 }
 
+/**
+ * adminNotificationTemplate's `lines` and orderEmailTemplate's order data
+ * both embed customer-supplied text (lead name, message, enquiry details,
+ * courier/tracking entries, ...) straight into the email HTML. Callers must
+ * escape any *interpolated* customer value with this before building a line
+ * -- e.g. `` `Name: ${escapeHtml(lead.name)}` `` -- since the line itself is
+ * still allowed to carry trusted markup like `<strong>`.
+ */
+export function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function paragraph(text: string) {
   return `<p style="margin:0 0 16px;font-family:${FONT_SANS};font-size:15px;line-height:1.7;color:${COLOR.ink700}">${text}</p>`;
 }
@@ -107,7 +124,7 @@ function orderRows(order: EmailOrder) {
         .map(
           (item) => `
         <tr>
-          <td style="padding:12px 0;border-bottom:1px solid ${COLOR.line};color:${COLOR.ink700}">${item.productName} &times; ${item.quantity}</td>
+          <td style="padding:12px 0;border-bottom:1px solid ${COLOR.line};color:${COLOR.ink700}">${escapeHtml(item.productName)} &times; ${item.quantity}</td>
           <td style="padding:12px 0;border-bottom:1px solid ${COLOR.line};text-align:right;color:${COLOR.navy};font-weight:700">${formatPrice(item.lineTotal)}</td>
         </tr>`,
         )
@@ -128,8 +145,8 @@ export function orderEmailTemplate(title: string, intro: string, order: EmailOrd
     <p style="margin:16px 0 0;font-family:${FONT_DISPLAY};font-size:20px;color:${COLOR.navy}">
       Total: ${formatPrice(order.total)}
     </p>
-    ${order.courierName ? paragraph(`<strong style="color:${COLOR.navy}">Courier:</strong> ${order.courierName}`) : ""}
-    ${order.trackingNumber ? paragraph(`<strong style="color:${COLOR.navy}">Tracking:</strong> ${order.trackingNumber}`) : ""}
+    ${order.courierName ? paragraph(`<strong style="color:${COLOR.navy}">Courier:</strong> ${escapeHtml(order.courierName)}`) : ""}
+    ${order.trackingNumber ? paragraph(`<strong style="color:${COLOR.navy}">Tracking:</strong> ${escapeHtml(order.trackingNumber)}`) : ""}
     ${tracking}
   `,
   );

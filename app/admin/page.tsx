@@ -72,7 +72,7 @@ export default async function AdminPage() {
             <h2 className="font-display text-2xl text-navy-950">Recent orders</h2>
             <Link href="/admin/orders" className="text-sm font-semibold text-gold-700 hover:text-navy-950">View all</Link>
           </div>
-          <div className="mt-4 divide-y divide-navy-950/10">
+          <div className="mt-4 divide-y divide-line">
             {recentOrders.map((order) => (
               <Link key={order.orderNumber} href={`/admin/orders/${order.orderNumber}`} className="grid gap-2 py-3 text-sm sm:grid-cols-[120px_1fr_120px_120px]">
                 <span className="font-semibold text-navy-950">{order.orderNumber}</span>
