@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/ui/PageHeader";
 import Container from "@/components/ui/Container";
+import { pageMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Privacy Policy | Gifta Guru",
-};
+  description: "How Gifta Guru collects, uses and protects information shared through inquiries, quote requests and orders.",
+  path: "/privacy-policy",
+});
 
 export default function PrivacyPolicyPage() {
   return (

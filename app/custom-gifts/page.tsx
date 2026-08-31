@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import PageHeader from "@/components/ui/PageHeader";
 import CustomGifting from "@/components/home/CustomGifting";
 import HowItWorks from "@/components/home/HowItWorks";
+import { pageMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Custom Corporate Gifts | Gifta Guru",
   description: "Add branding, custom packaging, and personalized messages to your corporate gifts.",
-};
+  path: "/custom-gifts",
+});
 
 export default function CustomGiftsPage() {
   return (

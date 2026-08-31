@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/ui/PageHeader";
 import Container from "@/components/ui/Container";
+import { pageMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Terms and Conditions | Gifta Guru",
-};
+  description: "The terms governing quote requests, orders and bulk gifting purchases placed through Gifta Guru.",
+  path: "/terms-and-conditions",
+});
 
 export default function TermsAndConditionsPage() {
   return (

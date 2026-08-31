@@ -8,27 +8,42 @@ import ProductGallery from "@/components/product/ProductGallery";
 import ProductPurchasePanel from "@/components/product/ProductPurchasePanel";
 import ProductDetailAccordion from "@/components/product/ProductDetailAccordion";
 import AddToCartButton from "@/components/cart/AddToCartButton";
+import JsonLd from "@/components/seo/JsonLd";
 import { getProductBySlug, searchProducts } from "@/lib/data/products";
 import { PERSONALIZATION_MAX_LENGTH } from "@/lib/config/store";
 import { getStoreSettings } from "@/lib/data/store-settings";
 import { DELIVERY_WINDOW } from "@/lib/services/delivery";
 import { formatPrice } from "@/lib/utils";
+import { pageMetadata, truncateDescription } from "@/lib/seo/metadata";
+import { breadcrumbSchema, productSchema } from "@/lib/seo/schema";
 import type { Product } from "@/types";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
-  if (!product) return { title: "Product | Gifta Guru" };
+  if (!product) {
+    // A missing product should read as "not found," not silently invite
+    // Google to index a placeholder title for a URL that 404s.
+    return pageMetadata({
+      title: "Product not found | Gifta Guru",
+      description: "This product is no longer available.",
+      path: `/products/${slug}`,
+      index: false,
+    });
+  }
 
-  return {
+  const description = truncateDescription(
+    product.description || `${product.name}, curated for corporate gifting by Gifta Guru.`,
+  );
+
+  return pageMetadata({
     title: `${product.name} | Gifta Guru`,
-    description: product.description ?? "Premium corporate gifting product by Gifta Guru.",
-    openGraph: {
-      title: product.name,
-      description: product.description ?? undefined,
-      images: product.images[0]?.url ? [product.images[0].url] : undefined,
-    },
-  };
+    description,
+    path: `/products/${product.slug}`,
+    image: product.images[0]?.url,
+    imageAlt: product.images[0]?.alt ?? product.name,
+    type: "website",
+  });
 }
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -51,8 +66,30 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   };
   const related = await searchProducts({ categorySlug: product.categorySlug ?? undefined, limit: 4 });
 
+  const inStock = product.variants.some((variant) => variant.inStock);
+
   return (
     <>
+      <JsonLd
+        data={[
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Shop", path: "/shop" },
+            { name: product.name, path: `/products/${product.slug}` },
+          ]),
+          productSchema({
+            name: product.name,
+            description: product.description || `${product.name}, curated for corporate gifting by Gifta Guru.`,
+            slug: product.slug,
+            images: product.images.map((image) => image.url),
+            sku: product.variants[0]?.sku,
+            price: product.basePrice,
+            inStock,
+            avgRating: product.avgRating || undefined,
+            reviewCount: product.reviewCount,
+          }),
+        ]}
+      />
       <Container className="py-6 pb-28 sm:py-10 lg:pb-16">
         <nav className="type-meta flex flex-wrap items-center gap-2" aria-label="Breadcrumb">
           <Link href="/" className="hover:text-navy-950">Home</Link>

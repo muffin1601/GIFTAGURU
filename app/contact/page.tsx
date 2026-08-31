@@ -5,11 +5,13 @@ import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
 import LeadForm from "@/components/forms/LeadForm";
 import { buildWhatsAppUrl, STORE_CONTACT } from "@/lib/config/store";
+import { pageMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Contact | Gifta Guru",
   description: "Get in touch with the Gifta Guru team for corporate gifting inquiries.",
-};
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (

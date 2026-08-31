@@ -1,5 +1,14 @@
+import type { Metadata } from "next";
 import AuthForm from "@/components/forms/AuthForm";
 import { forgotPasswordAction } from "@/lib/actions/auth";
+import { pageMetadata } from "@/lib/seo/metadata";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Reset Password | Gifta Guru",
+  description: "Request a secure password reset link for your Gifta Guru account.",
+  path: "/forgot-password",
+  index: false,
+});
 
 export default function ForgotPasswordPage() {
   return (

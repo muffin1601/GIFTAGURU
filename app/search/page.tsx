@@ -2,11 +2,25 @@ import type { Metadata } from "next";
 import Container from "@/components/ui/Container";
 import ProductCard from "@/components/ui/ProductCard";
 import { searchProducts } from "@/lib/data/products";
+import { pageMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
-  title: "Search Gifts | Gifta Guru",
-  description: "Search corporate gifting products by name, collection, category, and keyword.",
-};
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}): Promise<Metadata> {
+  const params = await searchParams;
+  // Every ?q= value is a distinct URL with the same template around it --
+  // classic duplicate-content territory, and results aren't unique/valuable
+  // enough to justify indexing each query. Crawlable (so links still work
+  // and pass PageRank to the products listed), never indexed.
+  return pageMetadata({
+    title: "Search Gifts | Gifta Guru",
+    description: "Search corporate gifting products by name, collection, category, and keyword.",
+    path: params.q ? `/search?q=${encodeURIComponent(params.q)}` : "/search",
+    index: false,
+  });
+}
 
 export default async function SearchPage({
   searchParams,

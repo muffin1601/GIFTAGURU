@@ -3,13 +3,15 @@ import Container from "@/components/ui/Container";
 import PageHeader from "@/components/ui/PageHeader";
 import ProductCard from "@/components/ui/ProductCard";
 import { searchProducts } from "@/lib/data/products";
+import { pageMetadata } from "@/lib/seo/metadata";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Shop Corporate Gifts | Gifta Guru",
   description: "Browse premium corporate gifts, joining kits, eco-friendly hampers, and bulk gifting solutions.",
-};
+  path: "/shop",
+});
 
 export default async function ShopPage() {
   const products = await searchProducts({ limit: 24 });

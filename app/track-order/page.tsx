@@ -1,4 +1,12 @@
+import type { Metadata } from "next";
 import Container from "@/components/ui/Container";
+import { pageMetadata } from "@/lib/seo/metadata";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Track Your Order | Gifta Guru",
+  description: "Track the status of your Gifta Guru corporate gifting order using your order number and email.",
+  path: "/track-order",
+});
 
 export default function TrackOrderPage() {
   return (

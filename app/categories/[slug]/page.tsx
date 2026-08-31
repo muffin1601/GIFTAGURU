@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import Container from "@/components/ui/Container";
 import ProductCard from "@/components/ui/ProductCard";
 import Button from "@/components/ui/Button";
+import JsonLd from "@/components/seo/JsonLd";
 import { categories } from "@/data/categories";
 import { getCollectionBySlug } from "@/lib/data/collections";
 import { getProductsByCollection } from "@/lib/data/products";
+import { pageMetadata, truncateDescription } from "@/lib/seo/metadata";
+import { breadcrumbSchema } from "@/lib/seo/schema";
 
 export const dynamic = "force-dynamic";
 
@@ -21,11 +25,22 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const category = await getCollectionBySlug(slug);
-  if (!category) return {};
-  return {
+  if (!category) {
+    return pageMetadata({
+      title: "Collection not found | Gifta Guru",
+      description: "This collection is no longer available.",
+      path: `/categories/${slug}`,
+      index: false,
+    });
+  }
+
+  return pageMetadata({
     title: `${category.name} | Gifta Guru`,
-    description: category.description,
-  };
+    description: truncateDescription(category.description || category.tagline || `${category.name} corporate gifts, curated by Gifta Guru.`),
+    path: `/categories/${category.slug}`,
+    image: category.image,
+    imageAlt: category.name,
+  });
 }
 
 export default async function CategoryPage({
@@ -41,8 +56,24 @@ export default async function CategoryPage({
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Categories", path: "/categories" },
+          { name: category.name, path: `/categories/${category.slug}` },
+        ])}
+      />
       <section className="border-b border-line">
-        <Container className="grid items-center gap-10 py-14 sm:py-16 lg:grid-cols-[1fr_auto] lg:gap-16">
+        <Container className="pt-6 sm:pt-8">
+          <nav className="type-meta flex flex-wrap items-center gap-2" aria-label="Breadcrumb">
+            <Link href="/" className="hover:text-navy-950">Home</Link>
+            <span aria-hidden="true">/</span>
+            <Link href="/categories" className="hover:text-navy-950">Categories</Link>
+            <span aria-hidden="true">/</span>
+            <span className="text-navy-950">{category.name}</span>
+          </nav>
+        </Container>
+        <Container className="grid items-center gap-10 pb-14 pt-6 sm:pb-16 lg:grid-cols-[1fr_auto] lg:gap-16">
           <div className="max-w-2xl">
             <span className="type-eyebrow">{category.name}</span>
             <h1 className="type-h1 mt-4">{category.tagline}</h1>

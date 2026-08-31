@@ -2,11 +2,19 @@ import type { Metadata } from "next";
 import PageHeader from "@/components/ui/PageHeader";
 import LeadForm from "@/components/forms/LeadForm";
 import FAQ from "@/components/home/FAQ";
+import { pageMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
+// This file's default export and metadata are re-exported verbatim at
+// /bulk-enquiry (see app/bulk-enquiry/page.tsx) -- same component, same
+// content, two URLs. Rather than duplicate content across both, the
+// canonical always points at /bulk-enquiry, which is the URL actually linked
+// from navigation and CTAs sitewide; /bulk-orders remains reachable (nothing
+// that links to it breaks) but tells Google the content lives at the other URL.
+export const metadata: Metadata = pageMetadata({
   title: "Bulk Orders | Gifta Guru",
   description: "Request a quote for bulk corporate gifting orders, delivered pan-India.",
-};
+  path: "/bulk-enquiry",
+});
 
 export default async function BulkOrdersPage({
   searchParams,

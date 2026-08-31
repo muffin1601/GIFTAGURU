@@ -1,5 +1,18 @@
+import type { Metadata } from "next";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
+import { pageMetadata } from "@/lib/seo/metadata";
+
+export function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  return params.then(({ id }) =>
+    pageMetadata({
+      title: "Order Received | Gifta Guru",
+      description: "Your Gifta Guru order confirmation.",
+      path: `/order-confirmation/${id}`,
+      index: false,
+    }),
+  );
+}
 
 export default async function OrderConfirmationPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

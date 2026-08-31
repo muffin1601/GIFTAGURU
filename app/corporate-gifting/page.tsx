@@ -3,11 +3,13 @@ import PageHeader from "@/components/ui/PageHeader";
 import CorporateSolutions from "@/components/home/CorporateSolutions";
 import HowItWorks from "@/components/home/HowItWorks";
 import BulkOrderCTA from "@/components/home/BulkOrderCTA";
+import { pageMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Corporate Gifting Solutions | Gifta Guru",
   description: "Gifting programs for onboarding, appreciation, client relationships, and events.",
-};
+  path: "/corporate-gifting",
+});
 
 export default function CorporateGiftingPage() {
   return (

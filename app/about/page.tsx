@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import PageHeader from "@/components/ui/PageHeader";
 import WhyChooseUs from "@/components/home/WhyChooseUs";
 import Testimonials from "@/components/home/Testimonials";
+import { pageMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "About Us | Gifta Guru",
   description: "Gifta Guru is a premium corporate gifting platform for businesses across India.",
-};
+  path: "/about",
+});
 
 export default function AboutPage() {
   return (

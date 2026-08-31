@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Heart, MapPin, Package, ShieldCheck, UserRound } from "lucide-react";
@@ -7,6 +8,16 @@ import { logoutAction } from "@/lib/actions/auth";
 import { isSupabaseConfigured } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 import { getAdminSession } from "@/lib/auth/admin";
+import { pageMetadata } from "@/lib/seo/metadata";
+
+// Also blocked in robots.txt (the whole /account tree) -- this noindex is
+// belt-and-suspenders for any renderer that ignores robots.txt.
+export const metadata: Metadata = pageMetadata({
+  title: "My Account | Gifta Guru",
+  description: "Manage your Gifta Guru account, orders, addresses and wishlist.",
+  path: "/account",
+  index: false,
+});
 
 export default async function AccountPage() {
   if (!isSupabaseConfigured()) {

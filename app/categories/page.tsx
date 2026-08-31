@@ -3,13 +3,15 @@ import PageHeader from "@/components/ui/PageHeader";
 import Container from "@/components/ui/Container";
 import CategoryCard from "@/components/ui/CategoryCard";
 import { getFeaturedCollectionsAsCategories } from "@/lib/data/collections";
+import { pageMetadata } from "@/lib/seo/metadata";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Gift Categories | Gifta Guru",
   description: "Browse eco, joining, luxury, and premium corporate gifting collections.",
-};
+  path: "/categories",
+});
 
 export default async function CategoriesPage() {
   const categories = await getFeaturedCollectionsAsCategories();
