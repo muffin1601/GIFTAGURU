@@ -32,7 +32,10 @@ export async function signupAction(_state: AuthState, formData: FormData): Promi
     password: parsed.data.password,
     options: {
       data: { full_name: parsed.data.fullName },
-      redirectTo: `${siteUrl()}/account`,
+      // Supabase's verify endpoint hands the session back as a URL hash
+      // fragment, which only a client-rendered page can read -- see
+      // app/auth/callback for why this can't point straight at /account.
+      redirectTo: `${siteUrl()}/auth/callback?next=/account`,
     },
   });
   if (error) return { error: error.message };
@@ -48,7 +51,10 @@ export async function forgotPasswordAction(_state: AuthState, formData: FormData
   const email = String(formData.get("email") ?? "");
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.SITE_URL ?? "http://localhost:3000"}/reset-password`,
+    // Same hash-fragment handoff as signup -- /reset-password calls
+    // updateUser() server-side, which needs a session cookie to already
+    // exist, so the reset link has to pass through /auth/callback first.
+    redirectTo: `${siteUrl()}/auth/callback?next=/reset-password`,
   });
   if (error) return { error: error.message };
   return { success: "Password reset instructions have been sent." };

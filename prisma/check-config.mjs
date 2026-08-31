@@ -21,6 +21,8 @@ const placeholder = (value) => !value || value.includes("USER:PASSWORD@HOST");
 check("SUPABASE_URL", Boolean(process.env.SUPABASE_URL), "Project Settings -> API");
 check("SUPABASE_ANON_KEY", Boolean(process.env.SUPABASE_ANON_KEY), "Project Settings -> API");
 check("SUPABASE_SERVICE_ROLE_KEY", Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY), "Server-only key; enables logo uploads");
+check("NEXT_PUBLIC_SUPABASE_URL", Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL), "Required by /auth/callback (signup/reset confirmation)");
+check("NEXT_PUBLIC_SUPABASE_ANON_KEY", Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY), "Required by /auth/callback (signup/reset confirmation)");
 check("DATABASE_URL", !placeholder(process.env.DATABASE_URL), "Pooled Postgres URL");
 check("DIRECT_URL", !placeholder(process.env.DIRECT_URL), "Direct Postgres URL for migrations");
 check("RAZORPAY_KEY_ID", Boolean(process.env.RAZORPAY_KEY_ID), "Checkout is disabled without it");
