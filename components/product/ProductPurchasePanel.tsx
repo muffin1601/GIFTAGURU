@@ -7,7 +7,7 @@ import { Loader2, MessageCircle, Minus, Plus, Upload, X } from "lucide-react";
 import type { Product } from "@/types";
 import { useCart } from "@/components/cart/CartProvider";
 import { PERSONALIZATION_MAX_LENGTH, buildWhatsAppUrl } from "@/lib/config/store";
-import { checkDeliveryAvailability, DELIVERY_WINDOW } from "@/lib/services/delivery";
+import { checkDeliveryAvailability } from "@/lib/services/delivery";
 import { formatPrice } from "@/lib/utils";
 import { resolveUnitPrice } from "@/lib/pricing";
 import ProductEnquiryButton from "@/components/lead/ProductEnquiryButton";
@@ -20,7 +20,14 @@ interface UploadedLogo {
 
 export default function ProductPurchasePanel({ product }: { product: Product }) {
   const router = useRouter();
-  const { addItem, giftWrapPrice, minOrderQuantity, minOrderQuantityMessage } = useCart();
+  const {
+    addItem,
+    giftWrapPrice,
+    minOrderQuantity,
+    minOrderQuantityMessage,
+    shippingMessage,
+    shippingTimeline,
+  } = useCart();
   const minimumQuantity = Math.max(product.minQuantity, minOrderQuantity);
   const [quantity, setQuantity] = useState(minimumQuantity);
   const [personalizationText, setPersonalizationText] = useState("");
@@ -29,7 +36,9 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
   const [logoState, setLogoState] = useState<"idle" | "uploading" | "success" | "error">("idle");
   const [logoError, setLogoError] = useState<string | null>(null);
   const [pinCode, setPinCode] = useState("");
-  const [deliveryMessage, setDeliveryMessage] = useState(DELIVERY_WINDOW);
+  // Before a PIN is checked, show the general timeline; checkDeliveryAvailability
+  // below builds the fuller "<shippingMessage>. <shippingTimeline>." message.
+  const [deliveryMessage, setDeliveryMessage] = useState(shippingTimeline);
   const [cartMessage, setCartMessage] = useState<string | null>(null);
   const validQuantity = quantity >= minimumQuantity;
   const whatsappHref = buildWhatsAppUrl(
@@ -215,7 +224,9 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
           />
           <button
             type="button"
-            onClick={() => setDeliveryMessage(checkDeliveryAvailability(pinCode).message)}
+            onClick={() =>
+              setDeliveryMessage(checkDeliveryAvailability(pinCode, shippingMessage, shippingTimeline).message)
+            }
             className="btn btn-secondary shrink-0"
           >
             Check

@@ -76,7 +76,12 @@ export default function Hero() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="relative aspect-[16/9] w-full sm:aspect-[21/9] lg:aspect-[2.75/1]">
+      {/* On mobile the image gets its own box and the copy sits below it in
+          normal flow on plain ground -- overlaying a full headline + body +
+          two buttons on top of a photo never had room to breathe in a 16:9
+          strip a few hundred pixels tall. From sm upward there's enough
+          width for the original overlay-on-banner treatment. */}
+      <div className="relative aspect-[4/5] w-full sm:aspect-[21/9] lg:aspect-[2.75/1]">
         <div
           className="flex h-full transition-transform duration-700 ease-in-out"
           style={{
@@ -99,14 +104,16 @@ export default function Hero() {
           ))}
         </div>
 
-        {/* Copy sits directly on each banner's plain left-hand ground -- no
-            overlay needed since every slide keeps that area clear. */}
-        <div className="absolute inset-0 flex items-center">
+        {/* Copy sits directly on each banner's plain left-hand ground on
+            larger screens -- no overlay needed since every slide keeps that
+            area clear. Hidden here on mobile; the in-flow block below the
+            image takes over instead. */}
+        <div className="absolute inset-0 hidden items-center sm:flex">
           <div className="mx-auto w-full max-w-[84rem] px-5 sm:px-8 lg:px-12">
             <div className="max-w-xl">
               <span className="type-eyebrow text-gold-600">{active.eyebrow}</span>
               <h1 className="type-h1 mt-3 text-navy-950 sm:mt-4">{active.title}</h1>
-              <p className="type-lead mt-3 hidden text-ink-600 sm:block">{active.description}</p>
+              <p className="type-lead mt-3 text-ink-600">{active.description}</p>
 
               <div className="mt-6 flex flex-wrap gap-3">
                 <Button href={active.href} variant="primary">
@@ -152,6 +159,41 @@ export default function Hero() {
                 index === activeIndex ? "w-6 bg-gold-400" : "w-2 bg-cream-100/50 hover:bg-cream-100/80",
               )}
             />
+          ))}
+        </div>
+      </div>
+
+      {/* Mobile-only copy block, in normal document flow below the image. */}
+      <div className="px-5 py-8 sm:hidden">
+        <span className="type-eyebrow text-gold-600">{active.eyebrow}</span>
+        <h1 className="type-h1 mt-3 text-navy-950">{active.title}</h1>
+        <p className="type-lead mt-3 text-ink-600">{active.description}</p>
+
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Button href={active.href} variant="primary">
+            Explore Collection
+          </Button>
+          <Button href="/bulk-enquiry" variant="secondary">
+            Request a Quote
+          </Button>
+        </div>
+
+        <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-line pt-5">
+          {slides.map((slide, index) => (
+            <button
+              key={slide.href}
+              type="button"
+              onClick={() => goTo(index)}
+              aria-current={index === activeIndex}
+              className={cn(
+                "border-b pb-1 text-xs font-semibold uppercase tracking-[0.1em] transition-colors duration-200",
+                index === activeIndex
+                  ? "border-gold-500 text-navy-950"
+                  : "border-transparent text-ink-500 hover:text-navy-950",
+              )}
+            >
+              {slide.label}
+            </button>
           ))}
         </div>
       </div>

@@ -1,10 +1,14 @@
-export const DELIVERY_WINDOW = "Ships within 10-15 days";
-
 export function isValidIndianPinCode(pinCode: string): boolean {
   return /^[1-9][0-9]{5}$/.test(pinCode.trim());
 }
 
-export function checkDeliveryAvailability(pinCode: string) {
+/**
+ * `shippingMessage`/`shippingTimeline` come from live store settings
+ * (lib/data/store-settings.ts, editable at /admin/settings) rather than
+ * hardcoded strings here, so an admin editing either field actually changes
+ * what a customer sees after checking their PIN code.
+ */
+export function checkDeliveryAvailability(pinCode: string, shippingMessage: string, shippingTimeline: string) {
   const normalizedPinCode = pinCode.trim();
 
   if (!isValidIndianPinCode(normalizedPinCode)) {
@@ -17,7 +21,7 @@ export function checkDeliveryAvailability(pinCode: string) {
 
   return {
     available: true,
-    message: `Delivery available across India. ${DELIVERY_WINDOW}.`,
+    message: `${shippingMessage}. ${shippingTimeline}.`,
     pinCode: normalizedPinCode,
   };
 }

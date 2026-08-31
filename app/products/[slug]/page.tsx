@@ -12,7 +12,6 @@ import JsonLd from "@/components/seo/JsonLd";
 import { getProductBySlug, searchProducts } from "@/lib/data/products";
 import { PERSONALIZATION_MAX_LENGTH } from "@/lib/config/store";
 import { getStoreSettings } from "@/lib/data/store-settings";
-import { DELIVERY_WINDOW } from "@/lib/services/delivery";
 import { formatPrice } from "@/lib/utils";
 import { pageMetadata, truncateDescription } from "@/lib/seo/metadata";
 import { breadcrumbSchema, productSchema } from "@/lib/seo/schema";
@@ -187,7 +186,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
         <div className="mt-16 grid gap-x-12 gap-y-8 border-t border-line pt-10 sm:grid-cols-3">
           {[
-            { title: "Estimated delivery", copy: DELIVERY_WINDOW, Icon: Clock },
+            { title: "Estimated delivery", copy: settings.shippingTimeline, Icon: Clock },
             { title: "Secure fulfilment", copy: "Server-side pricing and payment verification.", Icon: ShieldCheck },
             { title: "Bulk support", copy: "Dedicated assistance for custom quantities and packaging.", Icon: PackageCheck },
           ].map(({ title, copy, Icon }) => (
@@ -243,7 +242,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                   title: "Shipping & Returns",
                   content: (
                     <div className="space-y-3">
-                      <p>{DELIVERY_WINDOW}. Final shipping charges are calculated securely at checkout based on your delivery address and order size.</p>
+                      <p>{settings.shippingTimeline}. Final shipping charges are calculated securely at checkout based on your delivery address and order size.</p>
                       <p>Customized and personalized orders are made to your specification and are not eligible for return once production has started. Contact our team before placing a bulk order if you have questions.</p>
                     </div>
                   ),
