@@ -297,7 +297,7 @@ export async function createCouponAction(_state: { error?: string; success?: str
 // to price checkout server-side (or shown as informational shipping copy).
 // Previously this list also included store_name/contact_phone/whatsapp_number/
 // support_email, which nothing ever read -- the form silently discarded them.
-const NUMERIC_STORE_SETTINGS = ["minimum_quantity", "gift_wrap_price", "free_shipping_threshold", "shipping_charge"];
+const NUMERIC_STORE_SETTINGS = ["minimum_quantity", "gift_wrap_price", "free_shipping_threshold", "shipping_charge", "gst_rate_percent"];
 const TEXT_STORE_SETTINGS = ["shipping_message", "shipping_timeline"];
 
 export async function updateStoreSettingsAction(_state: { error?: string; success?: string }, formData: FormData) {

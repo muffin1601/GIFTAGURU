@@ -27,8 +27,27 @@ declare global {
 
 export default function CheckoutClient() {
   const router = useRouter();
-  const { items, merchandiseSubtotal, giftWrapTotal, subtotal, giftWrapPrice, minOrderQuantityMessage, clearCart } =
-    useCart();
+  const {
+    items,
+    merchandiseSubtotal,
+    giftWrapTotal,
+    subtotal,
+    giftWrapPrice,
+    minOrderQuantityMessage,
+    freeShippingThreshold,
+    shippingCharge,
+    gstRatePercent,
+    clearCart,
+  } = useCart();
+
+  // Mirrors the exact calculation in app/api/razorpay/create-order/route.ts
+  // (same settings source, same formula, same rounding) so the number shown
+  // here before payment matches what the server actually charges to the
+  // rupee -- this is a preview of the authoritative total, not a separate
+  // estimate that could drift from it.
+  const shippingTotal = subtotal >= freeShippingThreshold ? 0 : shippingCharge;
+  const gstTotal = Math.round((subtotal * gstRatePercent) / 100);
+  const grandTotal = subtotal + shippingTotal + gstTotal;
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -238,17 +257,30 @@ export default function CheckoutClient() {
               <dt className="text-ink-700">Merchandise</dt>
               <dd className="text-navy-950">{formatPrice(merchandiseSubtotal)}</dd>
             </div>
+            {giftWrapTotal > 0 ? (
+              <div className="flex justify-between gap-4 py-2">
+                <dt className="text-ink-700">Gift wrap</dt>
+                <dd className="text-navy-950">{formatPrice(giftWrapTotal)}</dd>
+              </div>
+            ) : null}
             <div className="flex justify-between gap-4 py-2">
-              <dt className="text-ink-700">Gift wrap</dt>
-              <dd className="text-navy-950">{formatPrice(giftWrapTotal)}</dd>
+              <dt className="text-ink-700">Shipping</dt>
+              <dd className="text-navy-950">
+                {shippingTotal > 0 ? formatPrice(shippingTotal) : "Free"}
+              </dd>
+            </div>
+            <div className="flex justify-between gap-4 py-2">
+              <dt className="text-ink-700">GST ({gstRatePercent}%)</dt>
+              <dd className="text-navy-950">{formatPrice(gstTotal)}</dd>
             </div>
             <div className="mt-2 flex justify-between gap-4 border-t border-line pt-4">
-              <dt className="font-semibold text-navy-950">Subtotal</dt>
-              <dd className="font-display text-xl text-navy-950">{formatPrice(subtotal)}</dd>
+              <dt className="font-semibold text-navy-950">Total</dt>
+              <dd className="font-display text-xl text-navy-950">{formatPrice(grandTotal)}</dd>
             </div>
           </dl>
           <p className="type-meta mt-3">
-            Final shipping, GST, discounts and payment status are verified server-side.
+            Discounts and payment status are verified server-side. Shipping updates if your order
+            crosses the free-shipping threshold after any changes to your cart.
           </p>
 
           <div className="mt-8 border-t border-line pt-6">

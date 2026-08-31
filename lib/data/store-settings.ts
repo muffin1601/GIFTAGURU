@@ -16,7 +16,11 @@ export interface StoreSettings {
   shippingCharge: number;
   shippingMessage: string;
   shippingTimeline: string;
+  /** Whole-number percentage, e.g. 18 for 18% GST -- not a 0-1 fraction. */
+  gstRatePercent: number;
 }
+
+const DEFAULT_GST_RATE_PERCENT = 18;
 
 const DEFAULTS: StoreSettings = {
   minOrderQuantity: DEFAULT_MIN_ORDER_QUANTITY,
@@ -26,6 +30,7 @@ const DEFAULTS: StoreSettings = {
   shippingCharge: DEFAULT_SHIPPING_CHARGE,
   shippingMessage: "Delivery available across India",
   shippingTimeline: "Ships within 10-15 days",
+  gstRatePercent: DEFAULT_GST_RATE_PERCENT,
 };
 
 /**
@@ -44,7 +49,7 @@ export const getStoreSettings = cache(async (): Promise<StoreSettings> => {
 
   try {
     const rows = await prisma.storeSetting.findMany({
-      where: { key: { in: ["minimum_quantity", "gift_wrap_price", "free_shipping_threshold", "shipping_charge", "shipping_message", "shipping_timeline"] } },
+      where: { key: { in: ["minimum_quantity", "gift_wrap_price", "free_shipping_threshold", "shipping_charge", "shipping_message", "shipping_timeline", "gst_rate_percent"] } },
     });
     const values = Object.fromEntries(rows.map((row) => [row.key, row.value]));
 
@@ -52,6 +57,7 @@ export const getStoreSettings = cache(async (): Promise<StoreSettings> => {
     const giftWrapPrice = toNonNegativeNumber(values.gift_wrap_price, DEFAULTS.giftWrapPrice);
     const freeShippingThreshold = toNonNegativeNumber(values.free_shipping_threshold, DEFAULTS.freeShippingThreshold);
     const shippingCharge = toNonNegativeNumber(values.shipping_charge, DEFAULTS.shippingCharge);
+    const gstRatePercent = toNonNegativeNumber(values.gst_rate_percent, DEFAULTS.gstRatePercent);
 
     return {
       minOrderQuantity,
@@ -61,6 +67,7 @@ export const getStoreSettings = cache(async (): Promise<StoreSettings> => {
       shippingCharge,
       shippingMessage: toText(values.shipping_message, DEFAULTS.shippingMessage),
       shippingTimeline: toText(values.shipping_timeline, DEFAULTS.shippingTimeline),
+      gstRatePercent,
     };
   } catch {
     // Unreachable database: fall back to defaults rather than break checkout.

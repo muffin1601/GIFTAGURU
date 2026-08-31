@@ -122,7 +122,7 @@ export async function POST(request: Request) {
 
   const subtotal = lineItems.reduce((sum, item) => sum + item.lineTotal, 0);
   const shippingTotal = subtotal >= settings.freeShippingThreshold ? 0 : settings.shippingCharge;
-  const taxTotal = Math.round(subtotal * 0.18);
+  const taxTotal = Math.round((subtotal * settings.gstRatePercent) / 100);
   const total = subtotal + shippingTotal + taxTotal;
 
   const dbOrder = await prisma.$transaction(async (tx) => {

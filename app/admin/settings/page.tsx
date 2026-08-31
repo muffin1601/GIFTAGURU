@@ -34,6 +34,10 @@ export default async function AdminSettingsPage() {
             Shipping charge below threshold (INR)
             <AdminInput name="shipping_charge" type="number" min={0} step="0.01" required defaultValue={settings.shippingCharge} />
           </label>
+          <label className="space-y-1 text-sm font-medium text-navy-950">
+            GST rate (%)
+            <AdminInput name="gst_rate_percent" type="number" min={0} max={100} step="0.01" required defaultValue={settings.gstRatePercent} />
+          </label>
           <label className="space-y-1 text-sm font-medium text-navy-950 md:col-span-2">
             Shipping message (shown on the product page)
             <AdminInput name="shipping_message" defaultValue={settings.shippingMessage} />

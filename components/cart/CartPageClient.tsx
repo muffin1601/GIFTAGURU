@@ -17,10 +17,20 @@ export default function CartPageClient() {
     subtotal,
     giftWrapPrice,
     minOrderQuantityMessage,
+    freeShippingThreshold,
+    shippingCharge,
+    gstRatePercent,
     updateQuantity,
     removeItem,
   } = useCart();
   const [quantityMessage, setQuantityMessage] = useState<string | null>(null);
+
+  // Same formula as checkout and the server order route -- shipping and GST
+  // only depend on the merchandise+gift-wrap subtotal, not the address, so
+  // there's no reason to make the shopper wait until checkout to see them.
+  const shippingTotal = subtotal >= freeShippingThreshold ? 0 : shippingCharge;
+  const gstTotal = Math.round((subtotal * gstRatePercent) / 100);
+  const grandTotal = subtotal + shippingTotal + gstTotal;
 
   if (items.length === 0) {
     return (
@@ -136,9 +146,9 @@ export default function CartPageClient() {
           <dl className="mt-5 border-t border-line text-sm">
             {[
               ["Merchandise", formatPrice(merchandiseSubtotal)],
-              ["Gift wrap", formatPrice(giftWrapTotal)],
-              ["Shipping", "Calculated after address"],
-              ["GST", "Calculated at checkout"],
+              ...(giftWrapTotal > 0 ? [["Gift wrap", formatPrice(giftWrapTotal)]] : []),
+              ["Shipping", shippingTotal > 0 ? formatPrice(shippingTotal) : "Free"],
+              [`GST (${gstRatePercent}%)`, formatPrice(gstTotal)],
             ].map(([term, value]) => (
               <div key={term} className="flex justify-between gap-4 border-b border-line py-3">
                 <dt className="text-ink-700">{term}</dt>
@@ -146,8 +156,8 @@ export default function CartPageClient() {
               </div>
             ))}
             <div className="flex justify-between gap-4 py-4">
-              <dt className="font-semibold text-navy-950">Estimated total</dt>
-              <dd className="font-display text-xl text-navy-950">{formatPrice(subtotal)}</dd>
+              <dt className="font-semibold text-navy-950">Total</dt>
+              <dd className="font-display text-xl text-navy-950">{formatPrice(grandTotal)}</dd>
             </div>
           </dl>
 
