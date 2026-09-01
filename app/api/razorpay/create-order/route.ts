@@ -42,6 +42,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Enter a valid 6-digit Indian PIN code." }, { status: 400 });
   }
 
+  const billingSameAsShipping = text(checkout.billingSameAsShipping) !== "false";
+  const billingPostalCode = billingSameAsShipping ? postalCode : text(checkout.billingPostalCode);
+
+  if (billingPostalCode && !isValidIndianPinCode(billingPostalCode)) {
+    return NextResponse.json({ error: "Enter a valid 6-digit Indian PIN code for the billing address." }, { status: 400 });
+  }
+
   // Authoritative: whatever admin has configured in /admin/settings, not the
   // bundled defaults, governs what the customer is actually charged.
   const settings = await getStoreSettings();
@@ -151,9 +158,27 @@ export async function POST(request: Request) {
           postalCode: text(checkout.postalCode),
           country: "IN",
         },
-        billingAddress: {
-          company: text(checkout.company),
-        },
+        billingAddress: billingSameAsShipping
+          ? {
+              name: text(checkout.name),
+              company: text(checkout.company),
+              phone: text(checkout.phone),
+              line1: text(checkout.address),
+              city: text(checkout.city),
+              state: text(checkout.state),
+              postalCode: text(checkout.postalCode),
+              country: "IN",
+            }
+          : {
+              name: text(checkout.billingName),
+              company: text(checkout.company),
+              phone: text(checkout.phone),
+              line1: text(checkout.billingAddress),
+              city: text(checkout.billingCity),
+              state: text(checkout.billingState),
+              postalCode: billingPostalCode,
+              country: "IN",
+            },
         subtotal,
         shippingTotal,
         taxTotal,

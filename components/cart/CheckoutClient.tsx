@@ -50,6 +50,7 @@ export default function CheckoutClient() {
   const grandTotal = subtotal + shippingTotal + gstTotal;
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [billingSameAsShipping, setBillingSameAsShipping] = useState(true);
 
   async function submitCheckout(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -58,6 +59,9 @@ export default function CheckoutClient() {
 
     const formData = new FormData(event.currentTarget);
     const postalCode = String(formData.get("postalCode") ?? "");
+    const billingPostalCode = billingSameAsShipping
+      ? postalCode
+      : String(formData.get("billingPostalCode") ?? "");
 
     if (items.some((item) => item.quantity < item.minQuantity)) {
       setError(minOrderQuantityMessage);
@@ -69,6 +73,22 @@ export default function CheckoutClient() {
       setError("Enter a valid 6-digit Indian PIN code.");
       setPending(false);
       return;
+    }
+
+    if (!billingSameAsShipping && !isValidIndianPinCode(billingPostalCode)) {
+      setError("Enter a valid 6-digit Indian PIN code for the billing address.");
+      setPending(false);
+      return;
+    }
+
+    const checkout = Object.fromEntries(formData) as Record<string, FormDataEntryValue>;
+    checkout.billingSameAsShipping = billingSameAsShipping ? "true" : "false";
+    if (billingSameAsShipping) {
+      checkout.billingName = String(formData.get("name") ?? "");
+      checkout.billingAddress = String(formData.get("address") ?? "");
+      checkout.billingCity = String(formData.get("city") ?? "");
+      checkout.billingState = String(formData.get("state") ?? "");
+      checkout.billingPostalCode = postalCode;
     }
 
     const response = await fetch("/api/razorpay/create-order", {
@@ -83,7 +103,7 @@ export default function CheckoutClient() {
           logoFileName,
           giftWrap,
         })),
-        checkout: Object.fromEntries(formData),
+        checkout,
       }),
     });
     const payload = (await response.json()) as {
@@ -211,6 +231,46 @@ export default function CheckoutClient() {
                 <label className="field-label" htmlFor="state">State</label>
                 <input required id="state" name="state" autoComplete="address-level1" className="field-input" />
               </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="type-eyebrow">Billing address</h2>
+            <div className="mt-5 border-t border-line pt-6">
+              <label className="flex items-center gap-2 text-sm text-ink-700">
+                <input
+                  type="checkbox"
+                  checked={billingSameAsShipping}
+                  onChange={(event) => setBillingSameAsShipping(event.target.checked)}
+                  className="h-4 w-4"
+                />
+                Same as shipping address
+              </label>
+
+              {!billingSameAsShipping ? (
+                <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                  <div className="field">
+                    <label className="field-label" htmlFor="billingName">Billing name</label>
+                    <input required id="billingName" name="billingName" autoComplete="name" className="field-input" />
+                  </div>
+                  <div className="field">
+                    <label className="field-label" htmlFor="billingPostalCode">PIN code</label>
+                    <input required id="billingPostalCode" name="billingPostalCode" inputMode="numeric" autoComplete="postal-code" className="field-input" />
+                  </div>
+                  <div className="field sm:col-span-2">
+                    <label className="field-label" htmlFor="billingAddress">Address</label>
+                    <input required id="billingAddress" name="billingAddress" autoComplete="street-address" className="field-input" />
+                  </div>
+                  <div className="field">
+                    <label className="field-label" htmlFor="billingCity">City</label>
+                    <input required id="billingCity" name="billingCity" autoComplete="address-level2" className="field-input" />
+                  </div>
+                  <div className="field">
+                    <label className="field-label" htmlFor="billingState">State</label>
+                    <input required id="billingState" name="billingState" autoComplete="address-level1" className="field-input" />
+                  </div>
+                </div>
+              ) : null}
             </div>
           </section>
 
