@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase/client";
+import { claimGuestCartAction } from "@/lib/actions/cart";
 
 /**
  * Supabase's hosted email-confirmation and password-reset links verify the
@@ -37,6 +38,7 @@ function AuthCallback() {
 
     async function confirm() {
       const next = searchParams.get("next") || "/account";
+      const isConfirmFlow = searchParams.get("flow") === "confirm";
       const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
       const accessToken = hash.get("access_token");
       const refreshToken = hash.get("refresh_token");
@@ -51,6 +53,17 @@ function AuthCallback() {
         setError(hashError.replace(/\+/g, " "));
         return;
       }
+
+      // Email confirmation: Supabase's verify endpoint already marked the
+      // address confirmed before redirecting here, so the tokens in the
+      // fragment are surplus -- deliberately left unconsumed so the customer
+      // arrives at the login page signed out, rather than being signed in and
+      // then back out again. Their guest cart is merged when they log in.
+      if (isConfirmFlow) {
+        router.replace(`/login?confirmed=1&next=${encodeURIComponent(next)}`);
+        return;
+      }
+
       if (!accessToken || !refreshToken) {
         setError("This confirmation link is missing or has already been used.");
         return;
@@ -67,6 +80,13 @@ function AuthCallback() {
         setError(sessionError.message);
         return;
       }
+
+      // The session cookie now exists, so the server can see who this is and
+      // fold in any cart built before confirming. Awaited so the destination
+      // renders with the merged cart rather than briefly showing it empty.
+      await claimGuestCartAction();
+      if (cancelled) return;
+
       router.replace(next);
     }
 

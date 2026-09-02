@@ -86,14 +86,48 @@ export async function sendTransactionalEmail(input: SendEmailInput) {
   }
 }
 
-export async function sendSignupConfirmationEmail(email: string, confirmationUrl: string) {
+export const SIGNUP_CONFIRMATION_TYPE = "signup_confirmation";
+
+/**
+ * `sendTransactionalEmail` short-circuits on an already-"sent" eventKey, which
+ * is correct for order mail (one receipt per order) but fatal for confirmation
+ * mail: with a fixed key of `signup:<email>:confirm`, every resend after the
+ * first was silently swallowed. Each attempt therefore gets its own key, and
+ * abuse is bounded by `confirmationEmailCooldownRemaining` instead.
+ */
+export async function sendSignupConfirmationEmail(
+  email: string,
+  confirmationUrl: string,
+  attemptKey: string = "initial",
+) {
   return sendTransactionalEmail({
-    eventKey: `signup:${email}:confirm`,
-    type: "signup_confirmation",
+    eventKey: `signup:${email}:confirm:${attemptKey}`,
+    type: SIGNUP_CONFIRMATION_TYPE,
     to: email,
     subject: "Confirm your Gifta Guru account",
     html: confirmSignupEmailTemplate(confirmationUrl),
   });
+}
+
+/**
+ * Per-address throttle for confirmation resends, measured against the last
+ * attempt we actually recorded. Supabase rate-limits its own mailer, but this
+ * project sends through Resend, so the ceiling has to live here.
+ *
+ * Returns the seconds remaining before another send is allowed, or 0.
+ */
+export async function confirmationEmailCooldownRemaining(email: string, windowSeconds = 60) {
+  const last = await prisma.emailEvent
+    .findFirst({
+      where: { recipient: email, type: SIGNUP_CONFIRMATION_TYPE },
+      orderBy: { createdAt: "desc" },
+      select: { createdAt: true },
+    })
+    .catch(() => null);
+
+  if (!last) return 0;
+  const elapsed = (Date.now() - last.createdAt.getTime()) / 1000;
+  return elapsed >= windowSeconds ? 0 : Math.ceil(windowSeconds - elapsed);
 }
 
 export async function sendOrderReceivedEmail(orderId: string) {

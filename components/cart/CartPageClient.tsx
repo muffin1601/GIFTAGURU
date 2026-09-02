@@ -22,6 +22,8 @@ export default function CartPageClient() {
     gstRatePercent,
     updateQuantity,
     removeItem,
+    pending,
+    error,
   } = useCart();
   const [quantityMessage, setQuantityMessage] = useState<string | null>(null);
 
@@ -60,10 +62,9 @@ export default function CartPageClient() {
         <section aria-label="Cart items">
           <div className="border-t border-line">
             {items.map((item) => (
-              <div
-                key={`${item.id}-${item.personalizationText ?? ""}-${item.logoUrl ?? ""}-${item.giftWrap ? "wrap" : "plain"}`}
-                className="grid gap-5 border-b border-line py-6 sm:grid-cols-[96px_1fr_auto]"
-              >
+              // The cart-line id, not the product id: the same product can
+              // legitimately occupy several lines with different personalization.
+              <div key={item.lineId} className="grid gap-5 border-b border-line py-6 sm:grid-cols-[96px_1fr_auto]">
                 <Link
                   href={`/products/${item.slug}`}
                   className="relative aspect-square overflow-hidden border border-line bg-surface"
@@ -93,6 +94,11 @@ export default function CartPageClient() {
                   <p className="mt-2.5 text-sm font-semibold text-navy-950">
                     {formatPrice(cartItemUnitPrice(item))} / unit
                   </p>
+                  {item.exceedsStock ? (
+                    <p role="status" className="field-error mt-1.5 text-xs">
+                      Only {item.maxQuantity} in stock — reduce the quantity to check out.
+                    </p>
+                  ) : null}
                 </div>
 
                 <div className="flex items-center justify-between gap-4 sm:flex-col sm:items-end sm:justify-start">
@@ -100,11 +106,12 @@ export default function CartPageClient() {
                     <button
                       type="button"
                       aria-label={`Decrease quantity of ${item.name}`}
-                      className="px-3 text-navy-950 transition-colors duration-200 hover:text-gold-600"
+                      disabled={pending}
+                      className="px-3 text-navy-950 transition-colors duration-200 hover:text-gold-600 disabled:opacity-50"
                       onClick={() => {
                         if (item.quantity - 1 < item.minQuantity)
                           setQuantityMessage(minOrderQuantityMessage);
-                        updateQuantity(item.id, item.quantity - 1);
+                        updateQuantity(item.lineId, item.quantity - 1);
                       }}
                     >
                       <Minus className="h-4 w-4" aria-hidden="true" strokeWidth={1.5} />
@@ -115,16 +122,20 @@ export default function CartPageClient() {
                     <button
                       type="button"
                       aria-label={`Increase quantity of ${item.name}`}
-                      className="px-3 text-navy-950 transition-colors duration-200 hover:text-gold-600"
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      // Stock is re-checked server-side regardless; disabling
+                      // here just avoids an inevitable round-trip rejection.
+                      disabled={pending || item.quantity >= item.maxQuantity}
+                      className="px-3 text-navy-950 transition-colors duration-200 hover:text-gold-600 disabled:opacity-50"
+                      onClick={() => updateQuantity(item.lineId, item.quantity + 1)}
                     >
                       <Plus className="h-4 w-4" aria-hidden="true" strokeWidth={1.5} />
                     </button>
                   </div>
                   <button
                     type="button"
-                    onClick={() => removeItem(item.id)}
-                    className="link-underline text-xs font-semibold uppercase tracking-[0.08em] text-ink-500"
+                    onClick={() => removeItem(item.lineId)}
+                    disabled={pending}
+                    className="link-underline text-xs font-semibold uppercase tracking-[0.08em] text-ink-500 disabled:opacity-50"
                   >
                     Remove
                   </button>
@@ -133,11 +144,19 @@ export default function CartPageClient() {
             ))}
           </div>
 
-          {quantityMessage ? (
-            <p role="alert" className="field-error mt-5">
-              {quantityMessage}
-            </p>
-          ) : null}
+          <div aria-live="polite">
+            {/* Server-side rejection (stock, minimum quantity) takes priority
+                over the optimistic client-side hint. */}
+            {error ? (
+              <p role="alert" className="field-error mt-5">
+                {error}
+              </p>
+            ) : quantityMessage ? (
+              <p role="alert" className="field-error mt-5">
+                {quantityMessage}
+              </p>
+            ) : null}
+          </div>
         </section>
 
         <aside className="h-fit lg:sticky lg:top-32" aria-label="Order summary">

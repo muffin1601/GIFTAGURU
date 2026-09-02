@@ -95,8 +95,8 @@ export default function CheckoutClient() {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        items: items.map(({ id, quantity, personalizationText, logoUrl, logoFileName, giftWrap }) => ({
-          productId: id,
+        items: items.map(({ productId, quantity, personalizationText, logoUrl, logoFileName, giftWrap }) => ({
+          productId,
           quantity,
           personalizationText,
           logoUrl,
@@ -301,7 +301,7 @@ export default function CheckoutClient() {
           <h2 className="type-eyebrow">Review</h2>
           <div className="mt-5 flex flex-col gap-4 border-t border-line pt-5">
             {items.map((item) => (
-              <div key={`${item.id}-${item.personalizationText ?? ""}-${item.logoUrl ?? ""}-${item.giftWrap ? "wrap" : "plain"}`} className="space-y-1 text-sm">
+              <div key={item.lineId} className="space-y-1 text-sm">
                 <div className="flex justify-between gap-4">
                   <span>{item.name} x {item.quantity}</span>
                   <span className="font-semibold">{formatPrice(cartItemUnitPrice(item) * item.quantity + (item.giftWrap ? giftWrapPrice : 0))}</span>

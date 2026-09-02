@@ -7,6 +7,7 @@ import StorefrontOnly from "@/components/layout/StorefrontOnly";
 import FloatingCommunication from "@/components/lead/FloatingCommunication";
 import { siteUrl } from "@/lib/env";
 import { getStoreSettings } from "@/lib/data/store-settings";
+import { getCartView } from "@/lib/cart/service";
 import { SITE_DESCRIPTION, SITE_LOCALE, SITE_NAME, logoUrl } from "@/lib/seo/site";
 import { organizationSchema, websiteSchema } from "@/lib/seo/schema";
 import JsonLd from "@/components/seo/JsonLd";
@@ -52,7 +53,10 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const storeSettings = await getStoreSettings();
+  // Both read server-side so the first paint carries the real cart -- the
+  // header badge and cart page no longer flash empty while a client store
+  // rehydrates from localStorage.
+  const [storeSettings, initialCart] = await Promise.all([getStoreSettings(), getCartView()]);
 
   return (
     // data-scroll-behavior is required by Next when the html element sets
@@ -64,7 +68,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-screen flex-col antialiased">
         <JsonLd data={[organizationSchema(), websiteSchema()]} />
-        <CartProvider settings={storeSettings}>
+        <CartProvider settings={storeSettings} initialCart={initialCart}>
           <StorefrontOnly>
             <Header />
           </StorefrontOnly>

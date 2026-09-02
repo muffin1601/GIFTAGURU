@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import AuthForm from "@/components/forms/AuthForm";
 import { signupAction } from "@/lib/actions/auth";
+import { safeNextPath } from "@/lib/auth/redirect";
 import { pageMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = pageMetadata({
@@ -10,10 +11,22 @@ export const metadata: Metadata = pageMetadata({
   index: false,
 });
 
-export default function SignupPage() {
+export default async function SignupPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string }>;
+}) {
+  const { next } = await searchParams;
+
   return (
     <main className="bg-cream-200 py-16 sm:py-24">
-      <AuthForm title="Create account" subtitle="Create a business gifting account for faster checkout and quotes." action={signupAction} mode="signup" />
+      <AuthForm
+        title="Create account"
+        subtitle="Create a business gifting account for faster checkout and quotes."
+        action={signupAction}
+        mode="signup"
+        next={safeNextPath(next)}
+      />
     </main>
   );
 }

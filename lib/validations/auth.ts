@@ -11,9 +11,16 @@ export const signInSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
-export const forgotPasswordSchema = z.object({
+/**
+ * Shared by forgot-password and confirmation-resend, which both take an
+ * address and nothing else. `.passthrough()` is deliberately not used: the
+ * forms also post a `next` field, read separately from FormData.
+ */
+export const emailOnlySchema = z.object({
   email: z.string().trim().toLowerCase().email("Enter a valid email"),
 });
+
+export const forgotPasswordSchema = emailOnlySchema;
 
 export const resetPasswordSchema = z
   .object({
