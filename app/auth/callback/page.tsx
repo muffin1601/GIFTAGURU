@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
-import { createClient } from "@/lib/supabase/client";
+import { createClient, SupabaseConfigError } from "@/lib/supabase/client";
 import { claimGuestCartAction } from "@/lib/actions/cart";
 
 /**
@@ -94,30 +94,36 @@ function AuthCallback() {
         return;
       }
 
-      // The session cookie now exists, so the server can see who this is and
-      // fold in any cart built before confirming. Awaited so the destination
-      // renders with the merged cart rather than briefly showing it empty.
-      //
-      // Failure here must never strand the customer: this is a convenience,
-      // and the reset page is the thing they actually came for. A rejected
-      // server action (a pending migration, a database blip) previously
-      // escaped this async function and left the page showing "Confirming
-      // your account..." forever.
-      try {
-        await claimGuestCartAction();
-      } catch {
-        // Non-fatal: they keep their guest cart cookie and it merges on the
-        // next sign-in instead.
-      }
-      if (cancelled) return;
+      // Deliberately NOT awaited. Merging the guest cart is a convenience;
+      // reaching the password form is the thing the customer actually came
+      // for, and nothing about the merge should be able to delay or block it.
+      // Awaiting a server action here meant a slow or failing one (a pending
+      // migration, a database blip) held up navigation -- and before this had
+      // a catch, left the page on "Confirming your account..." forever.
+      void claimGuestCartAction().catch(() => {
+        // Non-fatal: the guest cart cookie survives and merges on next sign-in.
+      });
 
       router.replace(next);
     }
 
     // Any unanticipated throw must surface as the error screen rather than an
     // indefinite spinner.
-    void confirm().catch(() => {
-      if (!cancelled) setError("We couldn't complete that link. Please request a new one.");
+    void confirm().catch((thrown: unknown) => {
+      if (cancelled) return;
+
+      // A misconfigured deployment and an expired link are indistinguishable
+      // to the customer but need entirely different fixes, so say which it is.
+      if (thrown instanceof SupabaseConfigError) {
+        console.error(thrown.message);
+        setError(
+          "This site isn't configured correctly, so we can't verify your link. Please contact us — this isn't something you can fix by requesting a new link.",
+        );
+        return;
+      }
+
+      console.error("Auth callback failed", thrown);
+      setError("We couldn't complete that link. Please request a new one.");
     });
     return () => {
       cancelled = true;
