@@ -20,10 +20,16 @@ function authLinkMessage(code: string): string {
   if (code === "otp_expired") {
     return "That link has expired or was already used. Request a new one below — links can only be used once.";
   }
+  // Google's own code when the consent screen is dismissed. Distinct from an
+  // expired email link, and telling someone to "request a new link" here would
+  // be nonsense — they just need to try the button again.
   if (code === "access_denied") {
-    return "That link is no longer valid. Request a new one below.";
+    return "Google sign-in was cancelled or declined. Try again, or sign in with your email and password.";
   }
-  return "We couldn't verify that link. Request a new one below.";
+  if (code === "invalid_link") {
+    return "That sign-in attempt didn't complete. Please try again.";
+  }
+  return "We couldn't complete that sign-in. Please try again, or request a new link if you were resetting your password.";
 }
 
 export default async function LoginPage({

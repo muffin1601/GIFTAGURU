@@ -314,6 +314,47 @@ export async function resetPasswordAction(_state: AuthState, formData: FormData)
   redirect("/account");
 }
 
+/**
+ * Starts the Google OAuth handshake.
+ *
+ * Run as a server action rather than from the browser client on purpose: the
+ * PKCE code verifier is then written to an httpOnly cookie by @supabase/ssr,
+ * which is exactly what /auth/oauth needs to exchange the returned code for a
+ * session server-side. Doing it client-side would leave the verifier in
+ * browser storage and require a client-side exchange.
+ *
+ * Note this returns no session itself -- it only produces the URL to send the
+ * customer to.
+ */
+export async function signInWithGoogleAction(_state: AuthState, formData: FormData): Promise<AuthState> {
+  if (!isSupabaseConfigured()) {
+    logger.error("auth.google.misconfigured");
+    return NOT_CONFIGURED;
+  }
+
+  const next = safeNextPath(formData.get("next"));
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${siteUrl()}/auth/oauth?next=${encodeURIComponent(next)}`,
+      // Always show the account chooser: a shared machine must not silently
+      // reuse whichever Google account happens to be signed in.
+      queryParams: { prompt: "select_account" },
+    },
+  });
+
+  if (error || !data.url) {
+    const mapped = mapAuthError(error);
+    logger.error("auth.google.start_failed", { code: mapped.code });
+    return { error: "We couldn't start Google sign-in. Please try again or use your email and password." };
+  }
+
+  // Outside any try/catch: redirect() signals by throwing.
+  redirect(data.url);
+}
+
 export async function logoutAction() {
   if (isSupabaseConfigured()) {
     const supabase = await createClient();

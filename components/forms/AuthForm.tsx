@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import Link from "next/link";
 import PasswordField from "@/components/ui/PasswordField";
+import GoogleSignInButton from "@/components/forms/GoogleSignInButton";
 import { resendConfirmationAction } from "@/lib/actions/auth";
 import type { AuthState } from "@/lib/actions/auth";
 
@@ -65,6 +66,22 @@ export default function AuthForm({
         >
           {notice}
         </p>
+      ) : null}
+
+      {/* Offered on sign-in and sign-up only. Forgot/reset are mid-recovery
+          for a password account, where Google would be a non-sequitur. */}
+      {mode === "login" || mode === "signup" ? (
+        <div className="mt-8">
+          <GoogleSignInButton
+            next={next}
+            label={mode === "signup" ? "Sign up with Google" : "Continue with Google"}
+          />
+          <div className="mt-7 flex items-center gap-4">
+            <span className="h-px flex-1 bg-line" />
+            <span className="type-meta">or use your email</span>
+            <span className="h-px flex-1 bg-line" />
+          </div>
+        </div>
       ) : null}
 
       <form action={formAction} className="mt-9 flex flex-col gap-5">

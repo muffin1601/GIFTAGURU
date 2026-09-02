@@ -192,6 +192,9 @@ model Address {
   phone      String
   line1      String
   line2      String?
+  /// Courier-facing hint ("opposite the metro station"). Optional, and kept
+  /// separate from line2 so it can be surfaced distinctly on a shipping label.
+  landmark   String?
   city       String
   state      String
   postalCode String   @map("postal_code")

@@ -78,7 +78,7 @@ export default async function AccountPage() {
           { href: "/account/orders", title: "Orders", copy: "Track corporate orders and payment status.", Icon: Package },
           { href: "/account/addresses", title: "Addresses", copy: "Manage billing and delivery addresses.", Icon: MapPin },
           { href: "/account/wishlist", title: "Wishlist", copy: "Saved gift sets for future campaigns.", Icon: Heart },
-          { href: "/account", title: "Profile", copy: "Business profile and account preferences.", Icon: UserRound },
+          { href: "/account/profile", title: "Profile", copy: "Business profile and account preferences.", Icon: UserRound },
         ].map(({ href, title, copy, Icon }) => (
           <Link key={title} href={href} className="panel p-6 transition-colors duration-200 hover:border-line-strong">
             <Icon className="h-5 w-5 text-gold-600" />

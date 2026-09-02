@@ -28,10 +28,58 @@ export default function AuthCallbackPage() {
   );
 }
 
+/**
+ * Every failure below used to render the same "Link expired" screen, which was
+ * wrong for most of them and impossible to diagnose from a screenshot. The
+ * `kind` drives distinct copy and, importantly, a distinct next action: an
+ * expired link needs a new one, a missing fragment needs the URL checking, a
+ * misconfigured deployment needs an operator.
+ */
+type CallbackFailure = {
+  kind: "expired" | "incomplete" | "config" | "session" | "unknown";
+  detail?: string;
+};
+
+const FAILURE_COPY: Record<
+  CallbackFailure["kind"],
+  { eyebrow: string; heading: string; body: string; primary: React.ReactNode }
+> = {
+  expired: {
+    eyebrow: "Link expired",
+    heading: "This link has expired",
+    body: "Password and confirmation links can only be used once, and requesting a new one immediately cancels any earlier link. Send yourself a fresh link to continue.",
+    primary: <Button href="/forgot-password">Send a new link</Button>,
+  },
+  incomplete: {
+    eyebrow: "Invalid link",
+    heading: "This link is incomplete",
+    body: "The security details this link carries didn't reach us. This usually means the address was altered in transit, or opened from an app that trims long links. Try opening it directly from your email in a browser.",
+    primary: <Button href="/forgot-password">Send a new link</Button>,
+  },
+  config: {
+    eyebrow: "Unavailable",
+    heading: "We can't verify links right now",
+    body: "This is a problem on our side, not with your link — requesting a new one won't help. Please contact us and we'll sort it out.",
+    primary: <Button href="/login">Back to login</Button>,
+  },
+  session: {
+    eyebrow: "Sign-in failed",
+    heading: "We couldn't sign you in",
+    body: "Your link was recognised, but we couldn't start a session with it. Requesting a fresh link usually resolves this.",
+    primary: <Button href="/forgot-password">Send a new link</Button>,
+  },
+  unknown: {
+    eyebrow: "Something went wrong",
+    heading: "We couldn't complete that link",
+    body: "Something unexpected happened while verifying your link. Please try a fresh one, and contact us if it keeps happening.",
+    primary: <Button href="/forgot-password">Send a new link</Button>,
+  },
+};
+
 function AuthCallback() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<CallbackFailure | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -63,7 +111,11 @@ function AuthCallback() {
       if (cancelled) return;
 
       if (hashError) {
-        setError(hashError.replace(/\+/g, " "));
+        // Supabase reports a rejected token here, most commonly otp_expired:
+        // recovery tokens are single-use, and generating a new one invalidates
+        // every earlier link for that address.
+        const code = hash.get("error_code") ?? undefined;
+        setError({ kind: "expired", detail: code ?? hashError.replace(/\+/g, " ") });
         return;
       }
 
@@ -77,8 +129,14 @@ function AuthCallback() {
         return;
       }
 
+      // No tokens and no error means the fragment never arrived -- typically a
+      // host redirect (www to apex, or http to https) that dropped it, since a
+      // fragment is client-side only and some redirect chains discard it.
       if (!accessToken || !refreshToken) {
-        setError("This confirmation link is missing or has already been used.");
+        setError({
+          kind: "incomplete",
+          detail: accessToken ? "refresh_token missing" : "no tokens in URL fragment",
+        });
         return;
       }
 
@@ -90,7 +148,7 @@ function AuthCallback() {
       if (cancelled) return;
 
       if (sessionError) {
-        setError(sessionError.message);
+        setError({ kind: "session", detail: sessionError.message });
         return;
       }
 
@@ -116,14 +174,12 @@ function AuthCallback() {
       // to the customer but need entirely different fixes, so say which it is.
       if (thrown instanceof SupabaseConfigError) {
         console.error(thrown.message);
-        setError(
-          "This site isn't configured correctly, so we can't verify your link. Please contact us — this isn't something you can fix by requesting a new link.",
-        );
+        setError({ kind: "config", detail: thrown.message });
         return;
       }
 
       console.error("Auth callback failed", thrown);
-      setError("We couldn't complete that link. Please request a new one.");
+      setError({ kind: "unknown", detail: thrown instanceof Error ? thrown.message : String(thrown) });
     });
     return () => {
       cancelled = true;
@@ -131,17 +187,24 @@ function AuthCallback() {
   }, [router, searchParams]);
 
   if (error) {
+    const copy = FAILURE_COPY[error.kind];
     return (
       <Container className="max-w-lg py-24 sm:py-32">
-        <span className="type-eyebrow">Link expired</span>
-        <h1 className="type-h1 mt-4">We couldn&apos;t confirm that link</h1>
-        <p className="type-lead mt-5">{error}</p>
+        <span className="type-eyebrow">{copy.eyebrow}</span>
+        <h1 className="type-h1 mt-4">{copy.heading}</h1>
+        <p className="type-lead mt-5">{copy.body}</p>
         <div className="mt-9 flex flex-wrap gap-3">
-          <Button href="/login">Back to login</Button>
+          {copy.primary}
           <Button href="/contact" variant="secondary">
             Contact us
           </Button>
         </div>
+        {/* Short technical reason, kept small and secondary. It is an auth
+            link status (e.g. "otp_expired"), not internal state, and having it
+            on screen turns a support ticket into a one-line answer. */}
+        {error.detail ? (
+          <p className="type-meta mt-8 border-t border-line pt-5">Reference: {error.detail}</p>
+        ) : null}
       </Container>
     );
   }

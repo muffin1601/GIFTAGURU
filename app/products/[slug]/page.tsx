@@ -6,6 +6,8 @@ import Container from "@/components/ui/Container";
 import ProductCard from "@/components/ui/ProductCard";
 import ProductGallery from "@/components/product/ProductGallery";
 import ProductPurchasePanel from "@/components/product/ProductPurchasePanel";
+import WishlistButton from "@/components/product/WishlistButton";
+import { isProductWishlisted } from "@/lib/wishlist/queries";
 import ProductDetailAccordion from "@/components/product/ProductDetailAccordion";
 import AddToCartButton from "@/components/cart/AddToCartButton";
 import JsonLd from "@/components/seo/JsonLd";
@@ -63,7 +65,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     inStock: product.variants.some((variant) => variant.inStock),
     priceTiers: product.priceTiers,
   };
-  const related = await searchProducts({ categorySlug: product.categorySlug ?? undefined, limit: 4 });
+  const [related, isWishlisted] = await Promise.all([
+    searchProducts({ categorySlug: product.categorySlug ?? undefined, limit: 4 }),
+    isProductWishlisted(product.id),
+  ]);
 
   const inStock = product.variants.some((variant) => variant.inStock);
 
@@ -180,6 +185,13 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
             <div className="mt-10 border-t border-line pt-8">
               <ProductPurchasePanel product={cardProduct} />
+              {/* Saved state is resolved server-side so the heart renders
+                  correctly on first paint rather than flickering from empty. */}
+              <WishlistButton
+                productId={cardProduct.id}
+                initiallySaved={isWishlisted}
+                className="mt-6 border-t border-line pt-6"
+              />
             </div>
           </section>
         </div>
