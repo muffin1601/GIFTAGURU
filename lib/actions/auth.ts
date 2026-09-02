@@ -222,7 +222,9 @@ export async function forgotPasswordAction(_state: AuthState, formData: FormData
     // Same hash-fragment handoff as signup -- /reset-password calls
     // updateUser() server-side, which needs a session cookie to already
     // exist, so the reset link has to pass through /auth/callback first.
-    redirectTo: `${siteUrl()}/auth/callback?next=/reset-password`,
+    // `flow=recovery` is what opts this path into establishing that session;
+    // the callback signs nobody in without it.
+    redirectTo: `${siteUrl()}/auth/callback?flow=recovery&next=/reset-password`,
   });
 
   if (error) {

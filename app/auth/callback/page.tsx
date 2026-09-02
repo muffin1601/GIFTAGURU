@@ -38,7 +38,20 @@ function AuthCallback() {
 
     async function confirm() {
       const next = searchParams.get("next") || "/account";
-      const isConfirmFlow = searchParams.get("flow") === "confirm";
+
+      // Establishing a session here is opt-IN, not the default.
+      //
+      // Only password recovery genuinely needs one: /reset-password calls
+      // updateUser() server-side, which requires the session cookie to already
+      // exist. Everything else -- email confirmation -- should land on the
+      // login page instead.
+      //
+      // Inverted deliberately rather than checking for `flow=confirm`: links
+      // generated before this behaviour existed carry no `flow` at all, and
+      // those emails are already sitting in customers' inboxes. Defaulting to
+      // the confirm path means they behave correctly too.
+      const isRecoveryFlow =
+        searchParams.get("flow") === "recovery" || next.startsWith("/reset-password");
       const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
       const accessToken = hash.get("access_token");
       const refreshToken = hash.get("refresh_token");
@@ -59,7 +72,7 @@ function AuthCallback() {
       // fragment are surplus -- deliberately left unconsumed so the customer
       // arrives at the login page signed out, rather than being signed in and
       // then back out again. Their guest cart is merged when they log in.
-      if (isConfirmFlow) {
+      if (!isRecoveryFlow) {
         router.replace(`/login?confirmed=1&next=${encodeURIComponent(next)}`);
         return;
       }
