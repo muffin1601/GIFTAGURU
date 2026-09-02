@@ -97,13 +97,28 @@ function AuthCallback() {
       // The session cookie now exists, so the server can see who this is and
       // fold in any cart built before confirming. Awaited so the destination
       // renders with the merged cart rather than briefly showing it empty.
-      await claimGuestCartAction();
+      //
+      // Failure here must never strand the customer: this is a convenience,
+      // and the reset page is the thing they actually came for. A rejected
+      // server action (a pending migration, a database blip) previously
+      // escaped this async function and left the page showing "Confirming
+      // your account..." forever.
+      try {
+        await claimGuestCartAction();
+      } catch {
+        // Non-fatal: they keep their guest cart cookie and it merges on the
+        // next sign-in instead.
+      }
       if (cancelled) return;
 
       router.replace(next);
     }
 
-    void confirm();
+    // Any unanticipated throw must surface as the error screen rather than an
+    // indefinite spinner.
+    void confirm().catch(() => {
+      if (!cancelled) setError("We couldn't complete that link. Please request a new one.");
+    });
     return () => {
       cancelled = true;
     };

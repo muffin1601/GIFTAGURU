@@ -35,9 +35,12 @@ export async function updateSession(request: NextRequest) {
 
   const isProtectedAccountRoute = pathname.startsWith("/account");
   const isAdminRoute = pathname.startsWith("/admin");
-  const isAuthRoute = ["/login", "/signup", "/forgot-password", "/reset-password"].some((p) =>
-    pathname.startsWith(p),
-  );
+  // /reset-password is deliberately NOT in this list. Arriving there REQUIRES
+  // an active session -- /auth/callback establishes one from the recovery link
+  // precisely so updateUser() can change the password server-side. Treating it
+  // as an auth route bounced every recovering customer straight to /account,
+  // making password reset impossible to complete.
+  const isAuthRoute = ["/login", "/signup", "/forgot-password"].some((p) => pathname.startsWith(p));
 
   if ((isProtectedAccountRoute || isAdminRoute) && !user) {
     const redirectUrl = new URL("/login", request.url);
