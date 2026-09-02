@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
 import { randomUUID } from "crypto";
+import { Prisma } from "@prisma/client";
 import { isDatabaseConfigured, isRazorpayConfigured } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
+import { getSessionUser } from "@/lib/auth/session";
+import { groupIntoShipments, toAddressSnapshot, totalShipping } from "@/lib/checkout/shipments";
 import { PERSONALIZATION_MAX_LENGTH } from "@/lib/config/store";
 import { getStoreSettings } from "@/lib/data/store-settings";
 import { resolveUnitPrice } from "@/lib/pricing";
@@ -13,6 +16,8 @@ interface CreateOrderBody {
   items?: {
     productId: string;
     quantity: number;
+    /** Saved address this line ships to; absent means the primary address. */
+    addressId?: string | null;
     personalizationText?: string;
     logoUrl?: string;
     logoFileName?: string;
@@ -98,6 +103,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "One or more cart items are unavailable." }, { status: 400 });
   }
 
+  // Saved addresses the customer is allowed to route to. Scoped to the
+  // signed-in profile, so an addressId belonging to anyone else resolves to
+  // nothing and the line falls back to the primary destination rather than
+  // leaking a stranger's address into this order.
+  const sessionUser = await getSessionUser();
+  const requestedAddressIds = [...new Set(body.items.map((item) => item.addressId).filter((id): id is string => Boolean(id)))];
+  const savedAddresses =
+    sessionUser && requestedAddressIds.length > 0
+      ? await prisma.address.findMany({ where: { id: { in: requestedAddressIds }, profileId: sessionUser.id } })
+      : [];
+
   const lineItems = body.items.map((item) => {
     const product = products.find((candidate) => candidate.id === item.productId || candidate.slug === item.productId);
     if (!product) throw new Error("Missing product after availability check.");
@@ -117,6 +133,7 @@ export async function POST(request: Request) {
       product,
       variant,
       quantity,
+      addressId: item.addressId ?? null,
       unitPrice,
       personalizationText: text(item.personalizationText),
       logoUrl: text(item.logoUrl),
@@ -128,7 +145,35 @@ export async function POST(request: Request) {
   });
 
   const subtotal = lineItems.reduce((sum, item) => sum + item.lineTotal, 0);
-  const shippingTotal = subtotal >= settings.freeShippingThreshold ? 0 : settings.shippingCharge;
+
+  const primaryAddress = {
+    name: text(checkout.name),
+    company: text(checkout.company) || undefined,
+    phone: text(checkout.phone),
+    line1: text(checkout.address),
+    city: text(checkout.city),
+    state: text(checkout.state),
+    postalCode: text(checkout.postalCode),
+    country: "IN",
+  };
+
+  // One group per destination. Shipping is charged per destination and the
+  // free-shipping threshold is evaluated against each destination's own
+  // subtotal -- three cities is three deliveries to pay for.
+  const shipmentGroups = groupIntoShipments({
+    lines: lineItems.map((item) => ({ addressId: item.addressId, lineTotal: item.lineTotal, item })),
+    addresses: new Map(
+      savedAddresses.map((address) => [
+        address.id,
+        { ...toAddressSnapshot(address, text(checkout.company)), label: address.label },
+      ]),
+    ),
+    primaryAddress,
+    primaryLabel: null,
+    settings,
+  });
+
+  const shippingTotal = totalShipping(shipmentGroups);
   const taxTotal = Math.round((subtotal * settings.gstRatePercent) / 100);
   const total = subtotal + shippingTotal + taxTotal;
 
@@ -148,16 +193,10 @@ export async function POST(request: Request) {
       data: {
         email: text(checkout.email) || "guest@giftaguru.local",
         phone: text(checkout.phone) || "0000000000",
-        shippingAddress: {
-          name: text(checkout.name),
-          company: text(checkout.company),
-          phone: text(checkout.phone),
-          line1: text(checkout.address),
-          city: text(checkout.city),
-          state: text(checkout.state),
-          postalCode: text(checkout.postalCode),
-          country: "IN",
-        },
+        // Retained as the order's primary destination even when the order
+        // splits, so anything reading orders.shipping_address (admin lists,
+        // invoices, existing emails) keeps working unchanged.
+        shippingAddress: primaryAddress,
         billingAddress: billingSameAsShipping
           ? {
               name: text(checkout.name),
@@ -212,6 +251,48 @@ export async function POST(request: Request) {
     await tx.orderStatusHistory.create({
       data: { orderId: created.id, toStatus: "pending", toPaymentStatus: "pending", toDeliveryStatus: "pending", note: "Order placed from storefront checkout." },
     });
+
+    // Destinations are written after the items so each line can be pointed at
+    // its shipment. Only recorded when the order actually splits: a
+    // single-destination order keeps orders.shipping_address alone, so nothing
+    // downstream has to special-case a one-row shipment table.
+    if (shipmentGroups.length > 1) {
+      for (const group of shipmentGroups) {
+        const shipment = await tx.orderShipment.create({
+          data: {
+            orderId: created.id,
+            label: group.label,
+            // AddressSnapshot is a closed interface, so it has no string index
+            // signature for Prisma's Json type to match; the shape is plain
+            // JSON-safe data, hence the widening rather than a type change.
+            address: { ...group.address } as Prisma.InputJsonObject,
+            subtotal: group.subtotal,
+            shippingTotal: group.shippingTotal,
+          },
+        });
+
+        // Match on the same identity used to build the group. Two lines of the
+        // same variant only ever differ by customization, which is already
+        // folded into a single cart line, so this maps one-to-one.
+        const itemIds = created.items
+          .filter((candidate) =>
+            group.items.some(
+              (line) =>
+                line.product.id === candidate.productId &&
+                line.variant.id === candidate.variantId &&
+                line.quantity === candidate.quantity,
+            ),
+          )
+          .map((candidate) => candidate.id);
+
+        if (itemIds.length > 0) {
+          await tx.orderItem.updateMany({
+            where: { id: { in: itemIds }, shipmentId: null },
+            data: { shipmentId: shipment.id },
+          });
+        }
+      }
+    }
 
     for (const item of lineItems) {
       const orderItem = created.items.find((candidate) => candidate.productId === item.product.id && candidate.variantId === item.variant.id);

@@ -6,6 +6,8 @@ import Link from "next/link";
 import Script from "next/script";
 import Container from "@/components/ui/Container";
 import { cartItemUnitPrice, useCart } from "@/components/cart/CartProvider";
+import DeliverySplit, { ShipmentSummary } from "@/components/cart/DeliverySplit";
+import { groupIntoShipments, totalShipping } from "@/lib/checkout/shipments";
 import { isValidIndianPinCode } from "@/lib/services/delivery";
 import { formatPrice } from "@/lib/utils";
 
@@ -25,7 +27,46 @@ declare global {
   }
 }
 
-export default function CheckoutClient() {
+/**
+ * Stand-in for the destination typed into the form below.
+ *
+ * At preview time the form may still be empty, and only `city` is rendered
+ * (in the destinations breakdown) -- the authoritative snapshot is built
+ * server-side from the submitted form, never from this.
+ */
+const PLACEHOLDER_PRIMARY = {
+  name: "",
+  phone: "",
+  line1: "",
+  city: "Address entered above",
+  state: "",
+  postalCode: "",
+  country: "IN",
+};
+
+/** Saved address as passed from the server; mirrors the columns checkout needs. */
+export interface CheckoutAddress {
+  id: string;
+  label: string;
+  fullName: string;
+  phone: string;
+  line1: string;
+  line2: string | null;
+  landmark: string | null;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  isDefault: boolean;
+}
+
+export default function CheckoutClient({
+  savedAddresses = [],
+  signedIn = false,
+}: {
+  savedAddresses?: CheckoutAddress[];
+  signedIn?: boolean;
+}) {
   const router = useRouter();
   const {
     items,
@@ -40,12 +81,39 @@ export default function CheckoutClient() {
     clearCart,
   } = useCart();
 
-  // Mirrors the exact calculation in app/api/razorpay/create-order/route.ts
-  // (same settings source, same formula, same rounding) so the number shown
-  // here before payment matches what the server actually charges to the
-  // rupee -- this is a preview of the authoritative total, not a separate
-  // estimate that could drift from it.
-  const shippingTotal = subtotal >= freeShippingThreshold ? 0 : shippingCharge;
+  // Shipping is grouped by destination through the SAME function the order
+  // route uses (lib/checkout/shipments.ts), so this preview cannot drift from
+  // what is actually charged. GST and the free-shipping threshold follow the
+  // same settings source for the same reason.
+  const shipmentGroups = groupIntoShipments({
+    lines: items.map((item) => ({
+      addressId: item.addressId,
+      lineTotal: item.lineTotal,
+      item,
+    })),
+    addresses: new Map(
+      savedAddresses.map((address) => [
+        address.id,
+        {
+          label: address.label,
+          name: address.fullName,
+          phone: address.phone,
+          line1: address.line1,
+          line2: address.line2 ?? undefined,
+          landmark: address.landmark ?? undefined,
+          city: address.city,
+          state: address.state,
+          postalCode: address.postalCode,
+          country: address.country,
+        },
+      ]),
+    ),
+    primaryAddress: PLACEHOLDER_PRIMARY,
+    primaryLabel: null,
+    settings: { freeShippingThreshold, shippingCharge },
+  });
+
+  const shippingTotal = totalShipping(shipmentGroups);
   const gstTotal = Math.round((subtotal * gstRatePercent) / 100);
   const grandTotal = subtotal + shippingTotal + gstTotal;
   const [error, setError] = useState<string | null>(null);
@@ -95,8 +163,9 @@ export default function CheckoutClient() {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        items: items.map(({ productId, quantity, personalizationText, logoUrl, logoFileName, giftWrap }) => ({
+        items: items.map(({ productId, quantity, addressId, personalizationText, logoUrl, logoFileName, giftWrap }) => ({
           productId,
+          addressId,
           quantity,
           personalizationText,
           logoUrl,
@@ -274,6 +343,11 @@ export default function CheckoutClient() {
             </div>
           </section>
 
+          {/* Placed after the billing block so the address typed above is
+              already established as the default destination before the
+              customer is offered the option to route items elsewhere. */}
+          {items.length > 0 ? <DeliverySplit addresses={savedAddresses} signedIn={signedIn} /> : null}
+
           {error ? (
             <p role="alert" className="field-error border-l-2 border-current pl-4">
               {error}
@@ -324,7 +398,12 @@ export default function CheckoutClient() {
               </div>
             ) : null}
             <div className="flex justify-between gap-4 py-2">
-              <dt className="text-ink-700">Shipping</dt>
+              <dt className="text-ink-700">
+                Shipping
+                {shipmentGroups.length > 1 ? (
+                  <span className="type-meta block">{shipmentGroups.length} destinations</span>
+                ) : null}
+              </dt>
               <dd className="text-navy-950">
                 {shippingTotal > 0 ? formatPrice(shippingTotal) : "Free"}
               </dd>
@@ -338,9 +417,20 @@ export default function CheckoutClient() {
               <dd className="font-display text-xl text-navy-950">{formatPrice(grandTotal)}</dd>
             </div>
           </dl>
+
+          <ShipmentSummary
+            groups={shipmentGroups.map((group) => ({
+              label: group.label,
+              city: group.address.city,
+              subtotal: group.subtotal,
+              shippingTotal: group.shippingTotal,
+            }))}
+          />
+
           <p className="type-meta mt-3">
-            Discounts and payment status are verified server-side. Shipping updates if your order
-            crosses the free-shipping threshold after any changes to your cart.
+            Discounts and payment status are verified server-side. Shipping is charged per
+            destination, and updates if a destination crosses the free-shipping threshold after any
+            changes to your cart.
           </p>
 
           <div className="mt-8 border-t border-line pt-6">

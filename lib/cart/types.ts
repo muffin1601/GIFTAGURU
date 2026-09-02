@@ -29,6 +29,8 @@ export interface CartViewItem {
   maxQuantity: number;
   /** True when the line exceeds what is currently sellable. */
   exceedsStock: boolean;
+  /** Saved address this line ships to; null means the order's primary address. */
+  addressId: string | null;
   personalizationText?: string;
   logoUrl?: string;
   logoFileName?: string;

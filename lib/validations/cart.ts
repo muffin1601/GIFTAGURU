@@ -55,6 +55,12 @@ export const legacyCartSchema = z.object({
 
 export const lineSchema = z.object({ lineId: uuid });
 
+/** `addressId: null` routes the line back to the order's primary destination. */
+export const lineAddressSchema = z.object({
+  lineId: uuid,
+  addressId: uuid.nullable().optional(),
+});
+
 export const lineQuantitySchema = z.object({
   lineId: uuid,
   quantity: z.number().int().min(0).max(100_000),

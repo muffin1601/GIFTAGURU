@@ -185,10 +185,10 @@ model Profile {
 }
 
 model Address {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  profileId  String   @map("profile_id") @db.Uuid
-  label      String?  @default("home")
-  fullName   String   @map("full_name")
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  profileId  String     @map("profile_id") @db.Uuid
+  label      String?    @default("home")
+  fullName   String     @map("full_name")
   phone      String
   line1      String
   line2      String?
@@ -197,12 +197,13 @@ model Address {
   landmark   String?
   city       String
   state      String
-  postalCode String   @map("postal_code")
-  country    String   @default("IN")
-  isDefault  Boolean  @default(false) @map("is_default")
-  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  profile    Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  postalCode String     @map("postal_code")
+  country    String     @default("IN")
+  isDefault  Boolean    @default(false) @map("is_default")
+  cartItems  CartItem[]
+  createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  profile    Profile    @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@index([profileId])
   @@map("addresses")
@@ -449,15 +450,15 @@ model Inventory {
 }
 
 model Cart {
-  id     String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId String? @map("user_id") @db.Uuid
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId       String?    @map("user_id") @db.Uuid
   /// Opaque guest identifier, mirrored in the httpOnly `gg_cart` cookie. Null
   /// once the cart has been claimed by a signed-in customer. Unique so a
   /// replayed cookie can never fan out into several carts.
   sessionToken String?    @unique @map("session_token")
   status       CartStatus @default(active)
   createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime   @default(now()) @updatedAt @db.Timestamptz(6) @map("updated_at")
+  updatedAt    DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   user         Profile?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   items        CartItem[]
 
@@ -467,20 +468,25 @@ model Cart {
 }
 
 model CartItem {
-  id            String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  cartId        String         @map("cart_id") @db.Uuid
-  variantId     String         @map("variant_id") @db.Uuid
-  quantity      Int
-  customization Json           @default("{}")
-  createdAt     DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt     DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id               String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cartId           String         @map("cart_id") @db.Uuid
+  variantId        String         @map("variant_id") @db.Uuid
+  quantity         Int
+  customization    Json           @default("{}")
+  createdAt        DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   /// Stable digest of the normalised `customization` payload. Exists purely so
   /// the composite unique below can span it -- Postgres can compare jsonb, but
   /// Prisma cannot put a Json column in @@unique. Empty string when the line
   /// carries no customization, so plain re-adds collapse onto one row.
   customizationKey String         @default("") @map("customization_key")
+  /// Destination chosen for this line at checkout. Null means "the order's
+  /// primary address". SetNull on delete so removing a saved address degrades
+  /// the line to the primary destination rather than deleting the cart line.
+  addressId        String?        @map("address_id") @db.Uuid
   cart             Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
   variant          ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  address          Address?       @relation(fields: [addressId], references: [id], onDelete: SetNull)
 
   /// The invariant behind "add the same thing 5 times => quantity 5, not 5
   /// rows". Enforced in the database so a double-submit that races past the
@@ -548,6 +554,7 @@ model Order {
   discountUsage       DiscountUsage[]
   statusHistory       OrderStatusHistory[]
   emailEvents         EmailEvent[]
+  shipments           OrderShipment[]
 
   @@index([userId])
   @@index([orderNumber])
@@ -567,8 +574,13 @@ model OrderItem {
   quantity              Int
   customization         Json                   @default("{}")
   lineTotal             Decimal                @map("line_total") @db.Decimal(10, 2)
+  /// Which destination this line ships to. Null on single-destination orders
+  /// and on every order placed before split delivery existed, so the column is
+  /// additive and old rows stay valid.
+  shipmentId            String?                @map("shipment_id") @db.Uuid
   createdAt             DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
   order                 Order                  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  shipment              OrderShipment?         @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
   product               Product?               @relation(fields: [productId], references: [id], onDelete: SetNull)
   variant               ProductVariant?        @relation(fields: [variantId], references: [id], onDelete: SetNull)
   customizationRequests CustomizationRequest[]
@@ -576,7 +588,41 @@ model OrderItem {
   reviews               Review[]
 
   @@index([orderId])
+  @@index([shipmentId])
   @@map("order_items")
+}
+
+/// One delivery destination within an order.
+///
+/// A corporate order frequently goes to several offices on a single payment,
+/// so shipping, tracking and delivery status are per-destination while the
+/// order keeps one number and one Razorpay payment. `address` is a snapshot
+/// for the same reason Order.shippingAddress is: editing a saved address later
+/// must never rewrite where a past order was actually sent.
+model OrderShipment {
+  id             String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId        String         @map("order_id") @db.Uuid
+  /// Human label for the destination, snapshotted from the address ("Delhi office").
+  label          String?
+  address        Json
+  /// Merchandise value routed to this destination, before shipping and tax.
+  subtotal       Decimal        @default(0) @db.Decimal(10, 2)
+  /// Shipping charged for THIS destination; the free-shipping threshold is
+  /// evaluated per destination, not across the whole order.
+  shippingTotal  Decimal        @default(0) @map("shipping_total") @db.Decimal(10, 2)
+  deliveryStatus DeliveryStatus @default(pending) @map("delivery_status")
+  courierName    String?        @map("courier_name")
+  trackingNumber String?        @map("tracking_number")
+  trackingUrl    String?        @map("tracking_url")
+  shippedAt      DateTime?      @map("shipped_at") @db.Timestamptz(6)
+  deliveredAt    DateTime?      @map("delivered_at") @db.Timestamptz(6)
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  order          Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  items          OrderItem[]
+
+  @@index([orderId])
+  @@map("order_shipments")
 }
 
 model Payment {

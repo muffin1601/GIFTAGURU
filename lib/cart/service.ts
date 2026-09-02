@@ -226,6 +226,7 @@ function buildCartView(items: CartItemWithRelations[], settings: StoreSettings):
         lineTotal: unitPrice * item.quantity + giftWrapTotal,
         maxQuantity: sellable,
         exceedsStock: item.quantity > sellable,
+        addressId: item.addressId,
         ...customization,
       };
     });
@@ -337,6 +338,38 @@ export async function updateCartItemQuantity(lineId: string, quantity: number): 
   if (quantity > sellable) throw new CartError(`Only ${sellable} unit(s) of ${item.variant.product.name} are available.`);
 
   await prisma.cartItem.update({ where: { id: lineId }, data: { quantity } });
+  await touchCart(cartId);
+  return getCartView();
+}
+
+/**
+ * Routes one cart line to a saved address, or back to the primary destination
+ * when `addressId` is null.
+ *
+ * The address must belong to the signed-in customer -- otherwise a crafted
+ * request could bind a line to a stranger's address and leak it into the order
+ * snapshot at checkout.
+ */
+export async function assignCartItemAddress(lineId: string, addressId: string | null): Promise<CartView> {
+  if (!isDatabaseConfigured()) throw new CartError("The store is temporarily unavailable. Please try again shortly.");
+
+  const cartId = await requireOwnedCart(lineId);
+
+  if (addressId) {
+    const userId = await currentUserId();
+    if (!userId) throw new CartError("Sign in to send items to a saved address.");
+
+    const owned = await prisma.address.findFirst({
+      where: { id: addressId, profileId: userId },
+      select: { id: true },
+    });
+    if (!owned) {
+      logger.warn("cart.address_ownership_rejected", { cartId, addressId });
+      throw new CartError("That address is no longer available.");
+    }
+  }
+
+  await prisma.cartItem.updateMany({ where: { id: lineId, cartId }, data: { addressId } });
   await touchCart(cartId);
   return getCartView();
 }

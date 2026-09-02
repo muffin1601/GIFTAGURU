@@ -18,6 +18,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
       items: { include: { product: { include: { images: { orderBy: { sortOrder: "asc" }, take: 1 } } } } },
       payments: { orderBy: { createdAt: "desc" } },
       statusHistory: { orderBy: { createdAt: "desc" }, include: { actor: { select: { fullName: true } } } },
+      shipments: { orderBy: { createdAt: "asc" }, include: { items: { select: { productName: true, quantity: true } } } },
     },
   });
   if (!order) notFound();
@@ -108,6 +109,76 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
               })}
             </div>
           </section>
+
+          {/* Only present when the order actually splits. Without this,
+              fulfilment staff would see one address on the order and have no
+              way to know part of it goes somewhere else. */}
+          {order.shipments.length > 0 ? (
+            <section className="panel p-5">
+              <h2 className="font-display text-2xl text-navy-950">
+                Delivery destinations ({order.shipments.length})
+              </h2>
+              <p className="mt-1 text-sm text-ink-600">
+                This order ships to more than one address. Each destination is charged and tracked
+                separately.
+              </p>
+              <div className="mt-4 space-y-3">
+                {order.shipments.map((shipment, index) => {
+                  const to = shipment.address as {
+                    name?: string;
+                    phone?: string;
+                    line1?: string;
+                    line2?: string;
+                    landmark?: string;
+                    city?: string;
+                    state?: string;
+                    postalCode?: string;
+                  } | null;
+
+                  return (
+                    <div key={shipment.id} className="border border-line p-4 text-sm">
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <p className="font-semibold text-navy-950">
+                          Destination {index + 1}
+                          {shipment.label ? ` · ${shipment.label}` : ""}
+                        </p>
+                        <span className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-600">
+                          {shipment.deliveryStatus.replaceAll("_", " ")}
+                        </span>
+                      </div>
+
+                      <address className="mt-2 not-italic text-ink-700">
+                        {to?.name}
+                        {to?.phone ? ` · ${to.phone}` : ""}
+                        <br />
+                        {to?.line1}
+                        {to?.line2 ? `, ${to.line2}` : ""}
+                        {to?.landmark ? <><br />Near {to.landmark}</> : null}
+                        <br />
+                        {to?.city}, {to?.state} {to?.postalCode}
+                      </address>
+
+                      <ul className="mt-3 border-t border-line pt-3 text-ink-700">
+                        {shipment.items.map((item, itemIndex) => (
+                          <li key={itemIndex}>
+                            {item.productName} &times; {item.quantity}
+                          </li>
+                        ))}
+                      </ul>
+
+                      <p className="mt-3 text-xs text-ink-600">
+                        Merchandise {formatPrice(Number(shipment.subtotal))} · Shipping{" "}
+                        {Number(shipment.shippingTotal) > 0
+                          ? formatPrice(Number(shipment.shippingTotal))
+                          : "Free"}
+                        {shipment.trackingNumber ? ` · Tracking ${shipment.trackingNumber}` : ""}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          ) : null}
 
           <section className="panel p-5">
             <h2 className="font-display text-2xl text-navy-950">Timeline</h2>

@@ -7,13 +7,20 @@ import {
   getCartView,
   removeCartItem,
   updateCartItemQuantity,
+  assignCartItemAddress,
   mergeGuestCartIntoUser,
   CartError,
   EMPTY_CART,
   type CartView,
 } from "@/lib/cart/service";
 import { createClient } from "@/lib/supabase/server";
-import { addToCartSchema, legacyCartSchema, lineQuantitySchema, lineSchema } from "@/lib/validations/cart";
+import {
+  addToCartSchema,
+  legacyCartSchema,
+  lineAddressSchema,
+  lineQuantitySchema,
+  lineSchema,
+} from "@/lib/validations/cart";
 import { logger, errorMessage } from "@/lib/logger";
 
 /**
@@ -75,6 +82,15 @@ export async function removeCartItemAction(input: unknown): Promise<CartActionRe
     return { cart: await safeRead(), error: "Invalid request." };
   }
   return run(() => removeCartItem(parsed.data.lineId), "cart.action.remove_failed");
+}
+
+export async function assignCartAddressAction(input: unknown): Promise<CartActionResult> {
+  const parsed = lineAddressSchema.safeParse(input);
+  if (!parsed.success) return { cart: await safeRead(), error: "Invalid request." };
+  return run(
+    () => assignCartItemAddress(parsed.data.lineId, parsed.data.addressId ?? null),
+    "cart.action.assign_address_failed",
+  );
 }
 
 export async function clearCartAction(): Promise<CartActionResult> {
