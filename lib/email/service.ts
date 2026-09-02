@@ -3,7 +3,15 @@ import "server-only";
 import { isEmailConfigured, siteUrl } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { STORE_CONTACT } from "@/lib/config/store";
-import { adminNotificationTemplate, confirmSignupEmailTemplate, escapeHtml, orderEmailTemplate, type EmailOrder } from "@/lib/email/templates";
+import {
+  adminNotificationTemplate,
+  confirmSignupEmailTemplate,
+  customerNoticeTemplate,
+  escapeHtml,
+  orderEmailTemplate,
+  resetPasswordEmailTemplate,
+  type EmailOrder,
+} from "@/lib/email/templates";
 
 type SendEmailInput = {
   eventKey: string;
@@ -109,17 +117,38 @@ export async function sendSignupConfirmationEmail(
   });
 }
 
+export const PASSWORD_RESET_TYPE = "password_reset";
+
 /**
- * Per-address throttle for confirmation resends, measured against the last
- * attempt we actually recorded. Supabase rate-limits its own mailer, but this
- * project sends through Resend, so the ceiling has to live here.
+ * Password reset mail, sent through Resend like everything else.
+ *
+ * Supabase's `resetPasswordForEmail` would send this through Supabase's own
+ * SMTP using their default template -- unbranded, and from
+ * noreply@mail.app.supabase.io. Generating the link with the admin API and
+ * delivering it ourselves keeps every customer email on one mailer and one
+ * design.
+ */
+export async function sendPasswordResetEmail(email: string, resetUrl: string, attemptKey: string = "initial") {
+  return sendTransactionalEmail({
+    eventKey: `reset:${email}:${attemptKey}`,
+    type: PASSWORD_RESET_TYPE,
+    to: email,
+    subject: "Reset your Gifta Guru password",
+    html: resetPasswordEmailTemplate(resetUrl),
+  });
+}
+
+/**
+ * Per-address, per-type throttle measured against the last attempt actually
+ * recorded. Supabase rate-limits its own mailer, but these emails go through
+ * Resend, so the ceiling has to live here.
  *
  * Returns the seconds remaining before another send is allowed, or 0.
  */
-export async function confirmationEmailCooldownRemaining(email: string, windowSeconds = 60) {
+export async function emailCooldownRemaining(email: string, type: string, windowSeconds = 60) {
   const last = await prisma.emailEvent
     .findFirst({
-      where: { recipient: email, type: SIGNUP_CONFIRMATION_TYPE },
+      where: { recipient: email, type },
       orderBy: { createdAt: "desc" },
       select: { createdAt: true },
     })
@@ -187,7 +216,7 @@ export async function sendBulkEnquiryEmail(enquiryId: string) {
     type: "bulk_enquiry_received",
     to: enquiry.email,
     subject: "Bulk enquiry received",
-    html: adminNotificationTemplate("Bulk enquiry received", [
+    html: customerNoticeTemplate("Bulk Gifting", "Bulk enquiry received", [
       `Hi ${escapeHtml(enquiry.fullName)}, we have received your bulk gifting enquiry.`,
       "Our team will contact you shortly with next steps.",
     ]),
@@ -230,7 +259,7 @@ export async function sendLeadEmails(leadId: string) {
     type: "lead_customer_confirmation",
     to: lead.email,
     subject: "Thanks for contacting Gifta Guru",
-    html: adminNotificationTemplate("Thanks for contacting Gifta Guru", [
+    html: customerNoticeTemplate("Enquiry Received", "Thanks for contacting Gifta Guru", [
       `Hi ${escapeHtml(lead.name)}, thank you for reaching out to Gifta Guru.`,
       "We have received your enquiry and our corporate gifting team will contact you shortly.",
       `Requirement: ${escapeHtml(lead.message)}`,

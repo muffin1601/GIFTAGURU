@@ -13,6 +13,7 @@ export default function AuthForm({
   mode,
   next,
   notice,
+  problem,
 }: {
   title: string;
   subtitle: string;
@@ -22,6 +23,8 @@ export default function AuthForm({
   next?: string;
   /** Page-level confirmation banner, e.g. after an email link is verified. */
   notice?: string;
+  /** Page-level failure banner, e.g. after an expired email link. */
+  problem?: string;
 }) {
   const [state, formAction, pending] = useActionState(action, {});
   const [resendState, resendAction, resendPending] = useActionState(resendConfirmationAction, {} as AuthState);
@@ -42,9 +45,20 @@ export default function AuthForm({
       <h1 className="type-h2">{title}</h1>
       <p className="type-body mt-3">{subtitle}</p>
 
+      {/* A failed email link needs a way forward, not just an explanation --
+          the reset request lives on /forgot-password. */}
+      {problem && !state.error && !state.success ? (
+        <div role="alert" className="field-error mt-6 border-l-2 border-current pl-4">
+          <p>{problem}</p>
+          <Link href="/forgot-password" className="link-underline mt-2 inline-block font-semibold text-navy-950">
+            Send a new link
+          </Link>
+        </div>
+      ) : null}
+
       {/* Dismissed implicitly by submitting: the action's own state replaces
           it below, so a stale "email confirmed" can't sit above a live error. */}
-      {notice && !state.error && !state.success ? (
+      {notice && !problem && !state.error && !state.success ? (
         <p
           role="status"
           className="mt-6 border-l-2 border-gold-500 bg-cream-100 py-3 pl-4 text-sm font-medium text-navy-950"

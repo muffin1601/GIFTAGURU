@@ -10,8 +10,11 @@ import { logger, errorMessage } from "@/lib/logger";
 import { mergeGuestCartIntoUser } from "@/lib/cart/service";
 import { emailOnlySchema, resetPasswordSchema, signInSchema, signUpSchema } from "@/lib/validations/auth";
 import {
-  confirmationEmailCooldownRemaining,
+  emailCooldownRemaining,
+  sendPasswordResetEmail,
   sendSignupConfirmationEmail,
+  PASSWORD_RESET_TYPE,
+  SIGNUP_CONFIRMATION_TYPE,
 } from "@/lib/email/service";
 
 export type AuthState = {
@@ -169,7 +172,7 @@ export async function resendConfirmationAction(_state: AuthState, formData: Form
   const { email } = parsed.data;
   const next = safeNextPath(formData.get("next"));
 
-  const cooldown = await confirmationEmailCooldownRemaining(email);
+  const cooldown = await emailCooldownRemaining(email, SIGNUP_CONFIRMATION_TYPE);
   if (cooldown > 0) {
     return {
       error: `Please wait ${cooldown} second${cooldown === 1 ? "" : "s"} before requesting another email.`,
@@ -207,8 +210,18 @@ export async function resendConfirmationAction(_state: AuthState, formData: Form
   }
 }
 
+/**
+ * Sends the password reset link through Resend, using the store's own email
+ * design.
+ *
+ * `supabase.auth.resetPasswordForEmail` would deliver this via Supabase's
+ * built-in SMTP with their stock template -- unbranded, and visibly from
+ * noreply@mail.app.supabase.io. Generating the recovery link with the admin
+ * API and mailing it ourselves keeps every customer email on one provider and
+ * one design, matching the signup confirmation path.
+ */
 export async function forgotPasswordAction(_state: AuthState, formData: FormData): Promise<AuthState> {
-  if (!isSupabaseConfigured()) {
+  if (!isSupabaseAdminConfigured()) {
     logger.error("auth.forgot_password.misconfigured");
     return NOT_CONFIGURED;
   }
@@ -217,24 +230,48 @@ export async function forgotPasswordAction(_state: AuthState, formData: FormData
   if (!parsed.success) return { error: "Enter a valid email address.", code: "unknown" };
 
   const { email } = parsed.data;
-  const supabase = await createClient();
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    // Same hash-fragment handoff as signup -- /reset-password calls
-    // updateUser() server-side, which needs a session cookie to already
-    // exist, so the reset link has to pass through /auth/callback first.
-    // `flow=recovery` is what opts this path into establishing that session;
-    // the callback signs nobody in without it.
-    redirectTo: `${siteUrl()}/auth/callback?flow=recovery&next=/reset-password`,
-  });
 
-  if (error) {
-    const mapped = mapAuthError(error);
-    logger.warn("auth.forgot_password.failed", { email, code: mapped.code });
-    // Rate limiting is the one case worth surfacing: silently claiming success
-    // would leave the customer waiting for mail that was never sent.
-    if (mapped.code === "rate_limited") return { error: mapped.message, code: mapped.code, email };
-  } else {
+  const cooldown = await emailCooldownRemaining(email, PASSWORD_RESET_TYPE);
+  if (cooldown > 0) {
+    return {
+      error: `Please wait ${cooldown} second${cooldown === 1 ? "" : "s"} before requesting another reset email.`,
+      code: "rate_limited",
+      email,
+    };
+  }
+
+  try {
+    const admin = createAdminClient();
+    const { data, error } = await admin.auth.admin.generateLink({
+      type: "recovery",
+      email,
+      options: {
+        // Same hash-fragment handoff as signup -- /reset-password calls
+        // updateUser() server-side, which needs a session cookie to already
+        // exist, so the reset link has to pass through /auth/callback first.
+        // `flow=recovery` is what opts this path into establishing that
+        // session; the callback signs nobody in without it.
+        redirectTo: `${siteUrl()}/auth/callback?flow=recovery&next=/reset-password`,
+      },
+    });
+
+    if (error) {
+      // Includes "user not found". Logged for operators, never differentiated
+      // in the response -- see GENERIC_EMAIL_SENT.
+      logger.warn("auth.forgot_password.generate_link_failed", { email, code: mapAuthError(error).code });
+      return { success: GENERIC_EMAIL_SENT, email };
+    }
+
+    const result = await sendPasswordResetEmail(email, data.properties.action_link, String(Date.now()));
+    if (result?.status === "failed") {
+      logger.error("auth.forgot_password.email_failed", { email });
+      return { error: "We couldn't send that email right now. Please try again shortly.", code: "unknown", email };
+    }
+
     logger.info("auth.forgot_password.requested", { email });
+  } catch (error) {
+    logger.error("auth.forgot_password.unexpected", { email, message: errorMessage(error) });
+    return { error: "We couldn't send that email right now. Please try again shortly.", code: "unknown", email };
   }
 
   // Uniform response regardless of whether the address exists.

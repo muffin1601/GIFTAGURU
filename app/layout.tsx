@@ -11,6 +11,7 @@ import { getCartView } from "@/lib/cart/service";
 import { SITE_DESCRIPTION, SITE_LOCALE, SITE_NAME, logoUrl } from "@/lib/seo/site";
 import { organizationSchema, websiteSchema } from "@/lib/seo/schema";
 import JsonLd from "@/components/seo/JsonLd";
+import AuthHashErrorWatcher from "@/components/auth/AuthHashErrorWatcher";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -68,6 +69,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-screen flex-col antialiased">
         <JsonLd data={[organizationSchema(), websiteSchema()]} />
+        {/* Supabase drops failed auth links on an arbitrary page with the
+            reason in a hash fragment; this catches it wherever it lands. */}
+        <AuthHashErrorWatcher />
         <CartProvider settings={storeSettings} initialCart={initialCart}>
           <StorefrontOnly>
             <Header />

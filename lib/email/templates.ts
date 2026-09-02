@@ -167,6 +167,34 @@ export function confirmSignupEmailTemplate(confirmationUrl: string) {
   );
 }
 
+export function resetPasswordEmailTemplate(resetUrl: string) {
+  return shell(
+    "Account Security",
+    "Reset your password",
+    `
+    ${paragraph("We received a request to reset the password on your Gifta Guru account. Choose a new password using the link below.")}
+    ${button("Reset password", resetUrl)}
+    ${paragraph(`<span style="color:${COLOR.ink500}">This link can only be used once, and expires in 60 minutes.</span>`)}
+    ${paragraph(`<span style="color:${COLOR.ink500}">If you didn't request this, you can safely ignore this email &mdash; your password will stay as it is.</span>`)}
+    <p style="margin:8px 0 0;font-family:${FONT_SANS};font-size:12px;line-height:1.6;color:${COLOR.ink500}">
+      If the button doesn't work, copy and paste this link into your browser:<br />
+      <a href="${resetUrl}" style="color:${COLOR.ink500};word-break:break-all">${resetUrl}</a>
+    </p>
+  `,
+  );
+}
+
+/**
+ * Customer-facing notice, in the same shell as every other email.
+ *
+ * Distinct from `adminNotificationTemplate` purely because of the eyebrow:
+ * customer confirmations were previously rendered with an "Admin Notification"
+ * label, which is internal wording no customer should ever see.
+ */
+export function customerNoticeTemplate(eyebrow: string, title: string, lines: string[]) {
+  return shell(eyebrow, title, lines.map((line) => paragraph(line)).join(""));
+}
+
 export function adminNotificationTemplate(title: string, lines: string[]) {
   return shell(
     "Admin Notification",
