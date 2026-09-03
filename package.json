@@ -7,6 +7,8 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "node --test --conditions=react-server \"tests/**/*.test.ts\"",
+    "test:watch": "node --test --watch --conditions=react-server \"tests/**/*.test.ts\"",
     "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:studio": "prisma studio",

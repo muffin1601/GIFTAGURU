@@ -106,6 +106,7 @@ function toNumber(value: unknown): number {
 
 async function getPrismaProducts(args: {
   limit?: number;
+  offset?: number;
   featuredOnly?: boolean;
   orderByReviewCount?: boolean;
   categorySlug?: string;
@@ -115,6 +116,7 @@ async function getPrismaProducts(args: {
   customizableOnly?: boolean;
 }) {
   return prisma.product.findMany({
+    skip: args.offset ?? 0,
     where: {
       status: "active",
       ...(args.featuredOnly ? { isFeatured: true } : {}),
@@ -270,6 +272,8 @@ export async function getProductsByCollection(collectionSlug: string): Promise<P
 }
 
 export interface ProductFilters {
+  /** Rows to skip, for paginated listings. */
+  offset?: number;
   categorySlug?: string;
   collectionSlug?: string;
   minPrice?: number;
@@ -284,6 +288,7 @@ export async function searchProducts(filters: ProductFilters): Promise<Product[]
     if (filters.collectionSlug) return getProductsByCollection(filters.collectionSlug);
     const products = await getPrismaProducts({
       limit: filters.limit,
+      offset: filters.offset,
       categorySlug: filters.categorySlug,
       query: filters.query,
       minPrice: filters.minPrice,
@@ -320,6 +325,38 @@ export async function searchProducts(filters: ProductFilters): Promise<Product[]
   if (error || !data || (Array.isArray(data) && data.length === 0)) return filterFallbackProducts(filters);
 
   return (data as unknown as ProductListRow[]).map(mapListRow);
+}
+
+/**
+ * Total active products matching the same filters `searchProducts` applies,
+ * so a listing can render page controls.
+ *
+ * Returns null when the catalogue is being served from the bundled fallback
+ * data rather than the database -- there is no meaningful total to page
+ * through in that case, and the caller renders the single page it has.
+ */
+export async function countProducts(filters: Pick<ProductFilters, "categorySlug" | "query">): Promise<number | null> {
+  if (!isDatabaseConfigured()) return null;
+
+  try {
+    return await prisma.product.count({
+      where: {
+        status: "active",
+        ...(filters.categorySlug ? { category: { slug: filters.categorySlug } } : {}),
+        ...(filters.query
+          ? {
+              OR: [
+                { name: { contains: filters.query, mode: "insensitive" } },
+                { description: { contains: filters.query, mode: "insensitive" } },
+                { category: { name: { contains: filters.query, mode: "insensitive" } } },
+              ],
+            }
+          : {}),
+      },
+    });
+  } catch {
+    return null;
+  }
 }
 
 export async function getProductBySlug(slug: string): Promise<StorefrontProductDetail | null> {

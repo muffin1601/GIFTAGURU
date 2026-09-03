@@ -1,19 +1,19 @@
 import { NextResponse } from "next/server";
-import { headers } from "next/headers";
 import { isDatabaseConfigured } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { leadSchema } from "@/lib/validations/lead";
 import { sendLeadEmails } from "@/lib/email/service";
-
-const attempts = new Map<string, number>();
-const COOLDOWN_MS = 20_000;
+import { clientKey, consume, tooManyRequests } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
-  const ip = (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
-  const lastAttempt = attempts.get(ip) ?? 0;
-
-  if (Date.now() - lastAttempt < COOLDOWN_MS) {
-    return NextResponse.json({ error: "Please wait a few seconds before submitting again." }, { status: 429 });
+  // Replaces a hand-rolled Map that was never pruned (one retained entry per
+  // client IP, for the life of the process) and that only recorded an attempt
+  // AFTER validation passed -- so malformed submissions were unthrottled and a
+  // scripted flood of invalid payloads cost nothing. The counter is consumed
+  // up front now, before any parsing or database work.
+  const limit = consume(await clientKey("leads"), 5, 60_000);
+  if (!limit.ok) {
+    return tooManyRequests("Please wait a few seconds before submitting again.", limit.retryAfter);
   }
 
   const payload = await request.json();
@@ -30,8 +30,6 @@ export async function POST(request: Request) {
   if (!isDatabaseConfigured()) {
     return NextResponse.json({ demo: true, message: "Lead validated. DATABASE_URL is not configured." });
   }
-
-  attempts.set(ip, Date.now());
 
   const lead = await prisma.lead.create({
     data: {

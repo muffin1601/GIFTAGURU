@@ -243,6 +243,25 @@ function buildCartView(items: CartItemWithRelations[], settings: StoreSettings):
   };
 }
 
+/**
+ * Id of the caller's active cart, or null if they have none.
+ *
+ * Read-only and cookie-free, so it is safe from a route handler that is about
+ * to open a transaction. Checkout uses it to empty the basket in the same
+ * transaction that creates the order.
+ */
+export async function getActiveCartId(): Promise<string | null> {
+  if (!isDatabaseConfigured()) return null;
+  try {
+    const userId = await currentUserId();
+    const jar = await cookies();
+    return await findActiveCart(userId, jar.get(CART_COOKIE)?.value ?? null);
+  } catch (error) {
+    logger.warn("cart.resolve_failed", { message: errorMessage(error) });
+    return null;
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /* Mutations                                                           */
 /* ------------------------------------------------------------------ */

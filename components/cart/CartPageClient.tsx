@@ -65,8 +65,14 @@ export default function CartPageClient() {
               // The cart-line id, not the product id: the same product can
               // legitimately occupy several lines with different personalization.
               <div key={item.lineId} className="grid gap-5 border-b border-line py-6 sm:grid-cols-[96px_1fr_auto]">
+                {/* Decorative duplicate of the product-name link below, so it
+                    is hidden from assistive tech and skipped by Tab rather
+                    than presented as a second, nameless link to the same
+                    place. Same treatment ProductCard already uses. */}
                 <Link
                   href={`/products/${item.slug}`}
+                  aria-hidden="true"
+                  tabIndex={-1}
                   className="relative aspect-square overflow-hidden border border-line bg-surface"
                 >
                   {item.image ? (

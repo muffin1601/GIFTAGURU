@@ -5,6 +5,8 @@ import { Prisma } from "@prisma/client";
 import { isDatabaseConfigured, isRazorpayConfigured } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/auth/session";
+import { getActiveCartId } from "@/lib/cart/service";
+import { logger, errorMessage } from "@/lib/logger";
 import { groupIntoShipments, toAddressSnapshot, totalShipping } from "@/lib/checkout/shipments";
 import { PERSONALIZATION_MAX_LENGTH } from "@/lib/config/store";
 import { getStoreSettings } from "@/lib/data/store-settings";
@@ -30,12 +32,47 @@ function text(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
+/**
+ * A checkout failure whose message is safe to show the customer.
+ *
+ * Previously these were plain `Error`s thrown outside any handler, so an
+ * out-of-stock line surfaced as an unhandled 500 and the customer was told
+ * "Unable to create payment order." with no indication of what to change.
+ * Anything that is NOT a CheckoutError is logged and replaced with a generic
+ * message, so internal detail still never reaches the browser.
+ */
+class CheckoutError extends Error {}
+
 function isUuid(value: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 }
 
 export async function POST(request: Request) {
-  const body = (await request.json()) as CreateOrderBody;
+  try {
+    return await handleCreateOrder(request);
+  } catch (error) {
+    if (error instanceof CheckoutError) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+    // Anything else is a genuine fault (inventory race lost, database
+    // unavailable, Razorpay rejected the order). It is logged with detail and
+    // answered with copy that gives the customer something to do.
+    logger.error("checkout.create_order_failed", { message: errorMessage(error) });
+    return NextResponse.json(
+      { error: "We couldn't start your payment. Nothing has been charged - please try again in a moment." },
+      { status: 500 },
+    );
+  }
+}
+
+async function handleCreateOrder(request: Request) {
+  let body: CreateOrderBody;
+  try {
+    body = (await request.json()) as CreateOrderBody;
+  } catch {
+    throw new CheckoutError("Malformed request.");
+  }
+
   if (!body.items?.length) {
     return NextResponse.json({ error: "Cart is empty." }, { status: 400 });
   }
@@ -78,7 +115,11 @@ export async function POST(request: Request) {
     });
   }
 
-  const productRefs = body.items.map((item) => item.productId);
+  // Deduplicated: the cart legitimately holds several lines for the SAME
+  // product when they carry different customizations (two engravings of one
+  // pen). Counting raw refs against the fetched rows below then reported
+  // "unavailable" and blocked checkout outright for those carts.
+  const productRefs = [...new Set(body.items.map((item) => item.productId))];
   const productIds = productRefs.filter(isUuid);
   const productSlugs = productRefs.filter((ref) => !isUuid(ref));
   const products = await prisma.product.findMany({
@@ -108,23 +149,31 @@ export async function POST(request: Request) {
   // nothing and the line falls back to the primary destination rather than
   // leaking a stranger's address into this order.
   const sessionUser = await getSessionUser();
+  const cartId = await getActiveCartId();
   const requestedAddressIds = [...new Set(body.items.map((item) => item.addressId).filter((id): id is string => Boolean(id)))];
   const savedAddresses =
     sessionUser && requestedAddressIds.length > 0
       ? await prisma.address.findMany({ where: { id: { in: requestedAddressIds }, profileId: sessionUser.id } })
       : [];
 
+  // Stock is checked against the running total per variant, not per line, so
+  // two customized lines of the same product cannot each independently "pass"
+  // against the same units.
+  const claimedPerVariant = new Map<string, number>();
+
   const lineItems = body.items.map((item) => {
     const product = products.find((candidate) => candidate.id === item.productId || candidate.slug === item.productId);
-    if (!product) throw new Error("Missing product after availability check.");
+    if (!product) throw new CheckoutError("One or more cart items are unavailable.");
     const variant = product.variants[0];
-    if (!variant) throw new Error(`Product ${product.slug} has no variant.`);
-    if (!variant.inventory) throw new Error(`Product ${product.slug} has no inventory record.`);
+    if (!variant) throw new CheckoutError(`${product.name} is not available for purchase right now.`);
+    if (!variant.inventory) throw new CheckoutError(`${product.name} is not available for purchase right now.`);
     const quantity = Math.max(item.quantity, product.minOrderQuantity, settings.minOrderQuantity);
     const available = variant.inventory.quantityAvailable - variant.inventory.quantityReserved;
-    if (available < quantity) {
-      throw new Error(`${product.name} has only ${available} unit(s) available.`);
+    const alreadyClaimed = claimedPerVariant.get(variant.id) ?? 0;
+    if (available < alreadyClaimed + quantity) {
+      throw new CheckoutError(`${product.name} has only ${Math.max(available, 0)} unit(s) available.`);
     }
+    claimedPerVariant.set(variant.id, alreadyClaimed + quantity);
     const baseUnitPrice = Number(variant.priceOverride ?? product.basePrice);
     const tiers = product.priceTiers.map((tier) => ({ minQuantity: tier.minQuantity, unitPrice: Number(tier.unitPrice) }));
     const unitPrice = resolveUnitPrice(baseUnitPrice, tiers, quantity);
@@ -191,6 +240,12 @@ export async function POST(request: Request) {
 
     const created = await tx.order.create({
       data: {
+        // Authoritative owner, taken from the session cookie and never from the
+        // request body. Without it every order was orphaned and /account/orders
+        // could only fall back to matching on the email typed into the form --
+        // so a customer who checked out with a different address to the one
+        // they registered with lost the order from their account entirely.
+        userId: sessionUser?.id ?? null,
         email: text(checkout.email) || "guest@giftaguru.local",
         phone: text(checkout.phone) || "0000000000",
         // Retained as the order's primary destination even when the order
@@ -309,6 +364,16 @@ export async function POST(request: Request) {
           },
         });
       }
+    }
+
+    // The basket has been converted into an order and its stock is reserved,
+    // so it must not remain addable a second time. Clearing it here -- inside
+    // the same transaction, rather than relying on the browser calling
+    // clearCart() after payment -- is what stops "abandon the Razorpay modal,
+    // refresh, submit again" from creating a duplicate order that reserves the
+    // same inventory twice.
+    if (cartId) {
+      await tx.cartItem.deleteMany({ where: { cartId } });
     }
 
     return created;

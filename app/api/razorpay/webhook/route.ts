@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from "crypto";
 import { NextResponse } from "next/server";
 import { markPaymentCaptured, markPaymentFailed } from "@/lib/orders/payment";
+import { logger, errorMessage } from "@/lib/logger";
 
 export async function POST(request: Request) {
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
@@ -31,12 +32,28 @@ export async function POST(request: Request) {
   const razorpayPaymentId = event.payload?.payment?.entity?.id;
   const webhookEventId = `${event.event ?? "unknown"}:${razorpayOrderId ?? "no-order"}:${razorpayPaymentId ?? "no-payment"}:${event.created_at ?? ""}`;
 
-  if (event.event === "payment.captured" && razorpayOrderId && razorpayPaymentId) {
-    await markPaymentCaptured({ razorpayOrderId, razorpayPaymentId, webhookEventId, rawResponse: event });
-  }
+  try {
+    if (event.event === "payment.captured" && razorpayOrderId && razorpayPaymentId) {
+      await markPaymentCaptured({ razorpayOrderId, razorpayPaymentId, webhookEventId, rawResponse: event });
+    }
 
-  if (event.event === "payment.failed" && razorpayOrderId) {
-    await markPaymentFailed({ razorpayOrderId, razorpayPaymentId, webhookEventId, rawResponse: event });
+    if (event.event === "payment.failed" && razorpayOrderId) {
+      await markPaymentFailed({ razorpayOrderId, razorpayPaymentId, webhookEventId, rawResponse: event });
+    }
+  } catch (error) {
+    // "Payment record not found" means the event is not ours (another
+    // integration on the same Razorpay account, or a test event). Retrying
+    // that forever is pointless, so it is acknowledged and logged. Everything
+    // else is a real failure and MUST return non-2xx so Razorpay redelivers --
+    // silently swallowing it would lose a capture.
+    const message = errorMessage(error);
+    if (message.includes("Payment record not found")) {
+      logger.warn("razorpay.webhook_unknown_order", { event: event.event, razorpayOrderId });
+      return NextResponse.json({ received: true, ignored: true });
+    }
+
+    logger.error("razorpay.webhook_failed", { event: event.event, razorpayOrderId, message });
+    return NextResponse.json({ error: "Webhook processing failed." }, { status: 500 });
   }
 
   return NextResponse.json({ received: true, event: event.event ?? "unknown" });

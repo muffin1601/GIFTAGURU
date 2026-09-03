@@ -61,9 +61,14 @@ export default function Footer() {
 
         {footerColumns.map((column) => (
           <nav key={column.heading} aria-label={column.heading}>
-            <h3 className="text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-gold-400">
+            {/* h2, not h3: the footer renders on every page, including ones
+                whose body has no h2 of its own (shop, login, 404). At h3 those
+                pages skipped a level straight from the page h1, which is a
+                WCAG 1.3.1 heading-order failure. The visual size is set by the
+                classes, so nothing changes on screen. */}
+            <h2 className="text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-gold-400">
               {column.heading}
-            </h3>
+            </h2>
             <ul className="mt-5 flex flex-col gap-3">
               {column.links.map((link) => (
                 <li key={link.href}>
