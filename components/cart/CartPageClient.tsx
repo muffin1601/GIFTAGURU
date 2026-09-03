@@ -9,7 +9,7 @@ import Button from "@/components/ui/Button";
 import { cartItemUnitPrice, useCart } from "@/components/cart/CartProvider";
 import { formatPrice } from "@/lib/utils";
 
-export default function CartPageClient() {
+export default function CartPageClient({ signedIn = false }: { signedIn?: boolean }) {
   const {
     items,
     merchandiseSubtotal,
@@ -186,9 +186,23 @@ export default function CartPageClient() {
             </div>
           </dl>
 
-          <Button href="/checkout" className="mt-3 w-full">
-            Continue to Checkout
+          {/* Checkout requires an account. Sending a signed-out shopper
+              straight to /login (rather than to /checkout, which would bounce
+              them) keeps the step visible instead of surprising. The basket is
+              merged into their account on sign-in, so nothing is lost. */}
+          <Button href={signedIn ? "/checkout" : "/login?next=/checkout"} className="mt-3 w-full">
+            {signedIn ? "Continue to Checkout" : "Sign in to Checkout"}
           </Button>
+
+          {!signedIn ? (
+            <p className="type-meta mt-3 text-center">
+              Your cart is saved. New customer?{" "}
+              <Link href="/signup?next=/checkout" className="link-underline text-navy-950">
+                Create an account
+              </Link>
+              .
+            </p>
+          ) : null}
 
           <div className="mt-8 border-t border-line pt-6">
             <p className="text-sm font-medium text-navy-950">Need a larger corporate order?</p>

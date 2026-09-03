@@ -393,6 +393,33 @@ orphaned = 5   recoverable = 0
 
 Joining `orders.email` against `auth.users.email` matches **zero** accounts — all five were genuine guest checkouts by people who never registered. There is nothing to backfill, so no migration was written. Those customers can still retrieve their orders via `/track-order`, and the `/account/orders` email fallback will surface them automatically should they register with the same address later.
 
+## Checkout is now sign-in only (VERIFIED)
+
+Guest checkout has been removed at the owner's instruction. This closes the last outstanding item from Phase 3 of the hardening plan. It is enforced in two places, and the distinction matters:
+
+| Layer | File | Role |
+|---|---|---|
+| **Enforcement** | `app/api/razorpay/create-order/route.ts` | Returns **401** `{ requiresAuth: true }` with no session. This route is reachable directly, so it — not the page — is the actual security boundary. |
+| Convenience | `app/checkout/page.tsx` | Redirects signed-out visitors to `/login?next=/checkout` so they never fill in a long form only to fail at payment. |
+| Expectation-setting | `components/cart/CartPageClient.tsx` | Signed-out cart shows **"Sign in to Checkout"** linking to `/login?next=/checkout`, plus a "Create an account" link, so the sign-in step is visible before the click rather than a surprise bounce. |
+| Session lapse | `components/cart/CheckoutClient.tsx` | A 401 mid-checkout routes to login rather than showing a dead-end error on a filled-in form. |
+
+**The customer's basket survives the sign-in.** `loginAction` calls `mergeGuestCartIntoUser()` before redirecting, and the cart is server-side, so a guest who builds a basket and is then asked to sign in keeps every line.
+
+### Verification performed
+
+| Check | Result |
+|---|---|
+| `GET /checkout` signed out | **307 → `/login?next=/checkout`** |
+| `POST /api/razorpay/create-order` signed out, well-formed body | **401** `{"error":"Please sign in to complete your order.","requiresAuth":true}` |
+| Order rows created by that rejected request | **none** — the gate fires before the transaction |
+| Inventory reserved by that rejected request | **none** |
+| `GET /cart` signed out | 200, renders "Sign in to Checkout" → `/login?next=/checkout` |
+
+A side benefit: because an order can no longer be created without a session, `orders.user_id` is now guaranteed non-null on every new order — the P0-1 defect is structurally prevented, not merely fixed.
+
+**Note on order GG-100012** (created 2026-09-03 06:09Z, `user_id = NULL`, `payment_status = pending`): this predates the auth gate and was placed while signed out. If it was submitted with the live keys now present locally, confirm in the Razorpay dashboard whether a real order was opened against it.
+
 ## Gate status after this pass
 
 | Gate | Result |
@@ -443,3 +470,7 @@ The classification does **not** advance to PRODUCTION READY, for one reason only
 | `tests/rate-limit.test.ts` | **New** — throttling + PIN validation |
 | `package.json` | `test` / `test:watch` scripts (no new dependencies) |
 | `tsconfig.json` | `allowImportingTsExtensions` |
+| `app/checkout/page.tsx` | Sign-in gate (redirect) |
+| `app/cart/page.tsx` | Passes `signedIn` to the cart |
+| `components/cart/CartPageClient.tsx` | Sign-in-aware checkout CTA |
+| `components/cart/CheckoutClient.tsx` | Handles a mid-checkout 401 |

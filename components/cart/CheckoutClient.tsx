@@ -184,9 +184,19 @@ export default function CheckoutClient({
       keyId?: string;
       error?: string;
       demo?: boolean;
+      requiresAuth?: boolean;
     };
 
     if (!response.ok) {
+      // The session can lapse while this page sits open. Rather than showing a
+      // dead-end error on a form the customer has already filled in, send them
+      // to sign in and straight back here -- the cart is server-side and is
+      // re-merged on login, so nothing they entered is lost from the basket.
+      if (response.status === 401 || payload.requiresAuth) {
+        router.push("/login?next=/checkout");
+        return;
+      }
+
       setError(payload.error ?? "Unable to create payment order.");
       setPending(false);
       return;

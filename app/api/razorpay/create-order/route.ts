@@ -149,6 +149,19 @@ async function handleCreateOrder(request: Request) {
   // nothing and the line falls back to the primary destination rather than
   // leaking a stranger's address into this order.
   const sessionUser = await getSessionUser();
+
+  // THE auth gate for payment. The /checkout page also redirects signed-out
+  // visitors, but that is convenience only -- this route is reachable directly
+  // and is what actually enforces the rule. A signed-in customer is now a
+  // precondition of creating an order, which is also what guarantees
+  // `userId` below is always populated.
+  if (!sessionUser) {
+    return NextResponse.json(
+      { error: "Please sign in to complete your order.", requiresAuth: true },
+      { status: 401 },
+    );
+  }
+
   const cartId = await getActiveCartId();
   const requestedAddressIds = [...new Set(body.items.map((item) => item.addressId).filter((id): id is string => Boolean(id)))];
   const savedAddresses =
@@ -241,11 +254,11 @@ async function handleCreateOrder(request: Request) {
     const created = await tx.order.create({
       data: {
         // Authoritative owner, taken from the session cookie and never from the
-        // request body. Without it every order was orphaned and /account/orders
-        // could only fall back to matching on the email typed into the form --
-        // so a customer who checked out with a different address to the one
-        // they registered with lost the order from their account entirely.
-        userId: sessionUser?.id ?? null,
+        // request body. Guaranteed non-null by the auth gate above; previously
+        // this was never set at all, so every order was orphaned and
+        // /account/orders could only fall back to matching on the email typed
+        // into the form.
+        userId: sessionUser.id,
         email: text(checkout.email) || "guest@giftaguru.local",
         phone: text(checkout.phone) || "0000000000",
         // Retained as the order's primary destination even when the order
