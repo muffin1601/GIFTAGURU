@@ -10,7 +10,8 @@ import { categories } from "@/data/categories";
 import { getCollectionBySlug } from "@/lib/data/collections";
 import { getProductsByCollection } from "@/lib/data/products";
 import { pageMetadata, truncateDescription } from "@/lib/seo/metadata";
-import { breadcrumbSchema } from "@/lib/seo/schema";
+import { breadcrumbSchema, faqPageSchema, itemListSchema } from "@/lib/seo/schema";
+import { getCollectionSeoContent } from "@/lib/seo/content/collections";
 
 export const dynamic = "force-dynamic";
 
@@ -34,9 +35,15 @@ export async function generateMetadata({
     });
   }
 
+  // Cluster-head-term metadata for the four core collections; admin-created
+  // collections fall back to their own description.
+  const seo = getCollectionSeoContent(slug);
+
   return pageMetadata({
-    title: `${category.name} | Gifta Guru`,
-    description: truncateDescription(category.description || category.tagline || `${category.name} corporate gifts, curated by Gifta Guru.`),
+    title: `${seo?.seoTitle ?? category.name} | Gifta Guru`,
+    description:
+      seo?.metaDescription ??
+      truncateDescription(category.description || category.tagline || `${category.name} corporate gifts, curated by Gifta Guru.`),
     path: `/categories/${category.slug}`,
     image: category.image,
     imageAlt: category.name,
@@ -53,15 +60,21 @@ export default async function CategoryPage({
   if (!category) notFound();
 
   const products = await getProductsByCollection(category.slug);
+  const seo = getCollectionSeoContent(category.slug);
 
   return (
     <>
       <JsonLd
-        data={breadcrumbSchema([
-          { name: "Home", path: "/" },
-          { name: "Categories", path: "/categories" },
-          { name: category.name, path: `/categories/${category.slug}` },
-        ])}
+        data={[
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Categories", path: "/categories" },
+            { name: category.name, path: `/categories/${category.slug}` },
+          ]),
+          // Describes the grid actually rendered below, in the same order.
+          itemListSchema(products.map((p) => ({ name: p.name, slug: p.slug }))),
+          faqPageSchema(seo?.faqs ?? []),
+        ]}
       />
       <section className="border-b border-line">
         <Container className="pt-6 sm:pt-8">
@@ -76,8 +89,14 @@ export default async function CategoryPage({
         <Container className="grid items-center gap-10 pb-14 pt-6 sm:pb-16 lg:grid-cols-[1fr_auto] lg:gap-16">
           <div className="max-w-2xl">
             <span className="type-eyebrow">{category.name}</span>
-            <h1 className="type-h1 mt-4">{category.tagline}</h1>
-            <p className="type-lead mt-5">{category.description}</p>
+            <h1 className="type-h1 mt-4">{seo?.h1 ?? category.tagline}</h1>
+            {seo ? (
+              seo.intro.map((paragraph) => (
+                <p key={paragraph} className="type-lead mt-5">{paragraph}</p>
+              ))
+            ) : (
+              <p className="type-lead mt-5">{category.description}</p>
+            )}
             <Button
               href={`/bulk-enquiry?collection=${encodeURIComponent(category.name)}`}
               variant="primary"
@@ -113,6 +132,47 @@ export default async function CategoryPage({
           ) : (
             <p className="type-body">No products in this collection yet.</p>
           )}
+
+          {seo ? (
+            <>
+              <section className="mt-16 border-t border-line pt-10">
+                <h2 className="type-h2">How to choose from this collection</h2>
+                <ul className="mt-6 max-w-3xl space-y-2">
+                  {seo.buyingPoints.map((point) => (
+                    <li key={point} className="type-body flex gap-3">
+                      <span aria-hidden="true" className="mt-2 h-1 w-1 shrink-0 rounded-full bg-gold-600" />
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+
+              <section className="mt-16 border-t border-line pt-10">
+                <h2 className="type-h2">Frequently asked questions</h2>
+                <dl className="mt-8 max-w-3xl space-y-8">
+                  {seo.faqs.map((faq) => (
+                    <div key={faq.question}>
+                      <dt className="font-display text-lg text-navy-950">{faq.question}</dt>
+                      <dd className="type-body mt-2">{faq.answer}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </section>
+
+              <section className="mt-16 border-t border-line pt-10">
+                <h2 className="type-h2">Continue exploring</h2>
+                <ul className="mt-6 flex flex-wrap gap-x-8 gap-y-3">
+                  {seo.relatedLinks.map((link) => (
+                    <li key={link.href}>
+                      <Link href={link.href} className="link-underline text-navy-950">
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            </>
+          ) : null}
         </Container>
       </section>
     </>

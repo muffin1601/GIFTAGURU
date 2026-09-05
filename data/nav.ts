@@ -47,6 +47,21 @@ export const footerColumns: { heading: string; links: NavLink[] }[] = [
       { label: "Custom Branding", href: "/custom-gifts" },
       { label: "Bulk Orders", href: "/bulk-orders" },
       { label: "Request a Quote", href: "/bulk-enquiry" },
+      { label: "Gifting by Industry", href: "/industries" },
+    ],
+  },
+  // The five editorial hubs. Linking them from every page is what keeps the
+  // ~38 landing pages beneath them out of orphan status -- each is then two
+  // clicks from anywhere on the site.
+  {
+    heading: "Gifting Solutions",
+    links: [
+      { label: "Employee Onboarding", href: "/gifting/employee-onboarding" },
+      { label: "Client Gifting", href: "/gifting/client-appreciation" },
+      { label: "Events & Conferences", href: "/gifting/events-conferences" },
+      { label: "All Gifting Solutions", href: "/gifting" },
+      { label: "Seasonal & Occasions", href: "/occasions" },
+      { label: "3-6 Piece Gift Sets", href: "/gift-sets" },
     ],
   },
   {
@@ -62,6 +77,7 @@ export const footerColumns: { heading: string; links: NavLink[] }[] = [
     heading: "Company",
     links: [
       { label: "About", href: "/about" },
+      { label: "Gifting Guides", href: "/guides" },
       { label: "Privacy Policy", href: "/privacy-policy" },
       { label: "Terms and Conditions", href: "/terms-and-conditions" },
     ],

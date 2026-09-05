@@ -16,7 +16,9 @@ import { PERSONALIZATION_MAX_LENGTH } from "@/lib/config/store";
 import { getStoreSettings } from "@/lib/data/store-settings";
 import { formatPrice } from "@/lib/utils";
 import { pageMetadata, truncateDescription } from "@/lib/seo/metadata";
-import { breadcrumbSchema, productSchema } from "@/lib/seo/schema";
+import { breadcrumbSchema, faqPageSchema, productSchema } from "@/lib/seo/schema";
+import { getProductSeoContent } from "@/lib/seo/content/products";
+import { productClusterLinks } from "@/lib/seo/content/clusters";
 import type { Product } from "@/types";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -33,12 +35,20 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     });
   }
 
-  const description = truncateDescription(
-    product.description || `${product.name}, curated for corporate gifting by Gifta Guru.`,
-  );
+  // The editorial SEO layer wins where it exists: it carries a hand-written,
+  // length-checked title and description built around this product's distinct
+  // primary keyword. Products added later (by an admin, with no entry in that
+  // file) still get sensible metadata from the catalog fields.
+  const seo = getProductSeoContent(product.slug);
+
+  const description = seo
+    ? seo.metaDescription
+    : truncateDescription(
+        product.description || `${product.name}, curated for corporate gifting by Gifta Guru.`,
+      );
 
   return pageMetadata({
-    title: `${product.name} | Gifta Guru`,
+    title: `${seo?.seoTitle ?? product.name} | Gifta Guru`,
     description,
     path: `/products/${product.slug}`,
     image: product.images[0]?.url,
@@ -71,6 +81,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   ]);
 
   const inStock = product.variants.some((variant) => variant.inStock);
+  const seo = getProductSeoContent(product.slug);
+  const clusterLinks = seo ? productClusterLinks[seo.cluster] : [];
 
   return (
     <>
@@ -81,6 +93,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             { name: "Shop", path: "/shop" },
             { name: product.name, path: `/products/${product.slug}` },
           ]),
+          // Only ever the FAQs rendered visibly further down this page.
+          faqPageSchema(seo?.faqs ?? []),
           productSchema({
             name: product.name,
             description: product.description || `${product.name}, curated for corporate gifting by Gifta Guru.`,
@@ -110,7 +124,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               panel is deliberately not wrapped in one large card. */}
           <section>
             <p className="type-eyebrow">{product.categoryName ?? "Corporate Gifts"}</p>
-            <h1 className="type-h1 mt-4">{product.name}</h1>
+            <h1 className="type-h1 mt-4">{seo?.h1 ?? product.name}</h1>
 
             {/* Ratings render only when real review data exists. */}
             {product.reviewCount > 0 && product.avgRating ? (
@@ -121,7 +135,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               </div>
             ) : null}
 
-            <p className="type-lead mt-5">{product.description}</p>
+            <p className="type-lead mt-5">{seo?.shortDescription ?? product.description}</p>
 
             <div className="mt-8 flex flex-wrap items-baseline gap-x-3 gap-y-1 border-t border-line pt-8">
               <span className="font-display text-3xl text-navy-950">
@@ -263,6 +277,74 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             />
           </div>
         </section>
+
+        {/* Editorial SEO content. Present for the 24 catalog sets that have an
+            entry in lib/seo/content/products.ts; a product added later simply
+            renders the sections above until copy is written for it. */}
+        {seo ? (
+          <>
+            <section className="mt-16 border-t border-line pt-10">
+              <h2 className="type-h2">About this gift set</h2>
+              <div className="mt-6 max-w-3xl">
+                {seo.detailedDescription.map((paragraph) => (
+                  <p key={paragraph} className="type-body mt-4">{paragraph}</p>
+                ))}
+              </div>
+
+              <div className="mt-10 grid max-w-4xl gap-x-12 gap-y-10 sm:grid-cols-2">
+                <div>
+                  <h3 className="type-eyebrow">Key features</h3>
+                  <ul className="mt-4 space-y-2">
+                    {seo.keyFeatures.map((feature) => (
+                      <li key={feature} className="type-body flex gap-3">
+                        <span aria-hidden="true" className="mt-2 h-1 w-1 shrink-0 rounded-full bg-gold-600" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="type-eyebrow">Who it&apos;s for</h3>
+                  <ul className="mt-4 space-y-2">
+                    {seo.useCases.map((useCase) => (
+                      <li key={useCase} className="type-body flex gap-3">
+                        <span aria-hidden="true" className="mt-2 h-1 w-1 shrink-0 rounded-full bg-gold-600" />
+                        <span>{useCase}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </section>
+
+            <section className="mt-16 border-t border-line pt-10">
+              <h2 className="type-h2">Questions about this set</h2>
+              <dl className="mt-8 max-w-3xl space-y-8">
+                {seo.faqs.map((faq) => (
+                  <div key={faq.question}>
+                    <dt className="font-display text-lg text-navy-950">{faq.question}</dt>
+                    <dd className="type-body mt-2">{faq.answer}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+
+            {clusterLinks.length > 0 ? (
+              <section className="mt-16 border-t border-line pt-10">
+                <h2 className="type-h2">Explore related gifting</h2>
+                <ul className="mt-6 flex flex-wrap gap-x-8 gap-y-3">
+                  {clusterLinks.map((link) => (
+                    <li key={link.href}>
+                      <Link href={link.href} className="link-underline text-navy-950">
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+          </>
+        ) : null}
 
         <section className="mt-16 border-t border-line pt-10">
           <h2 className="type-h2">Related products</h2>

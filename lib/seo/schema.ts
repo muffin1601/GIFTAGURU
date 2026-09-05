@@ -63,6 +63,48 @@ export function breadcrumbSchema(items: { name: string; path: string }[]) {
   };
 }
 
+/**
+ * FAQPage JSON-LD.
+ *
+ * Only ever call this with the exact question/answer pairs the page also
+ * renders visibly -- Google requires the markup to match on-page content, and
+ * FAQ markup describing hidden text is a manual-action risk, not a rich-result
+ * opportunity. Returns null for an empty list so a page with no FAQs emits no
+ * empty FAQPage node.
+ */
+export function faqPageSchema(faqs: { question: string; answer: string }[]) {
+  if (faqs.length === 0) return null;
+
+  return {
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: { "@type": "Answer", text: faq.answer },
+    })),
+  };
+}
+
+/**
+ * ItemList JSON-LD for a category/collection listing. Describes the products
+ * actually rendered in the grid, in the order they appear, so the markup
+ * matches what a visitor sees.
+ */
+export function itemListSchema(items: { name: string; slug: string }[]) {
+  if (items.length === 0) return null;
+
+  return {
+    "@type": "ItemList",
+    numberOfItems: items.length,
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      url: `${siteUrl()}/products/${item.slug}`,
+    })),
+  };
+}
+
 interface ProductSchemaInput {
   name: string;
   description: string;

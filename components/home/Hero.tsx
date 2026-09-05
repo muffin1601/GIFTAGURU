@@ -112,7 +112,14 @@ export default function Hero() {
           <div className="mx-auto w-full max-w-[84rem] px-5 sm:px-8 lg:px-12">
             <div className="max-w-xl">
               <span className="type-eyebrow text-gold-600">{active.eyebrow}</span>
-              <h1 className="type-h1 mt-3 text-navy-950 sm:mt-4">{active.title}</h1>
+              {/* Deliberately a <p>, not an <h1>. The mobile copy block below
+                  carries the real <h1> for this slide: both blocks render the
+                  same title, and emitting two <h1> elements gave the homepage
+                  two top-level headings in the DOM. The heading lives on the
+                  mobile block because Google indexes mobile-first, so that is
+                  the variant it actually sees rendered rather than
+                  display:none. Visual styling is identical. */}
+              <p className="type-h1 mt-3 text-navy-950 sm:mt-4">{active.title}</p>
               <p className="type-lead mt-3 text-ink-600">{active.description}</p>
 
               <div className="mt-6 flex flex-wrap gap-3">

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { isDatabaseConfigured } from "@/lib/env";
 import { siteUrl } from "@/lib/env";
 import { categories as fallbackCategories } from "@/data/categories";
+import { allLandingHubPaths, allLandingPages } from "@/lib/seo/content";
 
 /**
  * Database-driven. The previous version listed URLs from data/products.ts
@@ -43,11 +44,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === "" ? 1 : 0.7,
   }));
 
+  // Editorial SEO pages (industries, gifting use-cases, occasions, multi-piece
+  // gift sets, guides) plus their five hubs. Read from the same registry the
+  // routes and the footer read from, so a page cannot exist without being
+  // listed here.
+  const landingEntries: MetadataRoute.Sitemap = [
+    ...allLandingHubPaths().map((path) => ({
+      url: `${base}${path}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...allLandingPages().map((page) => ({
+      url: `${base}${page.path}`,
+      changeFrequency: "monthly" as const,
+      priority: page.family === "guides" ? 0.5 : 0.6,
+    })),
+  ];
+
   if (!isDatabaseConfigured()) {
     // No database configured (e.g. a fresh checkout of this repo): fall back
     // to the bundled fixture categories rather than emit an empty sitemap.
     return [
       ...staticEntries,
+      ...landingEntries,
       ...fallbackCategories.map((category) => ({
         url: `${base}/categories/${category.slug}`,
         changeFrequency: "weekly" as const,
@@ -69,6 +88,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     ...staticEntries,
+    ...landingEntries,
     ...collections.map((collection) => ({
       url: `${base}/categories/${collection.slug}`,
       lastModified: collection.updatedAt,

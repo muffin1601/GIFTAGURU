@@ -28,6 +28,7 @@ interface SupabaseQueryResult {
 interface SupabaseQueryBuilder extends PromiseLike<SupabaseQueryResult> {
   select(columns: string): SupabaseQueryBuilder;
   eq(column: string, value: unknown): SupabaseQueryBuilder;
+  in(column: string, values: readonly unknown[]): SupabaseQueryBuilder;
   order(column: string, options?: { ascending?: boolean }): SupabaseQueryBuilder;
   limit(count: number): PromiseLike<SupabaseQueryResult>;
   maybeSingle(): PromiseLike<SupabaseQueryResult>;
@@ -325,6 +326,60 @@ export async function searchProducts(filters: ProductFilters): Promise<Product[]
   if (error || !data || (Array.isArray(data) && data.length === 0)) return filterFallbackProducts(filters);
 
   return (data as unknown as ProductListRow[]).map(mapListRow);
+}
+
+/**
+ * Resolves an explicit, ordered list of catalog slugs to live products.
+ *
+ * Used by the editorial SEO landing pages, which recommend specific sets by
+ * slug (see lib/seo/content/*). Two deliberate behaviours:
+ *  - the caller's slug order is preserved, because those lists are curated
+ *    rather than sorted;
+ *  - a slug with no active product is silently dropped rather than throwing,
+ *    so retiring a product degrades a recommendation list instead of breaking
+ *    every page that mentioned it.
+ */
+export async function getProductsBySlugs(slugs: string[]): Promise<Product[]> {
+  if (slugs.length === 0) return [];
+
+  const order = new Map(slugs.map((slug, index) => [slug, index]));
+  const inRequestedOrder = (products: Product[]): Product[] =>
+    products
+      .filter((product) => order.has(product.slug))
+      .sort((a, b) => order.get(a.slug)! - order.get(b.slug)!);
+
+  if (isDatabaseConfigured()) {
+    try {
+      const products = await prisma.product.findMany({
+        where: { status: "active", slug: { in: slugs } },
+        include: {
+          category: { select: { slug: true } },
+          images: { orderBy: { sortOrder: "asc" }, take: 1 },
+        },
+      });
+      if (products.length > 0) return inRequestedOrder(products.map(mapPrismaListProduct));
+    } catch {
+      // Fall through to Supabase or the bundled catalog when Prisma is unavailable.
+    }
+  }
+
+  if (!isSupabaseConfigured()) {
+    return inRequestedOrder(fallbackProducts.filter((product) => order.has(product.slug)));
+  }
+
+  const supabase = (await createClient()) as unknown as SupabaseLooseClient;
+  const { data, error } = await supabase
+    .from("products")
+    .select(LIST_SELECT)
+    .eq("status", "active")
+    .in("slug", slugs);
+
+  const rows = data as ProductListRow[] | null;
+  if (error || !rows || rows.length === 0) {
+    return inRequestedOrder(fallbackProducts.filter((product) => order.has(product.slug)));
+  }
+
+  return inRequestedOrder(rows.map(mapListRow));
 }
 
 /**
