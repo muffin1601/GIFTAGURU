@@ -38,8 +38,24 @@ export interface ProductFaq {
 }
 
 export interface ProductSeoContent {
-  /** Catalog slug -- must match data/products.ts and the live `products` table. */
+  /** Catalog slug, as it appears in data/products.ts. */
   slug: string;
+  /**
+   * Other slugs the SAME product is known by, most importantly in the live
+   * database.
+   *
+   * The seeded `products` table and the data/products.ts fixture drifted: six
+   * products carry an extra "and" in the database ("journal-and-matching-pen-set"
+   * vs "journal-matching-pen-set"). Because this module is keyed by slug, that
+   * drift silently cost those six pages all of their SEO content -- they
+   * returned 200 with catalog-derived metadata and no copy, FAQs or links --
+   * and it also made them vanish from landing-page recommendations.
+   *
+   * Listing the aliases fixes it in both directions without renaming anything
+   * live (a slug change would need redirects) and without the fixture and the
+   * database having to agree.
+   */
+  slugAliases?: string[];
   cluster: ProductCluster;
   /** The one keyword this page owns. Unique across the catalog. */
   primaryKeyword: string;
@@ -114,6 +130,7 @@ export const productSeoContent: ProductSeoContent[] = [
   },
   {
     slug: "classic-pen-keychain-welcome-set",
+    slugAliases: ["classic-pen-and-keychain-welcome-set"],
     cluster: "pens-desk-accessories",
     primaryKeyword: "custom pen and keychain set",
     secondaryKeywords: [
@@ -216,6 +233,7 @@ export const productSeoContent: ProductSeoContent[] = [
   },
   {
     slug: "refined-folio-pen-gift-set",
+    slugAliases: ["refined-folio-and-pen-gift-set"],
     cluster: "luxury-executive",
     primaryKeyword: "executive folio gift set",
     secondaryKeywords: [
@@ -266,6 +284,7 @@ export const productSeoContent: ProductSeoContent[] = [
   },
   {
     slug: "journal-matching-pen-set",
+    slugAliases: ["journal-and-matching-pen-set"],
     cluster: "stationery-journals",
     primaryKeyword: "personalized journal and pen set",
     secondaryKeywords: [
@@ -666,6 +685,7 @@ export const productSeoContent: ProductSeoContent[] = [
   },
   {
     slug: "notebook-pen-executive-set",
+    slugAliases: ["notebook-and-pen-executive-set"],
     cluster: "pens-desk-accessories",
     primaryKeyword: "custom notebook and pen set",
     secondaryKeywords: [
@@ -866,6 +886,7 @@ export const productSeoContent: ProductSeoContent[] = [
   },
   {
     slug: "minimal-notebook-pen-set",
+    slugAliases: ["minimal-notebook-and-pen-set"],
     cluster: "onboarding-welcome-kits",
     primaryKeyword: "budget corporate gifts bulk",
     secondaryKeywords: [
@@ -1120,6 +1141,7 @@ export const productSeoContent: ProductSeoContent[] = [
   },
   {
     slug: "grey-folio-notebook-set",
+    slugAliases: ["grey-folio-and-notebook-set"],
     cluster: "planners-folios",
     primaryKeyword: "custom folio with logo",
     secondaryKeywords: [
@@ -1270,10 +1292,38 @@ export const productSeoContent: ProductSeoContent[] = [
   },
 ];
 
-const bySlug = new Map(productSeoContent.map((entry) => [entry.slug, entry]));
+/** Indexed by the canonical slug AND every alias, so either form resolves. */
+const bySlug = new Map<string, ProductSeoContent>();
+for (const entry of productSeoContent) {
+  bySlug.set(entry.slug, entry);
+  for (const alias of entry.slugAliases ?? []) bySlug.set(alias, entry);
+}
 
 export function getProductSeoContent(slug: string): ProductSeoContent | undefined {
   return bySlug.get(slug);
+}
+
+/**
+ * Expands curated slug lists to include known aliases.
+ *
+ * Landing pages recommend products by their data/products.ts slug, but the
+ * live database may store an aliased form. Querying only the written slug
+ * silently dropped those products from the recommendation grids -- the page
+ * still rendered, just with fewer cards than intended, which is exactly the
+ * kind of failure nobody notices. Callers pass their curated list through this
+ * before hitting the catalog.
+ */
+export function expandProductSlugs(slugs: string[]): string[] {
+  const expanded = new Set<string>();
+  for (const slug of slugs) {
+    expanded.add(slug);
+    const entry = bySlug.get(slug);
+    if (entry) {
+      expanded.add(entry.slug);
+      for (const alias of entry.slugAliases ?? []) expanded.add(alias);
+    }
+  }
+  return [...expanded];
 }
 
 /** Every distinct primary keyword owned by a product page. */

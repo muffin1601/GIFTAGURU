@@ -1,7 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { productSeoContent } from "../lib/seo/content/products.ts";
+import {
+  productSeoContent,
+  getProductSeoContent,
+  expandProductSlugs,
+} from "../lib/seo/content/products.ts";
 import { collectionSeoContent } from "../lib/seo/content/collections.ts";
 import { industryPages } from "../lib/seo/content/industries.ts";
 import { useCasePages } from "../lib/seo/content/use-cases.ts";
@@ -93,6 +97,47 @@ test("every recommended product on a landing page exists in the catalog", () => 
   }
 
   assert.deepEqual(broken, []);
+});
+
+test("slug aliases are unique and resolve to their own product", () => {
+  const owner = new Map<string, string>();
+  const problems: string[] = [];
+
+  for (const product of productSeoContent) {
+    for (const alias of product.slugAliases ?? []) {
+      if (alias === product.slug) problems.push(`${product.slug} aliases itself`);
+
+      const existing = owner.get(alias);
+      if (existing) problems.push(`alias "${alias}" claimed by ${existing} and ${product.slug}`);
+      else owner.set(alias, product.slug);
+
+      // An alias must never be another product's real slug, or one product's
+      // SEO copy would render on another product's page.
+      const clash = catalogProducts.find((c) => c.slug === alias);
+      if (clash && clash.slug !== product.slug) {
+        problems.push(`alias "${alias}" is the real slug of a different product`);
+      }
+
+      assert.equal(
+        getProductSeoContent(alias)?.slug,
+        product.slug,
+        `alias "${alias}" does not resolve back to ${product.slug}`,
+      );
+    }
+  }
+
+  assert.deepEqual(problems, []);
+});
+
+test("expandProductSlugs includes every alias, so recommendations cannot silently drop", () => {
+  const aliased = productSeoContent.find((p) => (p.slugAliases ?? []).length > 0);
+  assert.ok(aliased, "expected at least one aliased product to exercise this path");
+
+  const expanded = expandProductSlugs([aliased.slug]);
+  for (const alias of aliased.slugAliases ?? []) {
+    assert.ok(expanded.includes(alias), `expanded list is missing alias "${alias}"`);
+  }
+  assert.ok(expanded.includes(aliased.slug));
 });
 
 test("titles and meta descriptions are unique and present", () => {

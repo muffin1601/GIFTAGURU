@@ -28,10 +28,12 @@ into code so it can be verified rather than asserted:
 - **4 category pages** given cluster-head-term ownership, buying guidance and FAQs
 - **Homepage** given its own metadata, an indexable intro, and a 16-link routing block
 - **1 real cannibalization conflict** in the source strategy found and resolved
-- **2 automated scripts + 6 regression tests** so the architecture cannot silently rot
+- **3 automated scripts + 8 regression tests** so the architecture cannot silently rot
 
-Build, typecheck, lint and all 41 tests pass. No pricing, inventory, payment,
-auth or admin behaviour was touched.
+Build, typecheck, lint and all 43 tests pass. `SITE_URL` is set to
+`https://www.giftaguru.com` and every canonical, sitemap entry, OG tag and
+JSON-LD `@id` was verified against a running production build. No pricing,
+inventory, payment, auth or admin behaviour was touched.
 
 ## Two corrections to the brief's premises
 
@@ -442,6 +444,25 @@ zero duplicates by both the validator and a regression test.
 11. `getProductsBySlugs` added so curated recommendations degrade gracefully when a product is retired
 12. **Homepage shipped two `<h1>` elements** — the hero renders separate desktop and mobile copy blocks, each with its own heading, so both were in the DOM even though only one was ever visible. The desktop block became a `<p>` with identical styling and the mobile block keeps the real `<h1>`, since Google indexes mobile-first and that is the variant it sees rendered rather than `display:none`. Found by rendered-HTML inspection, not by the content-module checks — a `multiple-h1-in-component` check was then added to the validator so it cannot recur.
 
+13. **Six product pages were rendering with none of the SEO content.** The seeded
+    `products` table and the `data/products.ts` fixture had drifted: the database
+    stores `journal-and-matching-pen-set` where the fixture says
+    `journal-matching-pen-set` (same for five others — an extra `and`). Because
+    the SEO content module is keyed by slug, those six pages returned HTTP 200
+    with catalog-derived metadata and **no copy, no FAQs, no schema, no cluster
+    links** — and they were also silently dropped from every landing-page
+    recommendation grid that listed them.
+
+    Found only by diffing the live sitemap's product URLs against the content
+    module; the validator had reported all-clear because it checked the fixture,
+    not the database.
+
+    **Fix:** a `slugAliases` field, with `getProductSeoContent()` and a new
+    `expandProductSlugs()` resolving either form. No slug was renamed — doing so
+    would have required redirects for URLs that may already be indexed. The
+    validator now includes aliases in its known-slug set and asserts they are
+    unique and non-colliding; two regression tests cover the same ground.
+
 ### Verified in rendered HTML
 
 The above was confirmed against a running production build, not inferred from source:
@@ -451,18 +472,24 @@ The above was confirmed against a running production build, not inferred from so
 | `/` | 1 | Organization, WebSite, FAQPage |
 | `/categories/eco-gifts` | 1 | Organization, WebSite, BreadcrumbList, ItemList, FAQPage |
 | `/products/luxury-planner-gift-box` | 1 | Organization, WebSite, BreadcrumbList, FAQPage, Product |
+| `/products/journal-and-matching-pen-set` (aliased slug) | 1 | Organization, WebSite, BreadcrumbList, FAQPage, Product |
 | `/industries/it-software-saas` | 1 | Organization, WebSite, BreadcrumbList, FAQPage |
 | `/guides/corporate-gifting-guide` | 1 | Organization, WebSite, BreadcrumbList, FAQPage |
 
-Sitemap served: **83 URLs**, including all 5 hubs and 33 landing pages. All new
-routes return HTTP 200.
+Sitemap served: **83 URLs** against `https://www.giftaguru.com`, with **zero
+localhost references**, including all 5 hubs and 33 landing pages. All new routes
+return HTTP 200.
+
+Full-catalog sweep against the live database: **24 / 24 product pages carry their
+SEO content**, and every landing-page recommendation grid renders its full set of
+4 cards.
 
 ---
 
 # Remaining Risks
 
 1. **Image filenames** remain non-descriptive. A data migration, not a code change — see next steps.
-2. **The 24 product pages depend on slug stability.** `lib/seo/content/products.ts` is keyed by slug; if an admin changes a product slug, that product silently loses its SEO copy. The validator catches this (`seo-content-for-missing-product`) but only when run.
+2. **The 24 product pages depend on slug stability — and this risk already materialised once.** `lib/seo/content/products.ts` is keyed by slug, and the live database had drifted from the fixture on six products, costing them all their SEO content until `slugAliases` was added. The validator and tests now cover aliases, but they still compare against `data/products.ts`, **not the live database**. A slug changed in production by an admin would not be caught until someone diffs the sitemap against the content module again. A DB-aware check is the highest-value follow-up in this list.
 3. **Products added by admins get no editorial copy** until an entry is written. They degrade to catalog-derived metadata rather than breaking — deliberate, but it means the validator's `product-without-seo-content` warning should be watched.
 4. **No `hreflang`.** Correct for now — the site is single-locale (`en_IN`).
 5. **Faceted navigation / filter URLs** on `/shop` were not audited in depth; if filter combinations become crawlable URLs later they will need canonical or noindex handling.

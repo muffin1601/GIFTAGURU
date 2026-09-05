@@ -112,7 +112,19 @@ const dynamicSlugRoutes = new Set(
   [...routes].filter((r) => r.includes("[")).map((r) => r.replace(/\/\[slug\]$/, "")),
 );
 
-const productSlugs = new Set(catalogProducts.map((p) => p.slug));
+/**
+ * Every slug a product answers to: its fixture slug plus any database aliases.
+ *
+ * This validator previously only knew about data/products.ts, which is why it
+ * reported all-clear while six live product pages were silently rendering with
+ * no SEO content -- the seeded database uses "journal-and-matching-pen-set"
+ * where the fixture says "journal-matching-pen-set". Aliases are now part of
+ * the known-slug set, and check 26 below asserts each one still resolves.
+ */
+const productSlugs = new Set([
+  ...catalogProducts.map((p) => p.slug),
+  ...productSeoContent.flatMap((p) => [p.slug, ...(p.slugAliases ?? [])]),
+]);
 const categorySlugs = new Set(catalogCategories.map((c) => c.slug));
 const landingPaths = new Set(pages.map((p) => p.path));
 
@@ -190,14 +202,38 @@ for (const p of pages) {
 }
 
 // 6. Product SEO coverage matches the catalog exactly.
-for (const slug of productSlugs) {
-  if (!productSeoContent.some((p) => p.slug === slug)) {
+const seoBySlug = new Map();
+for (const p of productSeoContent) {
+  seoBySlug.set(p.slug, p);
+  for (const alias of p.slugAliases ?? []) seoBySlug.set(alias, p);
+}
+for (const slug of catalogProducts.map((p) => p.slug)) {
+  if (!seoBySlug.has(slug)) {
     add(WARN, "product-without-seo-content", `/products/${slug} has no entry in lib/seo/content/products.ts`);
   }
 }
 for (const p of productSeoContent) {
-  if (!productSlugs.has(p.slug)) {
-    add(ERROR, "seo-content-for-missing-product", `${p.slug} is not in the catalog`);
+  if (!catalogProducts.some((c) => c.slug === p.slug)) {
+    add(ERROR, "seo-content-for-missing-product", `${p.slug} is not in the catalog fixture`);
+  }
+}
+
+// 6b. Aliases must be distinct, and must not collide with a real fixture slug
+// belonging to a different product.
+const aliasOwner = new Map();
+for (const p of productSeoContent) {
+  for (const alias of p.slugAliases ?? []) {
+    if (alias === p.slug) {
+      add(WARN, "redundant-slug-alias", `${p.slug} lists itself as an alias`);
+    }
+    const clash = aliasOwner.get(alias);
+    if (clash) add(ERROR, "duplicate-slug-alias", `"${alias}" claimed by ${clash} and ${p.slug}`);
+    else aliasOwner.set(alias, p.slug);
+
+    const fixtureOwner = catalogProducts.find((c) => c.slug === alias);
+    if (fixtureOwner && fixtureOwner.slug !== p.slug) {
+      add(ERROR, "alias-collides-with-product", `"${alias}" is another product's real slug`);
+    }
   }
 }
 

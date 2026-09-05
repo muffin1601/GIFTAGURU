@@ -5,6 +5,7 @@ import Button from "@/components/ui/Button";
 import JsonLd from "@/components/seo/JsonLd";
 import { getProductsBySlugs } from "@/lib/data/products";
 import { breadcrumbSchema, faqPageSchema } from "@/lib/seo/schema";
+import { expandProductSlugs } from "@/lib/seo/content/products";
 import type { LandingFamily, LandingPageContent } from "@/lib/seo/content/types";
 import { landingFamilies } from "@/lib/seo/content/types";
 
@@ -30,7 +31,9 @@ export default async function LandingPageView({
 }) {
   const config = landingFamilies[family];
   const path = `${config.basePath}/${content.slug}`;
-  const products = await getProductsBySlugs(content.recommendedProductSlugs);
+  // Expanded so a product stored under an aliased slug in the database still
+  // resolves; without this the card is silently missing from the grid.
+  const products = await getProductsBySlugs(expandProductSlugs(content.recommendedProductSlugs));
 
   return (
     <>

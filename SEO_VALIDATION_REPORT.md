@@ -230,3 +230,55 @@ heading fails.
 | `/guides/corporate-gifting-guide` | 1 | + BreadcrumbList, FAQPage |
 
 Sitemap served **83 URLs**; all 38 new routes returned HTTP 200.
+
+---
+
+## 9. Live-database defect found after `SITE_URL` was set
+
+Setting `SITE_URL` to the production domain rebuilt the sitemap from the live
+database, which exposed a defect the earlier checks could not see:
+
+> **Six of 24 product pages were rendering with none of their SEO content.**
+> The seeded `products` table and the `data/products.ts` fixture had drifted —
+> the database stores `journal-and-matching-pen-set` where the fixture says
+> `journal-matching-pen-set`, and the same for five others.
+
+Because `lib/seo/content/products.ts` is keyed by slug, those pages returned
+HTTP 200 with catalog-derived metadata and **no copy, FAQs, schema or cluster
+links**. They were also silently dropped from every landing-page recommendation
+grid that listed them, so those grids rendered 2 cards instead of 4.
+
+Affected slugs (database form):
+
+```
+classic-pen-and-keychain-welcome-set
+refined-folio-and-pen-gift-set
+journal-and-matching-pen-set
+notebook-and-pen-executive-set
+minimal-notebook-and-pen-set
+grey-folio-and-notebook-set
+```
+
+**Why validation missed it:** every check compared against `data/products.ts`,
+the bundled fixture, not the live database. The fixture was internally
+consistent, so everything reported clean.
+
+**Fix:** a `slugAliases` field on `ProductSeoContent`, with
+`getProductSeoContent()` and a new `expandProductSlugs()` resolving either form.
+No slug was renamed — renaming would require redirects for URLs that may already
+be indexed.
+
+**Prevention:** the validator now folds aliases into its known-slug set and adds
+`duplicate-slug-alias` / `alias-collides-with-product` checks; two new
+regression tests assert aliases are unique, resolve to their own product, and
+are included by `expandProductSlugs`.
+
+### Post-fix verification (live database, production build)
+
+| Check | Result |
+| --- | --- |
+| Product pages carrying full SEO content | **24 / 24** |
+| Landing-page recommendation grids rendering 4 cards | all sampled families |
+| Sitemap URLs | 83, host `https://www.giftaguru.com` |
+| `localhost` references anywhere in output | **0** |
+| H1 count per page | 1 across every tier sampled |
