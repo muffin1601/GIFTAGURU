@@ -11,6 +11,7 @@ const mobileLinks = [
   { label: "Home", href: "/" },
   { label: "Shop", href: "/shop" },
   { label: "Collections", href: "/categories" },
+  { label: "Diwali 2026", href: "/diwali-2026" },
   { label: "Corporate Gifting", href: "/corporate-gifting" },
   { label: "Custom Branding", href: "/custom-gifts" },
   { label: "Bulk Orders", href: "/bulk-orders" },
@@ -53,7 +54,9 @@ export default function Header() {
           />
         </Link>
 
-        <nav className="hidden items-center justify-center gap-8 lg:flex">
+        {/* gap tightens at lg so the seventh link fits at exactly 1024px
+            without wrapping; it opens back up once there is room. */}
+        <nav className="hidden items-center justify-center gap-5 lg:flex xl:gap-8">
           <Link href="/" className={navLinkClass}>
             Home
           </Link>
@@ -61,6 +64,12 @@ export default function Header() {
             Shop
           </Link>
           <CollectionsDropdown />
+          {/* Seasonal hub. Distinct from the evergreen
+              /occasions/diwali-corporate-gifts page, which stays where it is
+              and is linked from the hub rather than from the header. */}
+          <Link href="/diwali-2026" className={`${navLinkClass} whitespace-nowrap`}>
+            Diwali 2026
+          </Link>
           <Link href="/corporate-gifting" className={navLinkClass}>
             Corporate
           </Link>

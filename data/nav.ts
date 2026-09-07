@@ -2,6 +2,7 @@ import type { NavLink } from "@/types";
 
 export const mainNav: NavLink[] = [
   { label: "Home", href: "/" },
+  { label: "Diwali 2026", href: "/diwali-2026" },
   { label: "Corporate Gifting", href: "/corporate-gifting" },
   { label: "Categories", href: "/categories" },
   { label: "Custom Gifts", href: "/custom-gifts" },
@@ -60,6 +61,9 @@ export const footerColumns: { heading: string; links: NavLink[] }[] = [
       { label: "Client Gifting", href: "/gifting/client-appreciation" },
       { label: "Events & Conferences", href: "/gifting/events-conferences" },
       { label: "All Gifting Solutions", href: "/gifting" },
+      // The seasonal hub sits beside the evergreen occasions hub, not inside
+      // it -- they target different intent and must stay distinguishable.
+      { label: "Diwali 2026 Gifts", href: "/diwali-2026" },
       { label: "Seasonal & Occasions", href: "/occasions" },
       { label: "3-6 Piece Gift Sets", href: "/gift-sets" },
     ],

@@ -28,6 +28,7 @@ const { useCasePages } = await load("lib/seo/content/use-cases.ts");
 const { occasionPages } = await load("lib/seo/content/occasions.ts");
 const { giftSetPages } = await load("lib/seo/content/gift-sets.ts");
 const { guidePages } = await load("lib/seo/content/guides.ts");
+const { seasonalHubs } = await load("lib/seo/content/seasonal.ts");
 const { products: catalogProducts } = await load("data/products.ts");
 const { categories: catalogCategories } = await load("data/categories.ts");
 const nav = await load("data/nav.ts");
@@ -74,6 +75,21 @@ for (const c of collectionSeoContent) {
     entry: c,
   });
 }
+// Seasonal campaign hubs live at the site root (/diwali-2026), not under a
+// family segment, but they are indexable pages that own a primary keyword --
+// so they must be inside the cannibalization, title and link checks below.
+for (const h of seasonalHubs) {
+  pages.push({
+    path: `/${h.slug}`,
+    title: `${h.seoTitle} | Gifta Guru`,
+    description: h.metaDescription,
+    h1: h.h1,
+    primaryKeyword: h.primaryKeyword,
+    source: "seasonal",
+    entry: h,
+  });
+}
+
 for (const [base, list] of landingFamilies) {
   for (const p of list) {
     pages.push({
@@ -251,9 +267,38 @@ for (const [base, list] of landingFamilies) {
   }
 }
 
+// 7b. Same two checks for seasonal hubs: real products, real body copy.
+for (const h of seasonalHubs) {
+  for (const slug of h.recommendedProductSlugs) {
+    if (!productSlugs.has(slug)) {
+      add(ERROR, "broken-product-recommendation", `/${h.slug} recommends missing product "${slug}"`);
+    }
+  }
+  const words = [
+    ...h.intro,
+    ...h.sections.flatMap((sec) => [...(sec.body ?? []), ...(sec.bullets ?? [])]),
+    ...h.recipients.map((r) => r.body),
+    ...h.tiers.map((t) => t.body),
+    ...h.faqs.flatMap((f) => [f.question, f.answer]),
+  ].join(" ").split(/\s+/).length;
+  if (words < 350) add(WARN, "thin-content", `/${h.slug} (~${words} words)`);
+  if (h.faqs.length === 0) add(ERROR, "no-faqs", `/${h.slug}`);
+  if (!routes.has(`/${h.slug}`)) add(ERROR, "missing-seasonal-route", `/${h.slug} has no page.tsx`);
+}
+
 // 8. Internal links must resolve.
 const linkSources = [
   ...pages.flatMap((p) => (p.entry.relatedLinks ?? []).map((l) => ({ from: p.path, ...l }))),
+  // A seasonal hub also renders CTAs, a recipient grid and a tier grid. Those
+  // are links on a live page too, so a dead one there is just as broken.
+  ...seasonalHubs.flatMap((h) =>
+    [
+      h.primaryCta,
+      h.secondaryCta,
+      ...h.recipients.map((r) => r.link),
+      ...h.tiers.map((t) => t.link),
+    ].map((l) => ({ from: `/${h.slug}`, ...l })),
+  ),
   ...Object.values(nav.footerColumns ?? []).flatMap((col) =>
     col.links.map((l) => ({ from: "footer", ...l })),
   ),
@@ -375,6 +420,7 @@ console.log(`Pages validated: ${pages.length}`);
 console.log(`  products:   ${pages.filter((p) => p.source === "product").length}`);
 console.log(`  categories: ${pages.filter((p) => p.source === "category").length}`);
 console.log(`  landing:    ${pages.filter((p) => p.source === "landing").length}`);
+console.log(`  seasonal:   ${pages.filter((p) => p.source === "seasonal").length}`);
 console.log(`Internal links checked: ${linkSources.length}`);
 console.log(`\nERRORS: ${errors.length}   WARNINGS: ${warnings.length}\n`);
 

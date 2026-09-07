@@ -4,6 +4,7 @@ import { isDatabaseConfigured } from "@/lib/env";
 import { siteUrl } from "@/lib/env";
 import { categories as fallbackCategories } from "@/data/categories";
 import { allLandingHubPaths, allLandingPages } from "@/lib/seo/content";
+import { seasonalHubs } from "@/lib/seo/content/seasonal";
 
 /**
  * Database-driven. The previous version listed URLs from data/products.ts
@@ -44,6 +45,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === "" ? 1 : 0.7,
   }));
 
+  // Seasonal campaign hubs (/diwali-2026, ...). Read from the same registry
+  // the routes render from, so a hub cannot exist without being listed here.
+  // Crawled more often than an evergreen page because demand for these is
+  // concentrated into a few weeks.
+  const seasonalEntries: MetadataRoute.Sitemap = seasonalHubs.map((hub) => ({
+    url: `${base}/${hub.slug}`,
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
+
   // Editorial SEO pages (industries, gifting use-cases, occasions, multi-piece
   // gift sets, guides) plus their five hubs. Read from the same registry the
   // routes and the footer read from, so a page cannot exist without being
@@ -66,6 +77,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // to the bundled fixture categories rather than emit an empty sitemap.
     return [
       ...staticEntries,
+      ...seasonalEntries,
       ...landingEntries,
       ...fallbackCategories.map((category) => ({
         url: `${base}/categories/${category.slug}`,
@@ -88,6 +100,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     ...staticEntries,
+    ...seasonalEntries,
     ...landingEntries,
     ...collections.map((collection) => ({
       url: `${base}/categories/${collection.slug}`,

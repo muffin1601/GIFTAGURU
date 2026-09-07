@@ -12,6 +12,7 @@ import { useCasePages } from "../lib/seo/content/use-cases.ts";
 import { occasionPages } from "../lib/seo/content/occasions.ts";
 import { giftSetPages } from "../lib/seo/content/gift-sets.ts";
 import { guidePages } from "../lib/seo/content/guides.ts";
+import { seasonalHubs } from "../lib/seo/content/seasonal.ts";
 import { products as catalogProducts } from "../data/products.ts";
 
 /**
@@ -32,10 +33,18 @@ const landingPages = [
   ...guidePages.map((p) => ({ path: `/guides/${p.slug}`, ...p })),
 ];
 
+// Seasonal hubs (/diwali-2026) sit at the site root rather than under a
+// family segment, but they are indexable pages owning a primary keyword, so
+// they belong in the same cannibalization and metadata guards as everything
+// else. Leaving them out is exactly how a seasonal page ends up quietly
+// competing with the evergreen occasion page it was meant to support.
+const seasonalPages = seasonalHubs.map((p) => ({ path: `/${p.slug}`, ...p }));
+
 const allPages = [
   ...productSeoContent.map((p) => ({ path: `/products/${p.slug}`, ...p })),
   ...collectionSeoContent.map((p) => ({ path: `/categories/${p.slug}`, ...p })),
   ...landingPages,
+  ...seasonalPages,
 ];
 
 const norm = (s: string) => s.toLowerCase().trim();
@@ -163,9 +172,33 @@ test("titles and meta descriptions are unique and present", () => {
 });
 
 test("every landing page carries FAQs and outbound internal links", () => {
-  for (const page of landingPages) {
+  for (const page of [...landingPages, ...seasonalPages]) {
     assert.ok(page.faqs.length > 0, `${page.path} has no FAQs`);
     assert.ok(page.sections.length >= 2, `${page.path} has fewer than two sections`);
     assert.ok(page.relatedLinks.length >= 2, `${page.path} has fewer than two internal links`);
+  }
+});
+
+test("a seasonal hub recommends only products that exist in the catalog", () => {
+  const known = new Set([
+    ...catalogProducts.map((p) => p.slug),
+    ...productSeoContent.flatMap((p) => [p.slug, ...(p.slugAliases ?? [])]),
+  ]);
+
+  for (const hub of seasonalHubs) {
+    for (const slug of hub.recommendedProductSlugs) {
+      assert.ok(known.has(slug), `/${hub.slug} recommends missing product "${slug}"`);
+    }
+  }
+});
+
+/**
+ * The seasonal hub exists precisely because the occasion pages may not name a
+ * year. If someone later adds a year to an occasion or guide page, the two
+ * start competing and this is the cheapest place to catch it.
+ */
+test("only seasonal hubs carry a year in their URL", () => {
+  for (const page of landingPages) {
+    assert.ok(!/\b20\d{2}\b/.test(page.path), `${page.path} names a year; that belongs on a seasonal hub`);
   }
 });
