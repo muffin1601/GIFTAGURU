@@ -7,6 +7,9 @@ export const metadata: Metadata = pageMetadata({
   title: "Track Your Order | Gifta Guru",
   description: "Track the status of your Gifta Guru corporate gifting order using your order number and email.",
   path: "/track-order",
+  // This form has no standalone search intent and exposes a customer-service
+  // workflow, so it must not compete with the indexable commercial pages.
+  index: false,
 });
 
 export default function TrackOrderPage() {

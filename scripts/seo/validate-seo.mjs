@@ -29,6 +29,7 @@ const { occasionPages } = await load("lib/seo/content/occasions.ts");
 const { giftSetPages } = await load("lib/seo/content/gift-sets.ts");
 const { guidePages } = await load("lib/seo/content/guides.ts");
 const { seasonalHubs } = await load("lib/seo/content/seasonal.ts");
+const { legacySeoRedirects } = await load("lib/seo/legacy-redirects.ts");
 const { products: catalogProducts } = await load("data/products.ts");
 const { categories: catalogCategories } = await load("data/categories.ts");
 const nav = await load("data/nav.ts");
@@ -311,6 +312,34 @@ for (const link of linkSources) {
   }
 }
 
+// 8b. Legacy URLs reported by Search Console must permanently point at a
+// useful, currently-rendered replacement. A redirect to a dead route (or two
+// legacy URLs pointing to one another) wastes crawl budget and loses signals.
+const legacySources = new Set();
+for (const redirect of legacySeoRedirects) {
+  if (legacySources.has(redirect.source)) {
+    add(ERROR, "duplicate-legacy-redirect", redirect.source);
+  }
+  legacySources.add(redirect.source);
+  if (!linkResolves(redirect.destination)) {
+    add(ERROR, "legacy-redirect-to-missing-route", `${redirect.source} -> ${redirect.destination}`);
+  }
+  if (legacySeoRedirects.some((candidate) => candidate.source === redirect.destination)) {
+    add(ERROR, "legacy-redirect-chain", `${redirect.source} -> ${redirect.destination}`);
+  }
+}
+
+// 8c. Utility pages may be linked for visitors, but never listed in the
+// sitemap: that would contradict their `noindex` directive and spend crawl
+// budget on customer-service workflows instead of commercial pages.
+const noindexUtilityPaths = ["/track-order"];
+const sitemapSource = fs.readFileSync(path.join(ROOT, "app", "sitemap.ts"), "utf8");
+for (const utilityPath of noindexUtilityPaths) {
+  if (sitemapSource.includes(`"${utilityPath}"`)) {
+    add(ERROR, "noindex-page-in-sitemap", utilityPath);
+  }
+}
+
 // 9. Anchor-text over-optimisation: the same exact anchor used many times.
 const anchorCounts = new Map();
 for (const link of linkSources) {
@@ -406,6 +435,32 @@ for (const file of [...tsxFiles(path.join(ROOT, "app")), ...tsxFiles(path.join(R
   const rel = path.relative(ROOT, file).split(path.sep).join("/");
   if (count > 1 && !MULTI_H1_ALLOWED.has(rel)) {
     add(ERROR, "multiple-h1-in-component", `${rel} renders ${count} <h1> elements`);
+  }
+}
+
+// 14. Soft 404s: a route segment that calls notFound() must not also carry a
+// loading.tsx.
+//
+// not-found renders INSIDE the Suspense boundary that loading.js creates, so
+// the response has already begun streaming and Next can no longer set a 404
+// status -- it returns 404 only for non-streamed responses. The result is a
+// soft 404: "not found" UI served with 200 OK, which Google keeps re-crawling
+// and reports under "Excluded by 'noindex' tag" instead of dropping.
+//
+// This caught a real defect: /products/[slug] shipped a loading skeleton, and
+// every dead product URL (many, inherited from the previous storefront)
+// answered 200 while every other dynamic route on the site correctly 404'd.
+for (const file of tsxFiles(path.join(ROOT, "app"))) {
+  if (path.basename(file) !== "page.tsx") continue;
+  const source = fs.readFileSync(file, "utf8");
+  // Only the call matters, not the import; `if (!x) notFound()` and
+  // `notFound();` both count, a bare mention in prose does not.
+  if (!/notFound\s*\(\s*\)/.test(source.replace(/\/\*[\s\S]*?\*\//g, ""))) continue;
+
+  const loading = path.join(path.dirname(file), "loading.tsx");
+  if (fs.existsSync(loading)) {
+    const rel = path.relative(ROOT, loading).split(path.sep).join("/");
+    add(ERROR, "soft-404-loading-boundary", `${rel} makes its segment's notFound() return 200 instead of 404`);
   }
 }
 

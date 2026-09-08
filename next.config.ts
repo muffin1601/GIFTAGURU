@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { legacySeoRedirects } from "./lib/seo/legacy-redirects";
 
 // Admin-uploaded product images and customer logo uploads are served from
 // Supabase storage's public URLs, which next/image refuses to optimize
@@ -13,6 +14,14 @@ const nextConfig: NextConfig = {
     remotePatterns: supabaseHostname
       ? [{ protocol: "https", hostname: supabaseHostname, pathname: "/storage/v1/object/public/**" }]
       : [],
+  },
+
+  // Consolidate the former storefront's discovered URLs into the current
+  // canonical content. `permanent: true` produces an HTTP 308, preserving
+  // query strings while telling search engines to transfer any signals to the
+  // replacement URL.
+  async redirects() {
+    return legacySeoRedirects.map((redirect) => ({ ...redirect, permanent: true }));
   },
 
   /**

@@ -60,6 +60,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const [product, settings] = await Promise.all([getProductBySlug(slug), getStoreSettings()]);
+  // Must stay reachable BEFORE the response starts streaming, or this becomes
+  // a soft 404 -- 200 OK serving "not found" UI.
+  //
+  // This segment used to carry a loading.tsx. Because not-found renders inside
+  // the Suspense boundary that loading.js creates, the response had already
+  // begun streaming by the time this ran, and Next cannot change the status
+  // once that happens (it returns 404 only for non-streamed responses). Dead
+  // product URLs -- of which there are many, left over from the previous
+  // storefront -- therefore answered 200, which Google reports as "Excluded by
+  // 'noindex' tag" and re-crawls far longer than a real 404.
+  //
+  // Do not add a loading.tsx back to this segment without solving that first;
+  // scripts/seo/validate-seo.mjs check 14 fails the build if one reappears.
   if (!product) notFound();
 
   const cardProduct: Product = {
