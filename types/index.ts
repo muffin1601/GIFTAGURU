@@ -17,6 +17,8 @@ export interface Product {
   category: string;
   description: string;
   price: number | null;
+  /** ProductVariant.sku for the default variant, when the catalogue has one. */
+  productCode?: string;
   minQuantity: number;
   featured: boolean;
   image?: string;

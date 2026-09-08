@@ -217,6 +217,7 @@ function buildCartView(items: CartItemWithRelations[], settings: StoreSettings):
         variantId: item.variantId,
         slug: product.slug,
         name: product.name,
+        productCode: item.variant.sku || undefined,
         image: product.images[0]?.url,
         price,
         priceTiers,

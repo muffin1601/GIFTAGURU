@@ -87,6 +87,7 @@ export default function CartPageClient({ signedIn = false }: { signedIn?: boolea
                   >
                     {item.name}
                   </Link>
+                  {item.productCode ? <p className="type-meta mt-1">Product code: {item.productCode}</p> : null}
                   <p className="type-meta mt-1">Minimum order: {item.minQuantity} units</p>
                   {item.personalizationText ? (
                     <p className="type-meta mt-1">Text: {item.personalizationText}</p>

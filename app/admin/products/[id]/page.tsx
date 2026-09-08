@@ -35,6 +35,8 @@ export default async function AdminProductDetailPage({ params }: { params: Promi
   ]);
   if (!product) notFound();
 
+  const defaultVariant = product.variants.find((variant) => variant.isDefault) ?? product.variants[0];
+  const visiblePriceTiers = product.priceTiers.filter((tier) => tier.minQuantity >= 5);
   const memberCollectionIds = new Set(product.collections.map((c) => c.collectionId));
 
   return (
@@ -48,6 +50,7 @@ export default async function AdminProductDetailPage({ params }: { params: Promi
           <p className="mt-1 text-sm text-ink-600">
             {product.slug} &middot; {product.category?.name ?? "Uncategorized"}
           </p>
+          {defaultVariant?.sku ? <p className="mt-1 text-sm text-ink-600">Product code: {defaultVariant.sku}</p> : null}
         </div>
         <div className="flex items-center gap-2">
           <span className={`badge ${product.status === "active" ? "badge-positive" : product.status === "draft" ? "badge-attention" : ""}`}>
@@ -151,6 +154,10 @@ export default async function AdminProductDetailPage({ params }: { params: Promi
                 <AdminInput name="slug" defaultValue={product.slug} />
               </label>
               <label className="space-y-1 text-sm font-medium text-navy-950">
+                Product code
+                <AdminInput name="productCode" defaultValue={defaultVariant?.sku ?? ""} placeholder="GG-SET-25-STD" />
+              </label>
+              <label className="space-y-1 text-sm font-medium text-navy-950">
                 Category
                 <select name="categoryId" defaultValue={product.categoryId ?? ""} className="field-input text-sm">
                   <option value="">Uncategorized</option>
@@ -181,7 +188,7 @@ export default async function AdminProductDetailPage({ params }: { params: Promi
               </label>
               <label className="space-y-1 text-sm font-medium text-navy-950">
                 Minimum order quantity
-                <AdminInput name="minOrderQuantity" type="number" min={1} required defaultValue={product.minOrderQuantity} />
+                <AdminInput name="minOrderQuantity" type="number" min={5} required defaultValue={Math.max(5, product.minOrderQuantity)} />
               </label>
               <div className="flex items-center gap-5">
                 <label className="flex items-center gap-2 text-sm font-medium text-navy-950">
@@ -240,11 +247,11 @@ export default async function AdminProductDetailPage({ params }: { params: Promi
 
             <div className="mt-4 divide-y divide-line border border-line">
               <div className="flex items-center justify-between px-4 py-3 text-sm">
-                <span>1 &ndash; {product.priceTiers[0]?.minQuantity ? product.priceTiers[0].minQuantity - 1 : "∞"}</span>
+                <span>5 &ndash; {visiblePriceTiers[0]?.minQuantity && visiblePriceTiers[0].minQuantity > 5 ? visiblePriceTiers[0].minQuantity - 1 : "∞"}</span>
                 <span className="font-semibold text-navy-950">{formatPrice(Number(product.basePrice))} (base)</span>
               </div>
-              {product.priceTiers.map((tier, index) => {
-                const next = product.priceTiers[index + 1];
+              {visiblePriceTiers.map((tier, index) => {
+                const next = visiblePriceTiers[index + 1];
                 return (
                   <div key={tier.id} className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
                     <span>
@@ -267,7 +274,7 @@ export default async function AdminProductDetailPage({ params }: { params: Promi
                 <input type="hidden" name="productId" value={product.id} />
                 <label className="text-xs font-semibold text-ink-600 sm:col-span-1">
                   Min quantity
-                  <AdminInput name="minQuantity" type="number" min={1} required className="mt-1" />
+                  <AdminInput name="minQuantity" type="number" min={5} required className="mt-1" />
                 </label>
                 <label className="text-xs font-semibold text-ink-600 sm:col-span-1">
                   Unit price (INR)
@@ -296,7 +303,7 @@ export default async function AdminProductDetailPage({ params }: { params: Promi
               {product.variants.map((variant) => (
                 <div key={variant.id} className="border border-line p-3">
                   <p className="font-semibold text-navy-950">{variant.name}</p>
-                  <p className="text-ink-600">SKU {variant.sku}</p>
+                  <p className="text-ink-600">Product code: {variant.sku}</p>
                   <p className="text-ink-600">{variant.inventory?.quantityAvailable ?? 0} in stock</p>
                 </div>
               ))}

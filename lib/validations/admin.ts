@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MIN_ORDER_QUANTITY } from "@/lib/config/store";
 
 export const categoryFormSchema = z.object({
   slug: z.string().trim().toLowerCase().regex(/^[a-z0-9-]+$/, "Use lowercase letters, numbers, and hyphens"),
@@ -21,12 +22,13 @@ export const collectionFormSchema = z.object({
 export const productFormSchema = z.object({
   slug: z.string().trim().toLowerCase().regex(/^[a-z0-9-]+$/, "Use lowercase letters, numbers, and hyphens"),
   name: z.string().trim().min(2).max(200),
+  productCode: z.string().trim().min(2).max(80).regex(/^[A-Za-z0-9][A-Za-z0-9._/-]*$/, "Use letters, numbers, dots, hyphens, underscores or slashes").optional().or(z.literal("")),
   description: z.string().trim().max(4000).optional(),
   categoryId: z.string().uuid().optional().or(z.literal("")),
   basePrice: z.coerce.number().nonnegative(),
   compareAtPrice: z.coerce.number().nonnegative().optional(),
   isCustomizable: z.boolean().default(false),
-  minOrderQuantity: z.coerce.number().int().min(1).default(1),
+  minOrderQuantity: z.coerce.number().int().min(MIN_ORDER_QUANTITY).default(MIN_ORDER_QUANTITY),
   occasionTags: z.array(z.string()).default([]),
   status: z.enum(["draft", "active", "archived"]).default("draft"),
   isFeatured: z.boolean().default(false),

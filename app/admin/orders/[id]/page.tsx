@@ -15,7 +15,12 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
     where: { OR: [{ id }, { orderNumber: id }] },
     include: {
       user: true,
-      items: { include: { product: { include: { images: { orderBy: { sortOrder: "asc" }, take: 1 } } } } },
+      items: {
+        include: {
+          product: { include: { images: { orderBy: { sortOrder: "asc" }, take: 1 } } },
+          variant: { select: { sku: true } },
+        },
+      },
       payments: { orderBy: { createdAt: "desc" } },
       statusHistory: { orderBy: { createdAt: "desc" }, include: { actor: { select: { fullName: true } } } },
       shipments: { orderBy: { createdAt: "asc" }, include: { items: { select: { productName: true, quantity: true } } } },
@@ -98,6 +103,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
                     <div className="text-sm">
                       <p className="font-semibold text-navy-950">{item.productName}</p>
                       <p className="text-ink-600">{item.variantName ?? "Standard"} · Qty {item.quantity}</p>
+                      {item.variant?.sku ? <p className="mt-1 text-ink-600">Product code: {item.variant.sku}</p> : null}
                       {customization?.personalizationText ? <p className="mt-1">Personalization: {customization.personalizationText}</p> : null}
                       {customization?.logoFileName ? <p>Logo: {customization.logoFileName}</p> : null}
                       {customization?.logoUrl ? <a href={customization.logoUrl} target="_blank" rel="noreferrer" className="font-semibold text-gold-700">View logo</a> : null}

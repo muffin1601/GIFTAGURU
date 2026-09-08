@@ -26,7 +26,7 @@ interface TrackedOrder {
   deliveredAt: string | null;
   total: number;
   createdAt: string;
-  items: { productName: string; quantity: number }[];
+  items: { productName: string; quantity: number; variant: { sku: string } | null }[];
 }
 
 const dateFormatter = new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" });
@@ -128,6 +128,7 @@ export default function TrackOrderForm() {
             {order.items.map((item, index) => (
               <li key={`${item.productName}-${index}`} className="text-ink-700">
                 {item.productName} &times; {item.quantity}
+                {item.variant?.sku ? <span className="block text-xs text-ink-600">Product code: {item.variant.sku}</span> : null}
               </li>
             ))}
           </ul>

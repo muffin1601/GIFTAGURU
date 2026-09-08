@@ -295,7 +295,7 @@ model Product {
   basePrice             Decimal                    @map("base_price") @db.Decimal(10, 2)
   compareAtPrice        Decimal?                   @map("compare_at_price") @db.Decimal(10, 2)
   isCustomizable        Boolean                    @default(false) @map("is_customizable")
-  minOrderQuantity      Int                        @default(1) @map("min_order_quantity")
+  minOrderQuantity      Int                        @default(5) @map("min_order_quantity")
   occasionTags          String[]                   @default([]) @map("occasion_tags")
   status                ProductStatus              @default(draft)
   isFeatured            Boolean                    @default(false) @map("is_featured")

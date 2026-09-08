@@ -16,6 +16,8 @@ export interface CartViewItem {
   variantId: string;
   slug: string;
   name: string;
+  /** Default-variant SKU, shown to make fulfilment references unambiguous. */
+  productCode?: string;
   image?: string;
   /** Base unit price before quantity tiers. */
   price: number;

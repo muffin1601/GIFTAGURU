@@ -19,7 +19,7 @@ export interface StorefrontCollection {
 export interface StorefrontVariant {
   id: string;
   name: string;
-  sku: string;
+  sku: string | null;
   price: number;
   compareAtPrice: number | null;
   option1Name: string | null;

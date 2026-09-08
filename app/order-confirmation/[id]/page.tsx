@@ -47,7 +47,7 @@ export default async function OrderConfirmationPage({ params }: { params: Promis
           paymentStatus: true,
           deliveryStatus: true,
           createdAt: true,
-          items: { select: { id: true, productName: true, quantity: true, lineTotal: true } },
+          items: { select: { id: true, productName: true, quantity: true, lineTotal: true, variant: { select: { sku: true } } } },
         },
       })
     : null;
@@ -79,6 +79,7 @@ export default async function OrderConfirmationPage({ params }: { params: Promis
                 <li key={item.id} className="flex justify-between gap-4">
                   <span className="text-ink-700">
                     {item.productName} &times; {item.quantity}
+                    {item.variant?.sku ? <span className="block text-xs text-ink-600">Product code: {item.variant.sku}</span> : null}
                   </span>
                   <span className="text-navy-950">{formatPrice(Number(item.lineTotal))}</span>
                 </li>

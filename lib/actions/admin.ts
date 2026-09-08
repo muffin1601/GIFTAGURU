@@ -6,6 +6,7 @@ import { requireAdmin } from "@/lib/auth/admin";
 import { logAdminAction } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import { sendOrderStatusEmail } from "@/lib/email/service";
+import { MIN_ORDER_QUANTITY } from "@/lib/config/store";
 
 const statusFlow = {
   pending: ["confirmed", "processing", "cancelled"],
@@ -310,6 +311,9 @@ export async function updateStoreSettingsAction(_state: { error?: string; succes
       return { error: `${key.replaceAll("_", " ")} must be a number.` };
     }
   }
+  if (Number(formData.get("minimum_quantity")) < MIN_ORDER_QUANTITY) {
+    return { error: `Minimum order quantity must be at least ${MIN_ORDER_QUANTITY}.` };
+  }
 
   await prisma.$transaction(entries.map((key) => {
     const rawValue = String(formData.get(key) ?? "");
@@ -329,7 +333,7 @@ export async function updateStoreSettingsAction(_state: { error?: string; succes
 
 const addPriceTierSchema = z.object({
   productId: z.string().uuid(),
-  minQuantity: z.coerce.number().int().min(1),
+  minQuantity: z.coerce.number().int().min(MIN_ORDER_QUANTITY),
   unitPrice: z.coerce.number().min(0),
 });
 

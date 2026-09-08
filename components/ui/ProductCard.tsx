@@ -49,6 +49,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
       <div className="flex flex-1 flex-col gap-1.5 pt-4">
         <span className="type-eyebrow">{label}</span>
+        {product.productCode ? <span className="type-meta">Product code: {product.productCode}</span> : null}
 
         <h3 className="font-display text-[1.0625rem] leading-snug text-navy-950">
           <Link href={`/products/${product.slug}`} className="link-underline">

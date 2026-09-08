@@ -39,12 +39,14 @@ const productSeedTuples: ProductSeedTuple[] = [
   ["grey-planner-corporate-set", "Grey Planner Corporate Set", "office-stationery", "Grey planner and black pen set for practical employee appreciation.", 1299, 30, "/Gifta Guru/Set 24/grey_notebook_gift_set_1200x1200.png"],
 ];
 
-const productSeeds = productSeedTuples.map(([slug, name, category, description, price, , image, featured = false]) => ({
+const productSeeds = productSeedTuples.map(([slug, name, category, description, price, , image, featured = false], index) => ({
   slug,
   name,
   category,
   description,
   price,
+  // These codes are the matching standard-variant SKUs defined in prisma/seed-catalog.mjs.
+  productCode: `GG-SET-${String(index + 1).padStart(2, "0")}-STD`,
   minQuantity: MIN_ORDER_QUANTITY,
   image,
   featured,

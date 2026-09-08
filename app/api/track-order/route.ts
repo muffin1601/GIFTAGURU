@@ -34,7 +34,7 @@ export async function GET(request: Request) {
       deliveredAt: true,
       total: true,
       createdAt: true,
-      items: { select: { productName: true, quantity: true } },
+      items: { select: { productName: true, quantity: true, variant: { select: { sku: true } } } },
       statusHistory: { orderBy: { createdAt: "asc" }, select: { toStatus: true, toDeliveryStatus: true, createdAt: true } },
     },
   });

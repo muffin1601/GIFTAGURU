@@ -10,6 +10,7 @@ import { isSupabaseAdminConfigured } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { slugify } from "@/lib/utils";
+import { MIN_ORDER_QUANTITY } from "@/lib/config/store";
 
 type ActionState = { error?: string; success?: string };
 
@@ -295,8 +296,9 @@ const createProductSchema = z.object({
   description: z.string().trim().max(4000).optional(),
   basePrice: z.coerce.number().min(0),
   compareAtPrice: z.coerce.number().min(0).optional().or(z.literal("")),
-  minOrderQuantity: z.coerce.number().int().min(1).default(1),
+  minOrderQuantity: z.coerce.number().int().min(MIN_ORDER_QUANTITY).default(MIN_ORDER_QUANTITY),
   isCustomizable: z.coerce.boolean().default(false),
+  productCode: z.string().trim().min(2).max(80).regex(/^[A-Za-z0-9][A-Za-z0-9._/-]*$/, "Use letters, numbers, dots, hyphens, underscores or slashes").optional().or(z.literal("")),
 });
 
 export async function createProductAction(_state: ActionState, formData: FormData): Promise<ActionState> {
@@ -314,7 +316,9 @@ export async function createProductAction(_state: ActionState, formData: FormDat
   const existing = await prisma.product.findUnique({ where: { slug } });
   if (existing) return { error: `A product with the slug "${slug}" already exists.` };
 
-  const sku = `GG-${randomUUID().split("-")[0].toUpperCase()}`;
+  const sku = parsed.data.productCode || `GG-${randomUUID().split("-")[0].toUpperCase()}`;
+  const codeClash = await prisma.productVariant.findUnique({ where: { sku }, select: { id: true } });
+  if (codeClash) return { error: `Product code "${sku}" is already in use.` };
 
   // New products start in draft so they never appear on the storefront
   // (status = "active") until an admin deliberately publishes them.
@@ -369,19 +373,35 @@ export async function updateProductAction(_state: ActionState, formData: FormDat
     if (clash) return { error: `A product with the slug "${slug}" already exists.` };
   }
 
-  const product = await prisma.product.update({
-    where: { id: parsed.data.id },
-    data: {
-      name: parsed.data.name,
-      slug,
-      description: parsed.data.description || null,
-      categoryId: parsed.data.categoryId || null,
-      basePrice: parsed.data.basePrice,
-      compareAtPrice: parsed.data.compareAtPrice ? Number(parsed.data.compareAtPrice) : null,
-      minOrderQuantity: parsed.data.minOrderQuantity,
-      isCustomizable: parsed.data.isCustomizable,
-      isFeatured: parsed.data.isFeatured,
-    },
+  const defaultVariant = await prisma.productVariant.findFirst({
+    where: { productId: before.id, isDefault: true },
+    select: { id: true, sku: true },
+  });
+  const productCode = parsed.data.productCode || defaultVariant?.sku;
+  if (parsed.data.productCode) {
+    const codeClash = await prisma.productVariant.findUnique({ where: { sku: parsed.data.productCode }, select: { productId: true } });
+    if (codeClash && codeClash.productId !== before.id) return { error: `Product code "${parsed.data.productCode}" is already in use.` };
+  }
+
+  const product = await prisma.$transaction(async (tx) => {
+    const updated = await tx.product.update({
+      where: { id: parsed.data.id },
+      data: {
+        name: parsed.data.name,
+        slug,
+        description: parsed.data.description || null,
+        categoryId: parsed.data.categoryId || null,
+        basePrice: parsed.data.basePrice,
+        compareAtPrice: parsed.data.compareAtPrice ? Number(parsed.data.compareAtPrice) : null,
+        minOrderQuantity: parsed.data.minOrderQuantity,
+        isCustomizable: parsed.data.isCustomizable,
+        isFeatured: parsed.data.isFeatured,
+      },
+    });
+    if (defaultVariant && productCode && productCode !== defaultVariant.sku) {
+      await tx.productVariant.update({ where: { id: defaultVariant.id }, data: { sku: productCode } });
+    }
+    return updated;
   });
 
   await logAdminAction(admin, { action: "product.updated", entityType: "product", entityId: product.id, before, after: product });
@@ -390,6 +410,7 @@ export async function updateProductAction(_state: ActionState, formData: FormDat
   revalidatePath(`/products/${before.slug}`);
   if (slug !== before.slug) revalidatePath(`/products/${slug}`);
   revalidatePath("/shop");
+  revalidatePath("/admin/inventory");
   return { success: "Product updated." };
 }
 

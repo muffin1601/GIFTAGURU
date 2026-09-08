@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { addressSchema } from "@/lib/validations/address";
+import { MIN_ORDER_QUANTITY } from "@/lib/config/store";
 
 export const checkoutContactSchema = z.object({
   email: z.string().trim().toLowerCase().email("Enter a valid email"),
@@ -21,7 +22,7 @@ export type CheckoutInput = z.infer<typeof checkoutSchema>;
 
 export const cartItemInputSchema = z.object({
   variantId: z.string().uuid(),
-  quantity: z.number().int().min(1).max(999),
+  quantity: z.number().int().min(MIN_ORDER_QUANTITY).max(999),
   customization: z
     .object({
       logo_url: z.string().url().optional(),

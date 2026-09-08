@@ -28,6 +28,10 @@ export default async function NewProductPage() {
             <AdminInput name="slug" placeholder="grey-planner-corporate-set" />
           </label>
           <label className="space-y-1 text-sm font-medium text-navy-950">
+            Product code (optional)
+            <AdminInput name="productCode" placeholder="GG-SET-25-STD" />
+          </label>
+          <label className="space-y-1 text-sm font-medium text-navy-950">
             Category
             <select name="categoryId" className="field-input text-sm">
               <option value="">Uncategorized</option>
@@ -52,7 +56,7 @@ export default async function NewProductPage() {
           </label>
           <label className="space-y-1 text-sm font-medium text-navy-950">
             Minimum order quantity
-            <AdminInput name="minOrderQuantity" type="number" min={1} defaultValue={5} required />
+            <AdminInput name="minOrderQuantity" type="number" min={5} defaultValue={5} required />
           </label>
           <label className="flex items-center gap-2 text-sm font-medium text-navy-950">
             <input type="checkbox" name="isCustomizable" value="true" defaultChecked className="h-4 w-4 accent-navy-950" />

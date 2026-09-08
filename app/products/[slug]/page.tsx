@@ -75,6 +75,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   // scripts/seo/validate-seo.mjs check 14 fails the build if one reappears.
   if (!product) notFound();
 
+  const minimumQuantity = Math.max(product.minOrderQuantity, settings.minOrderQuantity);
+  // Historic tiers below the storefront minimum are not purchasable and must
+  // not reintroduce a 1–4 quantity range into the pricing table.
+  const visiblePriceTiers = product.priceTiers.filter((tier) => tier.minQuantity >= minimumQuantity);
   const cardProduct: Product = {
     id: product.id,
     slug: product.slug,
@@ -82,7 +86,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     category: product.categorySlug ?? "corporate-gifts",
     description: product.description ?? "",
     price: product.basePrice,
-    minQuantity: settings.minOrderQuantity,
+    minQuantity: minimumQuantity,
     featured: true,
     image: product.images[0]?.url,
     inStock: product.variants.some((variant) => variant.inStock),
@@ -113,7 +117,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             description: product.description || `${product.name}, curated for corporate gifting by Gifta Guru.`,
             slug: product.slug,
             images: product.images.map((image) => image.url),
-            sku: product.variants[0]?.sku,
+            sku: product.variants[0]?.sku ?? undefined,
             price: product.basePrice,
             inStock,
             avgRating: product.avgRating || undefined,
@@ -162,7 +166,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               <span className="type-meta">excl. GST</span>
             </div>
 
-            {product.priceTiers.length > 0 ? (
+            {visiblePriceTiers.length > 0 ? (
               <div className="mt-8">
                 <h2 className="type-eyebrow">Volume Pricing</h2>
                 <table className="mt-4 w-full text-sm">
@@ -176,16 +180,18 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="border-b border-line">
-                      <td className="py-3 text-ink-700">
-                        1 &ndash; {product.priceTiers[0].minQuantity - 1}
-                      </td>
-                      <td className="py-3 text-right font-semibold text-navy-950">
-                        {formatPrice(product.basePrice)}
-                      </td>
-                    </tr>
-                    {product.priceTiers.map((tier, index) => {
-                      const next = product.priceTiers[index + 1];
+                    {visiblePriceTiers[0].minQuantity > minimumQuantity ? (
+                      <tr className="border-b border-line">
+                        <td className="py-3 text-ink-700">
+                          {minimumQuantity} &ndash; {visiblePriceTiers[0].minQuantity - 1}
+                        </td>
+                        <td className="py-3 text-right font-semibold text-navy-950">
+                          {formatPrice(product.basePrice)}
+                        </td>
+                      </tr>
+                    ) : null}
+                    {visiblePriceTiers.map((tier, index) => {
+                      const next = visiblePriceTiers[index + 1];
                       return (
                         <tr key={tier.minQuantity} className="border-b border-line">
                           <td className="py-3 text-ink-700">
@@ -248,6 +254,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                   content: (
                     <dl className="grid gap-x-12 sm:grid-cols-2">
                       {[
+                        ...(product.variants[0]?.sku ? [["Product code", product.variants[0].sku]] : []),
                         ["Minimum quantity", `${settings.minOrderQuantity} units`],
                         ["Customization", product.isCustomizable ? "Available" : "Not available"],
                         ["Gift wrap", formatPrice(settings.giftWrapPrice)],

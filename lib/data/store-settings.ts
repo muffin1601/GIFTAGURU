@@ -53,7 +53,9 @@ export const getStoreSettings = cache(async (): Promise<StoreSettings> => {
     });
     const values = Object.fromEntries(rows.map((row) => [row.key, row.value]));
 
-    const minOrderQuantity = toPositiveInt(values.minimum_quantity, DEFAULTS.minOrderQuantity);
+    // Five is a business rule, not merely a fallback. Older settings records
+    // may contain a smaller value, but they must never reopen 1–4 unit orders.
+    const minOrderQuantity = Math.max(DEFAULT_MIN_ORDER_QUANTITY, toPositiveInt(values.minimum_quantity, DEFAULTS.minOrderQuantity));
     const giftWrapPrice = toNonNegativeNumber(values.gift_wrap_price, DEFAULTS.giftWrapPrice);
     const freeShippingThreshold = toNonNegativeNumber(values.free_shipping_threshold, DEFAULTS.freeShippingThreshold);
     const shippingCharge = toNonNegativeNumber(values.shipping_charge, DEFAULTS.shippingCharge);

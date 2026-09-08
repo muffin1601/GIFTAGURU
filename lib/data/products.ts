@@ -18,6 +18,7 @@ interface ProductListRow {
   min_order_quantity: number;
   categories: { slug: string } | { slug: string }[] | null;
   product_images: { url: string; sort_order: number }[] | null;
+  product_variants: { sku: string; is_default: boolean }[] | null;
 }
 
 interface SupabaseQueryResult {
@@ -28,6 +29,7 @@ interface SupabaseQueryResult {
 interface SupabaseQueryBuilder extends PromiseLike<SupabaseQueryResult> {
   select(columns: string): SupabaseQueryBuilder;
   eq(column: string, value: unknown): SupabaseQueryBuilder;
+  ilike(column: string, value: string): SupabaseQueryBuilder;
   in(column: string, values: readonly unknown[]): SupabaseQueryBuilder;
   order(column: string, options?: { ascending?: boolean }): SupabaseQueryBuilder;
   limit(count: number): PromiseLike<SupabaseQueryResult>;
@@ -82,6 +84,8 @@ interface ProductDetailRow {
 function mapListRow(row: ProductListRow): Product {
   const category = Array.isArray(row.categories) ? row.categories[0] : row.categories;
   const cover = [...(row.product_images ?? [])].sort((a, b) => a.sort_order - b.sort_order)[0];
+  const variants = row.product_variants ?? [];
+  const defaultVariant = variants.find((variant) => variant.is_default) ?? variants[0];
 
   return {
     id: row.id,
@@ -90,6 +94,7 @@ function mapListRow(row: ProductListRow): Product {
     category: category?.slug ?? "corporate-gifts",
     description: row.description ?? "",
     price: row.base_price,
+    productCode: defaultVariant?.sku,
     minQuantity: row.min_order_quantity,
     featured: true,
     image: cover?.url,
@@ -97,7 +102,7 @@ function mapListRow(row: ProductListRow): Product {
 }
 
 const LIST_SELECT =
-  "id, slug, name, description, base_price, min_order_quantity, categories(slug), product_images(url, sort_order)";
+  "id, slug, name, description, base_price, min_order_quantity, categories(slug), product_images(url, sort_order), product_variants(sku, is_default)";
 
 type PrismaListProduct = Awaited<ReturnType<typeof getPrismaProducts>>[number];
 
@@ -128,6 +133,7 @@ async function getPrismaProducts(args: {
               { name: { contains: args.query, mode: "insensitive" } },
               { description: { contains: args.query, mode: "insensitive" } },
               { category: { name: { contains: args.query, mode: "insensitive" } } },
+              { variants: { some: { sku: { contains: args.query, mode: "insensitive" } } } },
             ],
           }
         : {}),
@@ -140,6 +146,7 @@ async function getPrismaProducts(args: {
     include: {
       category: { select: { slug: true } },
       images: { orderBy: { sortOrder: "asc" }, take: 1 },
+      variants: { where: { isDefault: true }, select: { sku: true }, take: 1 },
     },
   });
 }
@@ -155,6 +162,7 @@ function mapPrismaListProduct(product: PrismaListProduct): Product {
     minQuantity: product.minOrderQuantity,
     featured: product.isFeatured,
     image: product.images[0]?.url,
+    productCode: product.variants[0]?.sku,
     inStock: true,
   };
 }
@@ -167,7 +175,8 @@ function filterFallbackProducts(filters: ProductFilters): Product[] {
       (p) =>
         p.name.toLowerCase().includes(q) ||
         p.description.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q),
+        p.category.toLowerCase().includes(q) ||
+        p.productCode?.toLowerCase().includes(q),
     );
   }
   if (filters.categorySlug) results = results.filter((p) => p.category === filters.categorySlug);
@@ -239,6 +248,7 @@ export async function getProductsByCollection(collectionSlug: string): Promise<P
       include: {
         category: { select: { slug: true } },
         images: { orderBy: { sortOrder: "asc" }, take: 1 },
+        variants: { where: { isDefault: true }, select: { sku: true }, take: 1 },
       },
     });
     if (products.length > 0) return products.map(mapPrismaListProduct);
@@ -305,8 +315,17 @@ export async function searchProducts(filters: ProductFilters): Promise<Product[]
 
   const supabase = (await createClient()) as unknown as SupabaseLooseClient;
   let queryBuilder = supabase.from("products").select(LIST_SELECT).eq("status", "active");
+  let codeProductIds: string[] = [];
 
   if (filters.query) {
+    // Product code lives on the default variant. Query it separately so the
+    // public search endpoint remains useful when the app is backed directly
+    // by Supabase instead of Prisma.
+    const { data: matchingVariants } = await supabase
+      .from("product_variants")
+      .select("product_id")
+      .ilike("sku", `%${filters.query}%`);
+    codeProductIds = (matchingVariants as { product_id: string }[] | null ?? []).map((variant) => variant.product_id);
     queryBuilder = queryBuilder.textSearch("name", filters.query, { type: "websearch" });
   }
   if (filters.categorySlug) {
@@ -323,9 +342,16 @@ export async function searchProducts(filters: ProductFilters): Promise<Product[]
   if (filters.customizableOnly) queryBuilder = queryBuilder.eq("is_customizable", true);
 
   const { data, error } = await queryBuilder.limit(filters.limit ?? 24);
-  if (error || !data || (Array.isArray(data) && data.length === 0)) return filterFallbackProducts(filters);
+  const codeMatches = codeProductIds.length
+    ? await supabase.from("products").select(LIST_SELECT).eq("status", "active").in("id", codeProductIds).limit(filters.limit ?? 24)
+    : null;
+  const rows = [
+    ...((data as ProductListRow[] | null) ?? []),
+    ...((codeMatches?.data as ProductListRow[] | null) ?? []),
+  ].filter((row, index, all) => all.findIndex((candidate) => candidate.id === row.id) === index);
+  if (error || rows.length === 0) return filterFallbackProducts(filters);
 
-  return (data as unknown as ProductListRow[]).map(mapListRow);
+  return rows.slice(0, filters.limit ?? 24).map(mapListRow);
 }
 
 /**
@@ -355,6 +381,7 @@ export async function getProductsBySlugs(slugs: string[]): Promise<Product[]> {
         include: {
           category: { select: { slug: true } },
           images: { orderBy: { sortOrder: "asc" }, take: 1 },
+          variants: { where: { isDefault: true }, select: { sku: true }, take: 1 },
         },
       });
       if (products.length > 0) return inRequestedOrder(products.map(mapPrismaListProduct));
@@ -404,6 +431,7 @@ export async function countProducts(filters: Pick<ProductFilters, "categorySlug"
                 { name: { contains: filters.query, mode: "insensitive" } },
                 { description: { contains: filters.query, mode: "insensitive" } },
                 { category: { name: { contains: filters.query, mode: "insensitive" } } },
+                { variants: { some: { sku: { contains: filters.query, mode: "insensitive" } } } },
               ],
             }
           : {}),
@@ -505,7 +533,7 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
         {
           id: fallback.id,
           name: "Standard",
-          sku: fallback.id.toUpperCase(),
+          sku: fallback.productCode ?? null,
           price: fallback.price ?? 0,
           compareAtPrice: null,
           option1Name: null,
@@ -564,7 +592,7 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
         {
           id: fallback.id,
           name: "Standard",
-          sku: fallback.id.toUpperCase(),
+          sku: fallback.productCode ?? null,
           price: fallback.price ?? 0,
           compareAtPrice: null,
           option1Name: null,

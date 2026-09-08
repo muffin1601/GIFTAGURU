@@ -15,7 +15,7 @@ export default async function AccountOrderDetailPage({ params }: { params: Promi
 
   const order = await prisma.order.findFirst({
     where: { orderNumber: id, OR: [{ userId: user.id }, { email: user.email ?? "" }] },
-    include: { items: true, statusHistory: { orderBy: { createdAt: "asc" } } },
+    include: { items: { include: { variant: { select: { sku: true } } } }, statusHistory: { orderBy: { createdAt: "asc" } } },
   });
   if (!order) notFound();
 
@@ -43,7 +43,10 @@ export default async function AccountOrderDetailPage({ params }: { params: Promi
           <div className="mt-3 space-y-2">
             {order.items.map((item) => (
               <div key={item.id} className="flex justify-between gap-4 text-sm">
-                <span>{item.productName} x {item.quantity}</span>
+                <span>
+                  {item.productName} x {item.quantity}
+                  {item.variant?.sku ? <span className="block text-xs text-ink-600">Product code: {item.variant.sku}</span> : null}
+                </span>
                 <span>{formatPrice(Number(item.lineTotal))}</span>
               </div>
             ))}

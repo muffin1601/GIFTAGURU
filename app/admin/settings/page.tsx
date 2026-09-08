@@ -20,7 +20,7 @@ export default async function AdminSettingsPage() {
         <ActionForm action={updateStoreSettingsAction} submitLabel="Save settings" className="grid gap-5 md:grid-cols-2">
           <label className="space-y-1 text-sm font-medium text-navy-950">
             Minimum order quantity
-            <AdminInput name="minimum_quantity" type="number" min={1} required defaultValue={settings.minOrderQuantity} />
+            <AdminInput name="minimum_quantity" type="number" min={5} required defaultValue={settings.minOrderQuantity} />
           </label>
           <label className="space-y-1 text-sm font-medium text-navy-950">
             Gift wrap price (INR)

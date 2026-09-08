@@ -14,7 +14,15 @@ export default async function AdminProductsPage({
   const page = Math.max(1, Number(params.page) || 1);
 
   const where: Prisma.ProductWhereInput = {
-    ...(params.q ? { name: { contains: params.q, mode: "insensitive" } } : {}),
+    ...(params.q
+      ? {
+          OR: [
+            { name: { contains: params.q, mode: "insensitive" } },
+            { slug: { contains: params.q, mode: "insensitive" } },
+            { variants: { some: { sku: { contains: params.q, mode: "insensitive" } } } },
+          ],
+        }
+      : {}),
     ...(params.category ? { categoryId: params.category } : {}),
     ...(params.status ? { status: params.status as "draft" | "active" | "archived" } : {}),
   };
@@ -60,7 +68,7 @@ export default async function AdminProductsPage({
           type="search"
           name="q"
           defaultValue={params.q}
-          placeholder="Search product name"
+          placeholder="Search name, slug or product code"
           className="field-input text-sm"
         />
         <select name="category" defaultValue={params.category ?? ""} className="field-input text-sm">
@@ -88,6 +96,7 @@ export default async function AdminProductsPage({
             <tr>
               <th className="px-4 py-3">Product</th>
               <th className="px-4 py-3">Category</th>
+              <th className="px-4 py-3">Product code</th>
               <th className="px-4 py-3">Price</th>
               <th className="px-4 py-3">MOQ</th>
               <th className="px-4 py-3">Status</th>
@@ -107,6 +116,7 @@ export default async function AdminProductsPage({
                     <p className="text-ink-500">{product.slug}</p>
                   </td>
                   <td className="px-4 py-3">{product.category?.name ?? "Uncategorized"}</td>
+                  <td className="px-4 py-3 text-ink-600">{product.variants.find((variant) => variant.isDefault)?.sku ?? product.variants[0]?.sku ?? "—"}</td>
                   <td className="px-4 py-3">{formatPrice(Number(product.basePrice))}</td>
                   <td className="px-4 py-3">{product.minOrderQuantity}</td>
                   <td className="px-4 py-3">

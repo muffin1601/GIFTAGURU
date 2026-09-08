@@ -20,6 +20,7 @@ export async function GET(request: Request) {
       category: product.category,
       image: product.image,
       price: product.price,
+      productCode: product.productCode ?? null,
     })),
   });
 }
