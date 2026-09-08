@@ -232,17 +232,17 @@ export default async function Diwali2026Page() {
 
         {products.length > 0 ? (
           <section className="mt-16 border-t border-line pt-10">
-            <h2 className="type-h2">Diwali Gift Sets to Consider</h2>
+            <h2 className="type-h2">Diwali Gift Kits and Gift Sets</h2>
             <p className="type-body mt-4 max-w-3xl">
-              Sets from the current range whose finish and presentation suit the festive quarter.
+              Existing catalogue Gift Sets selected for employee, client, partner and leadership Diwali gifting.
             </p>
             <div className="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
               {products.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
-            <Link href="/shop" className="link-underline mt-10 inline-block text-navy-950">
-              Browse the full gift range
+            <Link href="/gift-sets" className="link-underline mt-10 inline-block text-navy-950">
+              Browse all corporate gift sets
             </Link>
           </section>
         ) : null}

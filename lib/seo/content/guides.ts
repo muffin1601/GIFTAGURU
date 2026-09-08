@@ -463,14 +463,16 @@ export const guidePages: LandingPageContent[] = [
       "festival corporate gifts India",
       "diwali corporate gifting checklist",
       "diwali gifts for clients premium",
+      "diwali gift sets",
+      "diwali gift kits",
     ],
-    seoTitle: "Diwali Corporate Gifting Guide - Planning & Gift Ideas",
+    seoTitle: "Diwali Corporate Gifting Guide - Gift Sets & Kits",
     metaDescription:
-      "How to plan Diwali corporate gifting: when to start, how to split client and employee lists, and how to stand out in a crowded festive season.",
-    h1: "How to Plan Diwali Corporate Gifting",
+      "Plan corporate Diwali gifts with existing Diwali gift sets and gift kits: split employee and client lists, then prepare quantities and artwork early.",
+    h1: "How to Plan Corporate Diwali Gift Sets and Kits",
     intro: [
       "Diwali gifting fails in the same way every year, and it is almost always a planning failure rather than a taste one. The order goes in late, the choice narrows to whatever can still be produced, and the gift arrives in the same week as everyone else's.",
-      "This guide is about the sequence rather than the products - what to decide, and in what order, to avoid that outcome.",
+      "This guide is about the sequence rather than individual products: choose from the existing Diwali Gift Set catalogue, split the recipient lists, and avoid a late decision.",
     ],
     sections: [
       {
@@ -533,6 +535,7 @@ export const guidePages: LandingPageContent[] = [
       "complete-stationery-gift-set",
     ],
     relatedLinks: [
+      { label: "Diwali gift kits and gift sets", href: "/diwali-2026" },
       { label: "Diwali corporate gifts", href: "/occasions/diwali-corporate-gifts" },
       { label: "gifting through the festive quarter", href: "/occasions/festive-corporate-gifting" },
       { label: "client gifting guide", href: "/guides/client-gifting-guide" },

@@ -137,6 +137,7 @@ export const collectionSeoContent: CollectionSeoContent[] = [
       },
     ],
     relatedLinks: [
+      { label: "Diwali gift kits and gift sets", href: "/diwali-2026" },
       { label: "client appreciation gifting", href: "/gifting/client-appreciation" },
       { label: "festive corporate gifting", href: "/occasions/festive-corporate-gifting" },
       { label: "luxury corporate gifts", href: "/categories/luxury-gifts" },
@@ -186,6 +187,7 @@ export const collectionSeoContent: CollectionSeoContent[] = [
       },
     ],
     relatedLinks: [
+      { label: "Diwali gift sets for corporate recipients", href: "/diwali-2026" },
       { label: "executive and leadership gifting", href: "/gifting/executive-leadership" },
       { label: "new year corporate gifts", href: "/occasions/new-year-corporate-gifts" },
       { label: "premium corporate gift sets", href: "/categories/premium-gifts" },
@@ -236,6 +238,7 @@ export const collectionSeoContent: CollectionSeoContent[] = [
       },
     ],
     relatedLinks: [
+      { label: "sustainable Diwali gift sets", href: "/diwali-2026" },
       { label: "sustainable gifting for ESG programmes", href: "/guides/eco-friendly-corporate-gifting" },
       { label: "bulk eco gifting for events", href: "/gifting/events-conferences" },
       { label: "request a quote", href: "/bulk-enquiry" },

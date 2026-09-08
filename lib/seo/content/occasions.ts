@@ -28,12 +28,12 @@ export const occasionPages: LandingPageContent[] = [
       "premium diwali corporate gifts",
       "diwali gifts for employees",
     ],
-    seoTitle: "Diwali Corporate Gifts - Premium Branded Festive Sets",
+    seoTitle: "Diwali Corporate Gifts - Gift Kits & Gift Sets",
     metaDescription:
-      "Diwali corporate gifts for clients, employees and partners. Branded festive gift sets with logo or name personalization, planned ahead of the rush.",
-    h1: "Diwali Corporate Gifts",
+      "Diwali corporate gifts for employees, clients and partners. Explore curated Diwali gift kits and gift sets from the existing catalogue for bulk gifting.",
+    h1: "Diwali Corporate Gifts: Gift Kits & Gift Sets",
     intro: [
-      "Diwali is the single busiest gifting moment in the Indian corporate calendar, which is precisely the problem. Your client receives gifts from every supplier in the same fortnight, and the ones that get remembered are almost never the most expensive - they are the ones that arrived early and looked unlike everything else on the table.",
+      "Diwali is the busiest gifting moment in the Indian corporate calendar. This page keeps the choice focused on existing Diwali Gift Sets and Gift Kits, rather than individual products, so employee, client and partner lists start from coordinated presentation pieces.",
       "Planning is the whole game here. Personalization needs a proof cycle, production capacity tightens as the season approaches, and the last two weeks before the festival are when everyone tries to order at once.",
     ],
     sections: [
@@ -52,9 +52,9 @@ export const occasionPages: LandingPageContent[] = [
         ],
       },
       {
-        heading: "Client, employee and partner lists",
+        heading: "Diwali Gift Kits for Client, Employee and Partner Lists",
         body: [
-          "Most companies run three Diwali lists at once, and they rarely need the same gift. Clients and key partners justify the premium and luxury sets; employees are usually gifted at scale, where a well-made mid-range set across everyone beats an expensive gift for a few.",
+          "Most companies run three Diwali lists at once, and they rarely need the same gift. Clients and key partners justify premium and luxury Gift Sets; employees are usually gifted at scale, where a coordinated gift kit across everyone can be a better fit than an individual product.",
         ],
         bullets: [
           "Key clients and partners: burgundy, white premium or luxury planner sets",
@@ -94,6 +94,7 @@ export const occasionPages: LandingPageContent[] = [
       "luxury-planner-gift-box",
     ],
     relatedLinks: [
+      { label: "Diwali gift kits and gift sets for 2026", href: "/diwali-2026" },
       { label: "seasonal gifting for the festive quarter", href: "/occasions/festive-corporate-gifting" },
       { label: "corporate gifts for clients", href: "/gifting/client-appreciation" },
       { label: "the luxury and executive range", href: "/categories/luxury-gifts" },

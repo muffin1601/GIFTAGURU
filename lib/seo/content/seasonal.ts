@@ -27,23 +27,21 @@ import type { LandingFaq, LandingLink, LandingSection } from "./types";
  *   Diwali Gifts for 2026 ...... Diwali gifts, Diwali festive gifts, gifting ideas
  *   Corporate section .......... Diwali corporate gifts 2026, corporate Diwali
  *                                gifting, Diwali business gifts, bulk Diwali gifts
- *   Hampers section ............ Diwali gift hampers 2026, Diwali hampers,
- *                                Diwali gift boxes
+ *   Gift-set section ........... Diwali gift sets, Diwali gift kits,
+ *                                Diwali gift hampers
  *   Employees section .......... Diwali gifts for employees
  *   Clients section ............ Diwali gifts for clients, gifts for customers,
  *                                gifts for business partners
  *   Personalisation section .... personalised Diwali gifts, customised Diwali gifts
  *   Premium section ............ premium Diwali gifts, luxury Diwali gifts
- *   Family & friends section ... Diwali gifts for family, Diwali gifts for friends
  *   Ordering / FAQs ............ Diwali gifts online, Diwali gifts delivery
  *
  * Rules this file keeps, matching ./types.ts and ./products.ts:
  *  - No prices, no stock, no dispatch dates, no delivery guarantees. Those are
  *    merchandising facts owned by the database and store settings.
- *  - No claimed product contents that the catalog does not carry. Gifta Guru's
- *    range is stationery, desk and executive gift sets; it is NOT a sweet-box
- *    or dry-fruit business, and the copy below says so plainly rather than
- *    implying otherwise for the sake of a keyword.
+ *  - Diwali recommendations are limited to products in the catalog's Gift Set
+ *    categories. No individual Diwali products are presented as campaign picks.
+ *  - No claimed product contents that the catalog does not carry.
  *  - No certifications, client names, statistics, ratings or awards.
  */
 
@@ -101,14 +99,14 @@ export const diwali2026: SeasonalHubContent = {
     "bulk diwali gifts",
     "diwali gifts online",
   ],
-  seoTitle: "Diwali Gifts 2026 - Corporate Gifts, Hampers & Ideas",
+  seoTitle: "Diwali Gift Kits & Gift Sets 2026 | Corporate Gifts",
   metaDescription:
-    "Diwali gifts 2026 from Gifta Guru: corporate Diwali gifts, premium hampers and personalised gift sets for employees, clients and family. Request a bulk quote.",
-  h1: "Diwali Gifts 2026 - Thoughtful Gifting for Every Celebration",
+    "Diwali gift kits and Diwali gift sets for corporate gifting. Explore curated gift hampers for employees, clients and partners, then request a bulk quote.",
+  h1: "Diwali Gift Kits & Gift Sets for Corporate Gifting",
 
   heroEyebrow: "Diwali 2026",
   heroLead:
-    "Curated Diwali gift sets for employees, clients and family - personalised with your logo or a recipient's name, and available for single orders or company-wide lists.",
+    "Curated Diwali gift kits and gift sets for employees, clients and partners, selected from our existing Gift Set catalogue for company-wide gifting.",
   heroImage: {
     // An existing brand banner. No new asset is created for this page: the
     // luxury banner is the closest match to festive gifting already shipped.
@@ -117,52 +115,52 @@ export const diwali2026: SeasonalHubContent = {
     width: 1600,
     height: 900,
   },
-  primaryCta: { label: "Explore Diwali Gifts", href: "/shop" },
+  primaryCta: { label: "Explore Diwali Gift Sets", href: "/gift-sets" },
   secondaryCta: { label: "Request a Corporate Diwali Quote", href: "/bulk-enquiry" },
 
   intro: [
-    "Diwali is the busiest gifting fortnight in the Indian calendar, and it is also the easiest one to get wrong. The same recipients receive a dozen near-identical boxes in the same week, and by the middle of November most of them have been forgotten. What people actually keep is the gift they end up using at their desk long after the festival.",
-    "This page is the starting point for Diwali gifts in 2026 - what to send to employees, clients, partners and family, how to shortlist by recipient rather than by catalogue order, and where each of those decisions leads inside the Gifta Guru range. Diwali 2026 falls in November, so artwork approvals and final quantities usually need settling through September and October rather than in the last fortnight.",
+    "Diwali corporate gifts work best when the presentation and the recipient list have been considered together. This campaign focuses only on the existing Gift Set catalogue: coordinated Diwali gift kits and gift sets for employees, clients, partners and leadership teams.",
+    "Use the sets below to build a practical volume tier for employees and a more refined tier for clients or senior recipients. For corporate Diwali gifts, confirm quantities and artwork early enough to allow for the product-specific personalisation process.",
   ],
 
   sections: [
     {
-      heading: "Diwali Gifts for 2026",
+      heading: "Diwali Gift Kits and Gift Sets",
       body: [
-        "Gifta Guru curates multi-piece festive gift sets built around things people genuinely use: notebooks and journals, pens, folios, planners, desk accessories, keychains and executive organisers. Every set arrives as a coordinated presentation piece rather than a bag of unrelated items, which is what makes it read as considered when it is opened in front of colleagues.",
-        "One clarification worth making early, because it decides whether this range suits your list: we are a gifting company, not a sweet-box or dry-fruit business. If you are sending mithai this Diwali, our sets work best alongside it - the sweets are consumed within the week, and the gift set is what stays on the desk through the year.",
+        "Every Diwali recommendation here is an existing Kit or Gift Set from the catalogue, rather than an individual product. The range brings notebooks, pens, folios, planners and desk accessories together in coordinated presentation packaging for a more considered corporate gift.",
+        "For buyers searching for Diwali gift hampers, these are coordinated non-food gift sets. Product pages remain the source of truth for each set's image, price, contents and available personalisation.",
       ],
       bullets: [
-        "Curated multi-piece festive gift sets, coordinated in one palette and packaged together",
-        "Logo, name or initial personalisation on most sets, applied before dispatch",
-        "Single orders through the online store, and quoted bulk orders for company lists",
-        "Ranges that scale from full-team gifting to a short list of senior recipients",
+        "Existing Diwali Gift Set catalogue products only",
+        "Coordinated Diwali gift kits for corporate recipient lists",
+        "Product-specific pricing, imagery and personalisation details",
+        "Options for broad employee lists and selected client recipients",
       ],
     },
     {
       heading: "Diwali Corporate Gifts 2026",
       body: [
-        "Corporate Diwali gifting is really three lists running at once, and they rarely want the same gift. Employees are gifted at scale, where a well-made mid-range set given to everyone lands better than an expensive gift given to a few. Clients and key accounts justify the premium and executive sets. Dealers, distributors and channel partners usually sit between the two, in volume.",
-        "For business gifting we quote against your quantities, personalisation and delivery split rather than listing a single figure - the economics of 40 sets and 4,000 sets are not comparable. Send the list size and the recipient mix and we will come back with options across tiers.",
+        "Corporate Diwali gifts usually serve more than one recipient group. A consistent gift kit can suit employees and partner lists, while premium or luxury gift sets give account teams a more considered option for key clients and leadership recipients.",
+        "For company orders, share quantities, personalisation requirements and delivery locations through the bulk enquiry form. The team can then match the existing Diwali Gift Set range to your recipient tiers.",
       ],
       bullets: [
         "Employee, client, customer, dealer, distributor and business-partner lists",
         "Branded corporate gifts carrying your logo, or the recipient's own name for senior gifting",
         "Executive and leadership sets for a short, high-value list",
-        "Bulk Diwali gifting quoted on quantity, personalisation and despatch split",
+        "Bulk Diwali gifting matched to quantity, personalisation and delivery requirements",
       ],
     },
     {
-      heading: "Diwali Gift Hampers and Multi-Piece Sets",
+      heading: "Diwali Gift Hampers as Curated Gift Sets",
       body: [
-        "What most buyers mean by a Diwali gift hamper is a coordinated multi-piece box rather than a single item, and that is exactly how our sets are built - typically three to six pieces chosen to work together and presented in one package. A three-piece set suits large employee lists; five and six-piece sets carry the weight expected for clients and leadership.",
-        "The pieces themselves are stationery, desk and executive items. We do not assemble food, sweets, dry-fruit or wellness hampers, so nothing on this page will promise contents we do not stock. Where a set's finish matters for the festive quarter - deeper tones, foil accents, gift-ready packaging - that is described honestly on the product page.",
+        "A Diwali gift hamper can be a coordinated gift set rather than a food hamper. Gifta Guru's Diwali range is limited to its existing stationery, desk and executive Gift Sets; it does not represent sweets, dry-fruit or other food hampers.",
+        "That makes the selection useful where recipients need a long-lasting desk or executive gift. Review each product page for the exact set, its presentation, price and customisation options.",
       ],
       bullets: [
-        "3-piece and 4-piece sets for broad festive distribution",
-        "5-piece and 6-piece sets where the gift needs to carry more weight",
-        "Coordinated palettes and gift-ready presentation packaging",
-        "Personalisation applied across the set rather than to one piece",
+        "Gift Sets for employee, client and partner gifting",
+        "Premium and luxury finishes for selected recipient tiers",
+        "Coordinated presentation rather than individual Diwali products",
+        "Personalisation subject to the selected product",
       ],
     },
     {
@@ -174,7 +172,6 @@ export const diwali2026: SeasonalHubContent = {
       bullets: [
         "Consistent gifts across the full team, in one coordinated finish",
         "Company logo across the set, or individual names for milestone recipients",
-        "Onboarding-style welcome kits for anyone who joined close to the festive quarter",
         "Volume-friendly sets that still open well",
       ],
     },
@@ -218,19 +215,6 @@ export const diwali2026: SeasonalHubContent = {
       ],
     },
     {
-      heading: "Diwali Gifts for Family and Friends",
-      body: [
-        "Not every Diwali list is a corporate one. The same sets can be ordered individually through the online store, without a bulk enquiry, and they suit family and friends who work - a good notebook and pen, a planner for the year ahead, or a desk set for someone who has just started a new job.",
-        "For a personal gift, the name option usually matters more than the size of the box. A single well-finished piece with someone's initials on it tends to be kept far longer than a larger unbranded one.",
-      ],
-      bullets: [
-        "Individual orders through the store, with no minimum quantity",
-        "Planners and journals for the year ahead",
-        "Desk sets for family members starting a new role",
-        "Name and initial personalisation on supported products",
-      ],
-    },
-    {
       heading: "Why Choose Gifta Guru for Diwali Gifting",
       body: [
         "Gifta Guru is a corporate gifting platform first, which shapes what this range is good at: curated sets rather than single novelties, personalisation as a standard service rather than an add-on, and bulk orders handled as quotes against your actual list instead of a fixed page price.",
@@ -239,8 +223,7 @@ export const diwali2026: SeasonalHubContent = {
         "Curated multi-piece gift sets rather than assorted single items",
         "Custom branding and personalisation run in-house as a core service",
         "Bulk and corporate orders quoted against quantity and personalisation",
-        "A storefront that also serves individual orders, so one range covers both lists",
-        "Order tracking available on placed orders through your account",
+        "A focused Diwali selection built from the existing Gift Set catalogue",
       ],
     },
     {
@@ -249,7 +232,7 @@ export const diwali2026: SeasonalHubContent = {
         "Shortlisting works better from the recipient inwards than from the catalogue outwards. Five questions usually settle it, and answering them before browsing saves the most time.",
       ],
       bullets: [
-        "Who is receiving it? Employees, clients, partners and family have different expectations of the same box.",
+        "Who is receiving it? Employees, clients and partners have different expectations of the same box.",
         "How many? Quantity decides whether you are choosing a volume set or a short-list premium one.",
         "How close is the relationship? Closer relationships justify the recipient's name over your logo.",
         "Should it carry branding? Company campaigns want the logo; personal gestures usually do not.",
@@ -290,23 +273,13 @@ export const diwali2026: SeasonalHubContent = {
       body: "Leadership, board-level contacts and your most valuable accounts. Short lists, higher finish, personal names.",
       link: { label: "Executive and leadership gifts", href: "/gifting/executive-leadership" },
     },
-    {
-      title: "Family",
-      body: "Individual orders with no minimum quantity - planners, journals and desk sets for people who will use them.",
-      link: { label: "Shop the full gift range", href: "/shop" },
-    },
-    {
-      title: "Friends",
-      body: "A single well-finished piece with initials on it, rather than a large unbranded box.",
-      link: { label: "See personalisation options", href: "/custom-gifts" },
-    },
   ],
 
   tiers: [
     {
-      title: "Thoughtful gifting",
-      body: "Compact sets for broad lists where every recipient gets the same gift and the total quantity is high.",
-      link: { label: "Browse joining and welcome sets", href: "/categories/joining-gifts" },
+      title: "Employee gift kits",
+      body: "Coordinated Diwali gift kits for broad employee and partner lists where consistency matters.",
+      link: { label: "Browse Diwali gift sets", href: "/gift-sets" },
     },
     {
       title: "Premium gifting",
@@ -364,7 +337,7 @@ export const diwali2026: SeasonalHubContent = {
     {
       question: "Can I order corporate Diwali hampers?",
       answer:
-        "Yes, in the sense of coordinated multi-piece gift sets - typically three to six stationery, desk and executive pieces packaged together. We do not assemble food, sweets or dry-fruit hampers, so the contents are always the items listed on the product page.",
+        "Yes, in the sense of coordinated Diwali Gift Sets with stationery, desk or executive items packaged together. We do not assemble food, sweets or dry-fruit hampers, so the contents are always the items listed on the product page.",
     },
     {
       question: "What are the premium Diwali gifting options?",
