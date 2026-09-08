@@ -20,6 +20,32 @@ export default function GiftSetsHubPage() {
         "These pages set out what each configuration typically contains, where it genuinely earns the step up, and where a smaller, better-presented set is the stronger choice.",
       ]}
       pages={giftSetPages}
+      visualGallery={[
+        {
+          src: "/catalogue-2026-images/page-03-img-01_480x445.png",
+          alt: "Black executive Diwali corporate gift kit in a presentation box",
+        },
+        {
+          src: "/catalogue-2026-images/page-03-img-02_480x431.png",
+          alt: "Corporate Diwali gift kit with bottle, tumbler and desk accessories",
+        },
+        {
+          src: "/catalogue-2026-images/page-03-img-03_560x423.png",
+          alt: "Multi-item corporate gift kit in a black presentation box",
+        },
+        {
+          src: "/catalogue-2026-images/page-03-img-04_560x385.png",
+          alt: "Corporate Diwali gift kit with notebook, mug and accessories",
+        },
+        {
+          src: "/catalogue-2026-images/page-03-img-05_640x476.png",
+          alt: "Black corporate gift kit with bottle and desk accessories",
+        },
+        {
+          src: "/catalogue-2026-images/page-03-img-06_720x541.png",
+          alt: "Corporate Diwali gift kit with bottle, notebook, pen and keychain",
+        },
+      ]}
       extraSections={[
         {
           heading: "Choosing a piece count",

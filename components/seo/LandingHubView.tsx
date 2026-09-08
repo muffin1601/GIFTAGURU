@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
 import JsonLd from "@/components/seo/JsonLd";
@@ -22,12 +23,16 @@ export default function LandingHubView({
   intro,
   pages,
   extraSections = [],
+  visualGallery = [],
 }: {
   family: LandingFamily;
   title: string;
   intro: string[];
   pages: LandingPageContent[];
   extraSections?: LandingSection[];
+  /** Existing catalogue imagery for a hub. Images are editorial only; product
+   * details and pricing continue to live on the linked product pages. */
+  visualGallery?: { src: string; alt: string }[];
 }) {
   const config = landingFamilies[family];
 
@@ -63,6 +68,34 @@ export default function LandingHubView({
       </section>
 
       <Container className="py-14 sm:py-16">
+        {visualGallery.length > 0 ? (
+          <section className="border-b border-line pb-14 sm:pb-16">
+            <div className="max-w-3xl">
+              <span className="type-eyebrow">2026 catalogue</span>
+              <h2 className="type-h2 mt-3">Featured Diwali Gift Kits</h2>
+              <p className="type-body mt-4">
+                A selection of coordinated corporate gift kits from the Diwali catalogue.
+                Enquire with your recipient count to discuss the right set for your list.
+              </p>
+            </div>
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {visualGallery.map((image) => (
+                <figure key={image.src} className="overflow-hidden border border-line bg-surface">
+                  <div className="relative aspect-[4/3]">
+                    <Image
+                      src={image.src}
+                      alt={image.alt}
+                      fill
+                      sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"
+                      className="object-cover"
+                    />
+                  </div>
+                </figure>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         <ul className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
           {pages.map((page) => (
             <li key={page.slug} className="border-t border-line pt-6">
