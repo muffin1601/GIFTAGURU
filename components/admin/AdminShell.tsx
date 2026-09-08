@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, Boxes, ChevronDown, CircleDollarSign, ClipboardList, FolderTree, Gift, Home, Mail, MessageSquareQuote, PackageCheck, Settings, ShoppingBag, TicketPercent, UsersRound } from "lucide-react";
+import { BarChart3, Boxes, ChevronDown, CircleDollarSign, ClipboardList, FolderTree, Gift, Home, LogOut, Mail, MessageSquareQuote, PackageCheck, Settings, ShoppingBag, Store, TicketPercent, UsersRound } from "lucide-react";
 import { useState } from "react";
+import { logoutAction } from "@/lib/actions/auth";
 
 const sections = [
   {
@@ -131,6 +132,25 @@ function AdminNavigation({ pathname, onNavigate }: { pathname: string; onNavigat
           </div>
         </div>
       ))}
+      <div className="mt-auto border-t border-line pt-5">
+        <Link
+          href="/"
+          onClick={onNavigate}
+          className="-mx-2 flex items-center gap-3 px-4 py-2 text-sm text-ink-700 transition-colors duration-200 hover:text-navy-950"
+        >
+          <Store className="h-4 w-4 shrink-0" aria-hidden="true" />
+          View storefront
+        </Link>
+        <form action={logoutAction} className="mt-1">
+          <button
+            type="submit"
+            className="-mx-2 flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-ink-700 transition-colors duration-200 hover:text-navy-950"
+          >
+            <LogOut className="h-4 w-4 shrink-0" aria-hidden="true" />
+            Log out
+          </button>
+        </form>
+      </div>
     </nav>
   );
 }
