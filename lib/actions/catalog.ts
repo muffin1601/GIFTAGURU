@@ -11,6 +11,7 @@ import { prisma } from "@/lib/prisma";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { slugify } from "@/lib/utils";
 import { MIN_ORDER_QUANTITY } from "@/lib/config/store";
+import { generateNextProductCode } from "@/lib/product-codes";
 
 type ActionState = { error?: string; success?: string };
 
@@ -316,7 +317,7 @@ export async function createProductAction(_state: ActionState, formData: FormDat
   const existing = await prisma.product.findUnique({ where: { slug } });
   if (existing) return { error: `A product with the slug "${slug}" already exists.` };
 
-  const sku = parsed.data.productCode || `GG-${randomUUID().split("-")[0].toUpperCase()}`;
+  const sku = parsed.data.productCode || await generateNextProductCode();
   const codeClash = await prisma.productVariant.findUnique({ where: { sku }, select: { id: true } });
   if (codeClash) return { error: `Product code "${sku}" is already in use.` };
 
@@ -412,6 +413,106 @@ export async function updateProductAction(_state: ActionState, formData: FormDat
   revalidatePath("/shop");
   revalidatePath("/admin/inventory");
   return { success: "Product updated." };
+}
+
+const bulkPricingSchema = z.object({
+  scope: z.enum(["selected", "all"]),
+  basePrice: z.coerce.number().min(0),
+  productIds: z.array(z.string().uuid()).default([]),
+});
+
+/** Sets one base unit price across an explicit selection or the entire catalogue. */
+export async function bulkUpdateProductPricingAction(_state: ActionState, formData: FormData): Promise<ActionState> {
+  const admin = await requireAdmin();
+  const parsed = bulkPricingSchema.safeParse({
+    scope: formData.get("scope"),
+    basePrice: formData.get("basePrice"),
+    productIds: formData.getAll("productIds"),
+  });
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Enter a valid price and product selection." };
+  if (parsed.data.scope === "selected" && parsed.data.productIds.length === 0) {
+    return { error: "Select at least one product, or choose all products." };
+  }
+
+  const where = parsed.data.scope === "all" ? {} : { id: { in: parsed.data.productIds } };
+  const products = await prisma.product.findMany({
+    where,
+    select: {
+      id: true,
+      slug: true,
+      basePrice: true,
+      priceTiers: { where: { unitPrice: { gte: parsed.data.basePrice } }, select: { id: true }, take: 1 },
+    },
+  });
+  if (products.length === 0) return { error: "No products matched this update." };
+
+  const tierConflict = products.find((product) => product.priceTiers.length > 0);
+  if (tierConflict) {
+    return { error: "The new base price must stay above every existing volume-tier price. Update that product's tiers first." };
+  }
+
+  const changed = products.filter((product) => Number(product.basePrice) !== parsed.data.basePrice);
+  if (changed.length === 0) return { success: "Those products already use this base price." };
+
+  await prisma.product.updateMany({ where: { id: { in: changed.map((product) => product.id) } }, data: { basePrice: parsed.data.basePrice } });
+  await logAdminAction(admin, {
+    action: "product.bulk_price_updated",
+    entityType: "product",
+    after: { scope: parsed.data.scope, productIds: changed.map((product) => product.id), basePrice: parsed.data.basePrice },
+  });
+
+  revalidatePath("/admin/products");
+  revalidatePath("/shop");
+  revalidatePath("/");
+  for (const product of changed) revalidatePath(`/products/${product.slug}`);
+  return { success: `Updated the base price for ${changed.length} product${changed.length === 1 ? "" : "s"}.` };
+}
+
+type PriceFileRow = { productCode: string; newPrice: string | number };
+type PriceFileResult = ActionState & { totalRows?: number; updated?: number; unchanged?: number; failed?: number; notFound?: number; report?: Array<{ productCode: string; status: string }> };
+
+function readPrice(value: string | number): number | null {
+  const text = String(value).trim().replace(/[₹,$\s]/g, "").replace(/,/g, "");
+  if (!/^\d+(?:\.\d{1,2})?$/.test(text)) return null;
+  const price = Number(text);
+  return Number.isFinite(price) && price >= 0 ? price : null;
+}
+
+/** Rechecks every uploaded row server-side before updating only base prices. */
+export async function applyPriceFileAction(_state: PriceFileResult, formData: FormData): Promise<PriceFileResult> {
+  const admin = await requireAdmin();
+  let rows: PriceFileRow[];
+  try { rows = JSON.parse(String(formData.get("rows") ?? "")); } catch { return { error: "We could not read the reviewed price rows." }; }
+  if (!Array.isArray(rows) || rows.length === 0 || rows.length > 1_000) return { error: "Choose a price file with between 1 and 1,000 rows." };
+
+  const seen = new Set<string>();
+  const report: Array<{ productCode: string; status: string }> = [];
+  const valid = rows.flatMap((row) => {
+    const productCode = typeof row.productCode === "string" ? row.productCode.trim() : "";
+    const price = readPrice(row.newPrice);
+    if (!productCode) { report.push({ productCode: "(blank)", status: "Product Code is missing" }); return []; }
+    if (seen.has(productCode)) { report.push({ productCode, status: "Duplicate Product Code in file" }); return []; }
+    seen.add(productCode);
+    if (price === null) { report.push({ productCode, status: "Invalid price" }); return []; }
+    return [{ productCode, price }];
+  });
+  const variants = await prisma.productVariant.findMany({ where: { sku: { in: valid.map((row) => row.productCode) }, isDefault: true }, include: { product: { include: { priceTiers: true } } } });
+  const byCode = new Map(variants.map((variant) => [variant.sku, variant.product]));
+  const updates: Array<{ id: string; slug: string; price: number }> = [];
+  for (const row of valid) {
+    const product = byCode.get(row.productCode);
+    if (!product) { report.push({ productCode: row.productCode, status: "Product code not found" }); continue; }
+    if (product.priceTiers.some((tier) => Number(tier.unitPrice) >= row.price)) { report.push({ productCode: row.productCode, status: "Price must stay above its volume-tier price" }); continue; }
+    if (Number(product.basePrice) === row.price) { report.push({ productCode: row.productCode, status: "No change" }); continue; }
+    updates.push({ id: product.id, slug: product.slug, price: row.price });
+    report.push({ productCode: row.productCode, status: "Updated" });
+  }
+  await prisma.$transaction(updates.map((update) => prisma.product.update({ where: { id: update.id }, data: { basePrice: update.price } })));
+  if (updates.length) await logAdminAction(admin, { action: "product.price_file_updated", entityType: "product", after: { updated: updates.length, totalRows: rows.length } });
+  revalidatePath("/admin/products"); revalidatePath("/shop"); revalidatePath("/");
+  for (const update of updates) revalidatePath(`/products/${update.slug}`);
+  const notFound = report.filter((row) => row.status === "Product code not found").length;
+  return { success: `Updated ${updates.length} product${updates.length === 1 ? "" : "s"}.`, totalRows: rows.length, updated: updates.length, unchanged: report.filter((row) => row.status === "No change").length, failed: report.filter((row) => !["Updated", "No change", "Product code not found"].includes(row.status)).length, notFound, report };
 }
 
 const productStatusSchema = z.object({

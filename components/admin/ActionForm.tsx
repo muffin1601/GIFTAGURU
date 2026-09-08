@@ -12,6 +12,7 @@ export default function ActionForm({
   className = "space-y-3",
   confirmMessage,
   onSuccess,
+  id,
 }: {
   action: (state: State, formData: FormData) => Promise<State>;
   children: React.ReactNode;
@@ -22,6 +23,7 @@ export default function ActionForm({
    * the browser's native confirm() so the prompt matches the rest of the UI. */
   confirmMessage?: string;
   onSuccess?: () => void;
+  id?: string;
 }) {
   const [state, formAction, pending] = useActionState(async (prevState: State, formData: FormData) => {
     const result = await action(prevState, formData);
@@ -33,6 +35,7 @@ export default function ActionForm({
   return (
     <form
       action={formAction}
+      id={id}
       className={className}
       onSubmit={(event) => {
         if (confirmMessage && !confirming) {

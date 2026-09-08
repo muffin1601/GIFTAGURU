@@ -1,4 +1,6 @@
 import Link from "next/link";
+import ActionForm, { AdminInput } from "@/components/admin/ActionForm";
+import { bulkUpdateProductPricingAction } from "@/lib/actions/catalog";
 import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/utils";
 import type { Prisma } from "@prisma/client";
@@ -61,6 +63,9 @@ export default async function AdminProductsPage({
         <Link href="/admin/products/new" className="btn btn-primary">
           New product
         </Link>
+        <Link href="/admin/products/bulk-price-update" className="btn btn-secondary">
+          Bulk Price Update
+        </Link>
       </div>
 
       <form className="panel grid gap-3 p-4 md:grid-cols-[1fr_180px_160px_auto]">
@@ -90,10 +95,37 @@ export default async function AdminProductsPage({
         </button>
       </form>
 
+      <section className="panel p-4">
+        <h2 className="font-display text-xl text-navy-950">Bulk pricing update</h2>
+        <p className="mt-1 text-sm text-ink-600">
+          Set one base unit price for selected products on this page, or for every product in the catalogue.
+        </p>
+        <ActionForm
+          id="bulk-price-update"
+          action={bulkUpdateProductPricingAction}
+          submitLabel="Update pricing"
+          confirmMessage="This overwrites the base price for the selected scope. Existing volume tiers are kept. Continue?"
+          className="mt-4 grid gap-3 md:grid-cols-[220px_1fr_auto] md:items-end"
+        >
+          <label className="space-y-1 text-sm font-medium text-navy-950">
+            Apply to
+            <select name="scope" defaultValue="selected" className="field-input text-sm">
+              <option value="selected">Selected products on this page</option>
+              <option value="all">All catalogue products</option>
+            </select>
+          </label>
+          <label className="space-y-1 text-sm font-medium text-navy-950">
+            New base unit price (INR)
+            <AdminInput name="basePrice" type="number" min={0} step="0.01" required placeholder="e.g. 1499" />
+          </label>
+        </ActionForm>
+      </section>
+
       <div className="panel overflow-x-auto">
         <table className="min-w-full text-left text-sm">
           <thead className="bg-sunken text-xs uppercase tracking-wide text-ink-600">
             <tr>
+              <th className="px-4 py-3"><span className="sr-only">Select</span></th>
               <th className="px-4 py-3">Product</th>
               <th className="px-4 py-3">Category</th>
               <th className="px-4 py-3">Product code</th>
@@ -109,6 +141,16 @@ export default async function AdminProductsPage({
               const stock = product.variants.reduce((sum, variant) => sum + (variant.inventory?.quantityAvailable ?? 0), 0);
               return (
                 <tr key={product.id} className="hover:bg-sunken">
+                  <td className="px-4 py-3">
+                    <input
+                      form="bulk-price-update"
+                      name="productIds"
+                      value={product.id}
+                      type="checkbox"
+                      aria-label={`Select ${product.name} for bulk pricing`}
+                      className="h-4 w-4 accent-navy-950"
+                    />
+                  </td>
                   <td className="px-4 py-3">
                     <Link href={`/admin/products/${product.id}`} className="font-semibold text-navy-950 hover:text-gold-700">
                       {product.name}

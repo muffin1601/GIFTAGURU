@@ -7,6 +7,7 @@ import { logAdminAction } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import { sendOrderStatusEmail } from "@/lib/email/service";
 import { MIN_ORDER_QUANTITY } from "@/lib/config/store";
+import { isValidProductCodeFormat } from "@/lib/product-codes";
 
 const statusFlow = {
   pending: ["confirmed", "processing", "cancelled"],
@@ -299,7 +300,7 @@ export async function createCouponAction(_state: { error?: string; success?: str
 // Previously this list also included store_name/contact_phone/whatsapp_number/
 // support_email, which nothing ever read -- the form silently discarded them.
 const NUMERIC_STORE_SETTINGS = ["minimum_quantity", "gift_wrap_price", "free_shipping_threshold", "shipping_charge", "gst_rate_percent"];
-const TEXT_STORE_SETTINGS = ["shipping_message", "shipping_timeline"];
+const TEXT_STORE_SETTINGS = ["shipping_message", "shipping_timeline", "product_code_format"];
 
 export async function updateStoreSettingsAction(_state: { error?: string; success?: string }, formData: FormData) {
   const admin = await requireAdmin();
@@ -313,6 +314,10 @@ export async function updateStoreSettingsAction(_state: { error?: string; succes
   }
   if (Number(formData.get("minimum_quantity")) < MIN_ORDER_QUANTITY) {
     return { error: `Minimum order quantity must be at least ${MIN_ORDER_QUANTITY}.` };
+  }
+  const productCodeFormat = String(formData.get("product_code_format") ?? "").trim();
+  if (!isValidProductCodeFormat(productCodeFormat)) {
+    return { error: "Product Code Format must include {NUMBER}, for example GG-DIW-{NUMBER:4}." };
   }
 
   await prisma.$transaction(entries.map((key) => {
