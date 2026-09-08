@@ -54,9 +54,9 @@ export default async function AdminSettingsPage() {
       <section className="panel p-5">
         <h2 className="font-display text-lg text-navy-950">Product Code Settings</h2>
         <p className="mt-2 max-w-2xl text-sm text-ink-600">
-          A Product Code is the unique code used to identify each product. You can find it in the Products list and on the product edit page. This format controls codes created for new products; existing codes will not change automatically.
+          A Product Code is the unique code used to identify each product. You can find it in the Products list and on the product edit page. Saving a different format updates every existing Product Code immediately, as well as codes created for new products.
         </p>
-        <ActionForm action={updateStoreSettingsAction} submitLabel="Save Product Code Format" className="mt-4 grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
+        <ActionForm action={updateStoreSettingsAction} submitLabel="Save and Update All Product Codes" confirmMessage="This will immediately replace every existing Product Code using the new format. Continue?" className="mt-4 grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
           <input type="hidden" name="minimum_quantity" value={settings.minOrderQuantity} />
           <input type="hidden" name="gift_wrap_price" value={settings.giftWrapPrice} />
           <input type="hidden" name="free_shipping_threshold" value={settings.freeShippingThreshold} />

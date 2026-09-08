@@ -7,7 +7,7 @@ import { logAdminAction } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import { sendOrderStatusEmail } from "@/lib/email/service";
 import { MIN_ORDER_QUANTITY } from "@/lib/config/store";
-import { isValidProductCodeFormat } from "@/lib/product-codes";
+import { formatProductCode, isValidProductCodeFormat } from "@/lib/product-codes";
 
 const statusFlow = {
   pending: ["confirmed", "processing", "cancelled"],
@@ -320,17 +320,33 @@ export async function updateStoreSettingsAction(_state: { error?: string; succes
     return { error: "Product Code Format must include {NUMBER}, for example GG-DIW-{NUMBER:4}." };
   }
 
-  await prisma.$transaction(entries.map((key) => {
-    const rawValue = String(formData.get(key) ?? "");
-    const numeric = NUMERIC_STORE_SETTINGS.includes(key);
-    return prisma.storeSetting.upsert({
-      where: { key },
-      update: { value: numeric ? Number(rawValue) : rawValue },
-      create: { key, value: numeric ? Number(rawValue) : rawValue },
-    });
-  }));
+  const previousFormatRow = await prisma.storeSetting.findUnique({ where: { key: "product_code_format" }, select: { value: true } });
+  const previousFormat = typeof previousFormatRow?.value === "string" ? previousFormatRow.value : "";
+  let changedCodes = 0;
+  await prisma.$transaction(async (tx) => {
+    for (const key of entries) {
+      const rawValue = String(formData.get(key) ?? "");
+      const numeric = NUMERIC_STORE_SETTINGS.includes(key);
+      await tx.storeSetting.upsert({ where: { key }, update: { value: numeric ? Number(rawValue) : rawValue }, create: { key, value: numeric ? Number(rawValue) : rawValue } });
+    }
+    if (previousFormat !== productCodeFormat) {
+      const variants = await tx.productVariant.findMany({ where: { isDefault: true }, orderBy: { createdAt: "asc" }, select: { id: true } });
+      const reservedCodes = new Set((await tx.productVariant.findMany({ where: { isDefault: false }, select: { sku: true } })).map((variant) => variant.sku));
+      // Reserve the old values first so a new sequential code can never collide
+      // with another product's current code midway through the rewrite.
+      for (const variant of variants) await tx.productVariant.update({ where: { id: variant.id }, data: { sku: `TMP-${variant.id}` } });
+      let number = 1;
+      for (const variant of variants) {
+        let code = formatProductCode(productCodeFormat, number++);
+        while (reservedCodes.has(code)) code = formatProductCode(productCodeFormat, number++);
+        reservedCodes.add(code);
+        await tx.productVariant.update({ where: { id: variant.id }, data: { sku: code } });
+      }
+      changedCodes = variants.length;
+    }
+  });
 
-  await logAdminAction(admin, { action: "store_settings.updated", entityType: "store_setting", after: Object.fromEntries(entries.map((key) => [key, formData.get(key)])) });
+  await logAdminAction(admin, { action: "store_settings.updated", entityType: "store_setting", after: { ...Object.fromEntries(entries.map((key) => [key, formData.get(key)])), changedProductCodes: changedCodes } });
   revalidatePath("/admin/settings");
   revalidatePath("/", "layout");
   return { success: "Store settings updated." };
