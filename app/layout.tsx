@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Fraunces, Manrope } from "next/font/google";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -69,6 +70,16 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-screen flex-col antialiased">
         <JsonLd data={[organizationSchema(), websiteSchema()]} />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-9BK35BLWT8"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-9BK35BLWT8');`}
+        </Script>
         {/* Supabase drops failed auth links on an arbitrary page with the
             reason in a hash fragment; this catches it wherever it lands. */}
         <AuthHashErrorWatcher />
