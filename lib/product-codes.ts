@@ -1,29 +1,43 @@
-import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
 
-export const DEFAULT_PRODUCT_CODE_FORMAT = "GG-{NUMBER:4}";
+export const PRODUCT_CODE_PREFIX_PATTERN = /^[A-Z0-9]{2,6}$/;
 
-export function isValidProductCodeFormat(value: string): boolean {
-  return /^[A-Za-z0-9._/-]*\{NUMBER(?::[1-8])?\}[A-Za-z0-9._/-]*$/.test(value);
+export function normalizeProductCodePrefix(value: string): string {
+  return value.trim().toUpperCase();
 }
 
-export function formatProductCode(format: string, number: number): string {
-  const match = format.match(/\{NUMBER(?::(\d+))?\}/);
-  if (!match) return format;
-  const width = Number(match[1] ?? 4);
-  return format.replace(match[0], String(number).padStart(width, "0"));
+export function isValidProductCodePrefix(value: string): boolean {
+  return PRODUCT_CODE_PREFIX_PATTERN.test(normalizeProductCodePrefix(value));
 }
 
-export async function getProductCodeFormat(): Promise<string> {
-  const setting = await prisma.storeSetting.findUnique({ where: { key: "product_code_format" }, select: { value: true } });
-  const value = typeof setting?.value === "string" ? setting.value.trim() : "";
-  return isValidProductCodeFormat(value) ? value : DEFAULT_PRODUCT_CODE_FORMAT;
+/** A readable default for categories created before an admin chooses a prefix. */
+export function suggestProductCodePrefix(name: string): string {
+  const lettersAndNumbers = name.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  return (lettersAndNumbers.slice(0, 3) || "CAT").padEnd(2, "X");
 }
 
-export async function generateNextProductCode(): Promise<string> {
-  const format = await getProductCodeFormat();
-  let number = (await prisma.productVariant.count()) + 1;
-  for (;;) {
-    const code = formatProductCode(format, number++);
-    if (!(await prisma.productVariant.findUnique({ where: { sku: code }, select: { id: true } }))) return code;
-  }
+export function formatCategoryProductCode(prefix: string, number: number): string {
+  return `${normalizeProductCodePrefix(prefix)}-${String(number).padStart(4, "0")}`;
+}
+
+/**
+ * Allocates one number atomically in PostgreSQL. INSERT … ON CONFLICT takes a
+ * row lock for a prefix, so simultaneous product creates cannot receive the
+ * same number. It must be called through the transaction that creates product.
+ */
+export async function allocateCategoryProductCode(
+  tx: Prisma.TransactionClient,
+  prefix: string,
+): Promise<string> {
+  const normalized = normalizeProductCodePrefix(prefix);
+  if (!isValidProductCodePrefix(normalized)) throw new Error("Category product-code prefix is invalid.");
+  const rows = await tx.$queryRaw<Array<{ number: number }>>`
+    insert into public.product_code_sequences (prefix, next_number)
+    values (${normalized}, 2)
+    on conflict (prefix)
+    do update set next_number = public.product_code_sequences.next_number + 1,
+                  updated_at = now()
+    returning next_number - 1 as number
+  `;
+  return formatCategoryProductCode(normalized, rows[0]!.number);
 }

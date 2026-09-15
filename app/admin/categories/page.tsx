@@ -35,6 +35,10 @@ export default async function AdminCategoriesPage() {
             Slug (optional, auto-generated from name)
             <AdminInput name="slug" placeholder="office-stationery" />
           </label>
+          <label className="space-y-1 text-sm font-medium text-navy-950">
+            Product code prefix
+            <AdminInput name="codePrefix" required placeholder="e.g. OFF" maxLength={6} pattern="[A-Za-z0-9]{2,6}" />
+          </label>
           <label className="space-y-1 text-sm font-medium text-navy-950 sm:col-span-2">
             Description
             <AdminTextarea name="description" rows={2} />
@@ -67,6 +71,7 @@ export default async function AdminCategoriesPage() {
                 {!category.isActive ? <span className="badge badge-attention shrink-0">Archived</span> : null}
               </div>
               <p className="mt-1 text-sm text-ink-600">{category.slug}</p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-ink-600">Prefix: {category.codePrefix ?? "Not set"}</p>
               <p className="mt-3 line-clamp-2 text-sm text-ink-700">{category.description ?? "No description"}</p>
               <p className="mt-3 text-sm font-semibold text-navy-950">{category._count.products} products</p>
             </Link>

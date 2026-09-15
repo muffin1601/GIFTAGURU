@@ -133,6 +133,7 @@ async function getPrismaProducts(args: {
               { name: { contains: args.query, mode: "insensitive" } },
               { description: { contains: args.query, mode: "insensitive" } },
               { category: { name: { contains: args.query, mode: "insensitive" } } },
+              { productCode: { contains: args.query, mode: "insensitive" } },
               { variants: { some: { sku: { contains: args.query, mode: "insensitive" } } } },
             ],
           }
@@ -162,7 +163,7 @@ function mapPrismaListProduct(product: PrismaListProduct): Product {
     minQuantity: product.minOrderQuantity,
     featured: product.isFeatured,
     image: product.images[0]?.url,
-    productCode: product.variants[0]?.sku,
+    productCode: product.productCode ?? product.variants[0]?.sku,
     inStock: true,
   };
 }
@@ -430,8 +431,9 @@ export async function countProducts(filters: Pick<ProductFilters, "categorySlug"
               OR: [
                 { name: { contains: filters.query, mode: "insensitive" } },
                 { description: { contains: filters.query, mode: "insensitive" } },
-                { category: { name: { contains: filters.query, mode: "insensitive" } } },
-                { variants: { some: { sku: { contains: filters.query, mode: "insensitive" } } } },
+              { category: { name: { contains: filters.query, mode: "insensitive" } } },
+              { productCode: { contains: filters.query, mode: "insensitive" } },
+              { variants: { some: { sku: { contains: filters.query, mode: "insensitive" } } } },
               ],
             }
           : {}),

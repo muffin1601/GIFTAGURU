@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PERSONALIZATION_MAX_LENGTH } from "@/lib/config/store";
+import { MAX_DIRECT_PURCHASE_QUANTITY, PERSONALIZATION_MAX_LENGTH, SALES_QUOTE_MESSAGE } from "@/lib/config/store";
 
 /**
  * Server-side contract for every cart mutation. The client is trusted for
@@ -26,7 +26,7 @@ export const addToCartSchema = z.object({
   variantId: uuid.optional(),
   // Upper bound guards against a hostile client inflating a line to an
   // absurd quantity; stock is the real ceiling, applied in the service.
-  quantity: z.number().int().positive().max(100_000).optional(),
+  quantity: z.number().int().positive().max(MAX_DIRECT_PURCHASE_QUANTITY, SALES_QUOTE_MESSAGE).optional(),
   customization: customizationSchema.optional(),
 });
 
@@ -41,7 +41,7 @@ export const legacyCartSchema = z.object({
     .array(
       z.object({
         id: z.string().trim().min(1).max(200),
-        quantity: z.number().int().positive().max(100_000),
+        quantity: z.number().int().positive().max(MAX_DIRECT_PURCHASE_QUANTITY, SALES_QUOTE_MESSAGE),
         personalizationText: z.string().trim().max(PERSONALIZATION_MAX_LENGTH).optional(),
         logoUrl: z.string().trim().max(2048).optional(),
         logoFileName: z.string().trim().max(255).optional(),
@@ -63,7 +63,7 @@ export const lineAddressSchema = z.object({
 
 export const lineQuantitySchema = z.object({
   lineId: uuid,
-  quantity: z.number().int().min(0).max(100_000),
+  quantity: z.number().int().min(0).max(MAX_DIRECT_PURCHASE_QUANTITY, SALES_QUOTE_MESSAGE),
 });
 
 export type AddToCartRequest = z.infer<typeof addToCartSchema>;

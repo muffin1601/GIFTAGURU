@@ -11,6 +11,7 @@ export const leadSchema = z.object({
   requirementType: z.string().trim().max(120).optional(),
   productId: z.string().uuid().optional().or(z.literal("")),
   productName: z.string().trim().max(200).optional(),
+  productCode: z.string().trim().max(80).optional(),
   productSlug: z.string().trim().max(200).optional(),
   productUrl: z.string().trim().max(500).optional(),
   collectionId: z.string().uuid().optional().or(z.literal("")),

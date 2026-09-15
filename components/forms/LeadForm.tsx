@@ -9,7 +9,7 @@ interface LeadFormProps {
   type: LeadType;
   source: string;
   compact?: boolean;
-  defaults?: Partial<Record<"productId" | "productName" | "productSlug" | "productUrl" | "collectionId" | "collectionName" | "quantity" | "message", string>>;
+  defaults?: Partial<Record<"productId" | "productName" | "productCode" | "productSlug" | "productUrl" | "collectionId" | "collectionName" | "quantity" | "message", string>>;
   showBulkFields?: boolean;
   onSuccess?: () => void;
 }

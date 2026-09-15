@@ -1,9 +1,14 @@
 import ActionForm, { AdminInput, AdminTextarea } from "@/components/admin/ActionForm";
 import { createProductAction } from "@/lib/actions/catalog";
 import { prisma } from "@/lib/prisma";
+import ProductCategoryCodePreview from "@/components/admin/ProductCategoryCodePreview";
 
 export default async function NewProductPage() {
-  const categories = await prisma.category.findMany({ where: { isActive: true }, orderBy: { name: "asc" } });
+  const [categories, sequences] = await Promise.all([
+    prisma.category.findMany({ where: { isActive: true }, orderBy: { name: "asc" } }),
+    prisma.productCodeSequence.findMany(),
+  ]);
+  const nextNumberByPrefix = new Map(sequences.map((sequence) => [sequence.prefix, sequence.nextNumber]));
 
   return (
     <div className="space-y-6">
@@ -27,21 +32,12 @@ export default async function NewProductPage() {
             Slug (optional, auto-generated)
             <AdminInput name="slug" placeholder="grey-planner-corporate-set" />
           </label>
-          <label className="space-y-1 text-sm font-medium text-navy-950">
-            Product code (optional)
-            <AdminInput name="productCode" placeholder="GG-SET-25-STD" />
-          </label>
-          <label className="space-y-1 text-sm font-medium text-navy-950">
-            Category
-            <select name="categoryId" className="field-input text-sm">
-              <option value="">Uncategorized</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </label>
+          <ProductCategoryCodePreview
+            categories={categories.map((category) => ({
+              ...category,
+              nextNumber: category.codePrefix ? (nextNumberByPrefix.get(category.codePrefix) ?? 1) : 1,
+            }))}
+          />
           <label className="space-y-1 text-sm font-medium text-navy-950 sm:col-span-2">
             Description
             <AdminTextarea name="description" rows={3} />

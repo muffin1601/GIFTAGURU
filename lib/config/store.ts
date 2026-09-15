@@ -4,6 +4,10 @@
 // has been configured, or if the database is unreachable.
 export const MIN_ORDER_QUANTITY = 5;
 export const MIN_ORDER_QUANTITY_MESSAGE = "You must select at least 5 products.";
+/** Online pricing is available for quantities from the MOQ through this limit. */
+export const MAX_DIRECT_PURCHASE_QUANTITY = 99;
+export const SALES_QUOTE_MESSAGE =
+  "For 100 or more units of a product, please contact our sales team for a custom quote.";
 
 export const GIFT_WRAP_PRICE = 40;
 

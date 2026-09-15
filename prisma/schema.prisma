@@ -213,6 +213,7 @@ model Category {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   slug        String    @unique
   name        String
+  codePrefix  String?   @unique @map("code_prefix")
   description String?
   imageUrl    String?   @map("image_url")
   sortOrder   Int       @default(0) @map("sort_order")
@@ -222,6 +223,16 @@ model Category {
   products    Product[]
 
   @@map("categories")
+}
+
+/// A prefix-owned counter. It deliberately has no category foreign key: a
+/// deleted category must not reset its number sequence and reuse old codes.
+model ProductCodeSequence {
+  prefix      String   @id
+  nextNumber  Int      @default(1) @map("next_number")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("product_code_sequences")
 }
 
 model Collection {
@@ -290,6 +301,7 @@ model Product {
   id                    String                     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   slug                  String                     @unique
   name                  String
+  productCode           String?                    @unique @map("product_code")
   description           String?
   categoryId            String?                    @map("category_id") @db.Uuid
   basePrice             Decimal                    @map("base_price") @db.Decimal(10, 2)
@@ -569,6 +581,7 @@ model OrderItem {
   productId             String?                @map("product_id") @db.Uuid
   variantId             String?                @map("variant_id") @db.Uuid
   productName           String                 @map("product_name")
+  productCode           String?                @map("product_code")
   variantName           String?                @map("variant_name")
   unitPrice             Decimal                @map("unit_price") @db.Decimal(10, 2)
   quantity              Int

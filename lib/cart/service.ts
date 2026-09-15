@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { isDatabaseConfigured, isSupabaseConfigured } from "@/lib/env";
 import { getStoreSettings, type StoreSettings } from "@/lib/data/store-settings";
 import { resolveUnitPrice } from "@/lib/pricing";
+import { MAX_DIRECT_PURCHASE_QUANTITY, SALES_QUOTE_MESSAGE } from "@/lib/config/store";
 import { EMPTY_CART, type CartView, type CartViewItem } from "@/lib/cart/types";
 import { customizationKey, normalizeCustomization, type CartCustomization } from "@/lib/cart/customization";
 import { logger, errorMessage } from "@/lib/logger";
@@ -192,6 +193,16 @@ type CartItemWithRelations = Prisma.CartItemGetPayload<{
 }>;
 
 function buildCartView(items: CartItemWithRelations[], settings: StoreSettings): CartView {
+  const productQuantities = new Map<string, number>();
+  for (const item of items) {
+    if (item.variant.product.status === "active") {
+      productQuantities.set(
+        item.variant.product.id,
+        (productQuantities.get(item.variant.product.id) ?? 0) + item.quantity,
+      );
+    }
+  }
+
   const viewItems = items
     // An archived or deleted product leaves the line unrenderable; drop it from
     // the view rather than showing a broken row. It is removed for real by
@@ -223,6 +234,7 @@ function buildCartView(items: CartItemWithRelations[], settings: StoreSettings):
         priceTiers,
         quantity: item.quantity,
         minQuantity: Math.max(product.minOrderQuantity, settings.minOrderQuantity),
+        requiresSalesQuote: (productQuantities.get(product.id) ?? 0) > MAX_DIRECT_PURCHASE_QUANTITY,
         unitPrice,
         lineTotal: unitPrice * item.quantity + giftWrapTotal,
         maxQuantity: sellable,
@@ -288,6 +300,14 @@ export async function addToCart(input: AddToCartInput): Promise<CartView> {
   const customization = normalizeCustomization(input.customization);
   const cartId = await ensureCart();
 
+  const existingQuantity = await prisma.cartItem.aggregate({
+    where: { cartId, variant: { productId: product.id } },
+    _sum: { quantity: true },
+  });
+  if ((existingQuantity._sum.quantity ?? 0) + requested > MAX_DIRECT_PURCHASE_QUANTITY) {
+    throw new CartError(SALES_QUOTE_MESSAGE);
+  }
+
   const sellable = variant.inventory
     ? Math.max(variant.inventory.quantityAvailable - variant.inventory.quantityReserved, 0)
     : 0;
@@ -350,6 +370,18 @@ export async function updateCartItemQuantity(lineId: string, quantity: number): 
   if (quantity < floor) {
     if (quantity <= 0) return removeCartItem(lineId);
     throw new CartError(settings.minOrderQuantityMessage);
+  }
+
+  const otherLinesQuantity = await prisma.cartItem.aggregate({
+    where: {
+      cartId,
+      id: { not: lineId },
+      variant: { productId: item.variant.product.id },
+    },
+    _sum: { quantity: true },
+  });
+  if ((otherLinesQuantity._sum.quantity ?? 0) + quantity > MAX_DIRECT_PURCHASE_QUANTITY) {
+    throw new CartError(SALES_QUOTE_MESSAGE);
   }
 
   const sellable = item.variant.inventory

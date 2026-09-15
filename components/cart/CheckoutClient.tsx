@@ -9,6 +9,7 @@ import { cartItemUnitPrice, useCart } from "@/components/cart/CartProvider";
 import DeliverySplit, { ShipmentSummary } from "@/components/cart/DeliverySplit";
 import { groupIntoShipments, totalShipping } from "@/lib/checkout/shipments";
 import { isValidIndianPinCode } from "@/lib/services/delivery";
+import { SALES_QUOTE_MESSAGE } from "@/lib/config/store";
 import { formatPrice } from "@/lib/utils";
 
 interface RazorpayResponse {
@@ -119,11 +120,18 @@ export default function CheckoutClient({
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [billingSameAsShipping, setBillingSameAsShipping] = useState(true);
+  const requiresSalesQuote = items.some((item) => item.requiresSalesQuote);
 
   async function submitCheckout(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setPending(true);
     setError(null);
+
+    if (requiresSalesQuote) {
+      setError(SALES_QUOTE_MESSAGE);
+      setPending(false);
+      return;
+    }
 
     const formData = new FormData(event.currentTarget);
     const postalCode = String(formData.get("postalCode") ?? "");
@@ -267,6 +275,9 @@ export default function CheckoutClient({
           <div>
             <span className="type-eyebrow">Checkout</span>
             <h1 className="type-h1 mt-4">Secure corporate checkout</h1>
+            {requiresSalesQuote ? (
+              <p role="alert" className="field-error mt-3">{SALES_QUOTE_MESSAGE}</p>
+            ) : null}
           </div>
 
           <section>
@@ -374,7 +385,7 @@ export default function CheckoutClient({
 
           <button
             type="submit"
-            disabled={pending || items.length === 0}
+            disabled={pending || items.length === 0 || requiresSalesQuote}
             className="btn btn-primary self-start"
           >
             {pending ? "Creating secure order…" : "Continue to Payment"}
@@ -383,6 +394,14 @@ export default function CheckoutClient({
 
         <aside className="h-fit lg:sticky lg:top-32">
           <h2 className="type-eyebrow">Review</h2>
+          {requiresSalesQuote ? (
+            <div className="mt-5 border-y border-line py-5">
+              <p className="font-semibold text-navy-950">Sales quote required</p>
+              <p className="type-body mt-2">{SALES_QUOTE_MESSAGE}</p>
+              <Link href="/bulk-enquiry" className="btn btn-primary mt-4">Request a quote</Link>
+            </div>
+          ) : (
+          <>
           <div className="mt-5 flex flex-col gap-4 border-t border-line pt-5">
             {items.map((item) => (
               <div key={item.lineId} className="space-y-1 text-sm">
@@ -452,6 +471,8 @@ export default function CheckoutClient({
               Talk to our team
             </Link>
           </div>
+          </>
+          )}
         </aside>
       </div>
     </Container>

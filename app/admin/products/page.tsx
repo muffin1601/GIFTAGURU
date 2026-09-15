@@ -21,6 +21,7 @@ export default async function AdminProductsPage({
           OR: [
             { name: { contains: params.q, mode: "insensitive" } },
             { slug: { contains: params.q, mode: "insensitive" } },
+            { productCode: { contains: params.q, mode: "insensitive" } },
             { variants: { some: { sku: { contains: params.q, mode: "insensitive" } } } },
           ],
         }

@@ -86,6 +86,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     category: product.categorySlug ?? "corporate-gifts",
     description: product.description ?? "",
     price: product.basePrice,
+    productCode: product.variants.find((variant) => variant.isDefault)?.sku ?? product.variants[0]?.sku ?? undefined,
     minQuantity: minimumQuantity,
     featured: true,
     image: product.images[0]?.url,

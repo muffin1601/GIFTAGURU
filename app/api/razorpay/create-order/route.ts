@@ -8,7 +8,7 @@ import { getSessionUser } from "@/lib/auth/session";
 import { getActiveCartId } from "@/lib/cart/service";
 import { logger, errorMessage } from "@/lib/logger";
 import { groupIntoShipments, toAddressSnapshot, totalShipping } from "@/lib/checkout/shipments";
-import { PERSONALIZATION_MAX_LENGTH } from "@/lib/config/store";
+import { MAX_DIRECT_PURCHASE_QUANTITY, PERSONALIZATION_MAX_LENGTH, SALES_QUOTE_MESSAGE } from "@/lib/config/store";
 import { getStoreSettings } from "@/lib/data/store-settings";
 import { resolveUnitPrice } from "@/lib/pricing";
 import { isValidIndianPinCode } from "@/lib/services/delivery";
@@ -98,6 +98,14 @@ async function handleCreateOrder(request: Request) {
   const invalidQuantity = body.items.some((item) => item.quantity < settings.minOrderQuantity);
   if (invalidQuantity) {
     return NextResponse.json({ error: settings.minOrderQuantityMessage }, { status: 400 });
+  }
+
+  const quantityByProduct = new Map<string, number>();
+  for (const item of body.items) {
+    quantityByProduct.set(item.productId, (quantityByProduct.get(item.productId) ?? 0) + item.quantity);
+  }
+  if ([...quantityByProduct.values()].some((quantity) => quantity > MAX_DIRECT_PURCHASE_QUANTITY)) {
+    return NextResponse.json({ error: SALES_QUOTE_MESSAGE }, { status: 400 });
   }
 
   const invalidPersonalization = body.items.some(
@@ -299,6 +307,7 @@ async function handleCreateOrder(request: Request) {
             productId: item.product.id,
             variantId: item.variant.id,
             productName: item.product.name,
+            productCode: item.product.productCode ?? item.variant.sku,
             variantName: item.variant.name,
             unitPrice: item.unitPrice,
             quantity: item.quantity,

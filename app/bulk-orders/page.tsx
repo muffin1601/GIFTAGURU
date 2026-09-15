@@ -19,7 +19,7 @@ export const metadata: Metadata = pageMetadata({
 export default async function BulkOrdersPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ product?: string; collection?: string; type?: string }>;
+  searchParams?: Promise<{ product?: string; code?: string; quantity?: string; collection?: string; type?: string }>;
 }) {
   const params = await searchParams;
 
@@ -38,6 +38,8 @@ export default async function BulkOrdersPage({
             showBulkFields
             defaults={{
               productName: params?.product ?? "",
+              productCode: params?.code ?? "",
+              quantity: params?.quantity ?? "",
               collectionName: params?.collection ?? "",
               message: params?.product
                 ? `Interested in ${params.product}.`

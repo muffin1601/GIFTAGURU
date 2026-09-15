@@ -1,10 +1,9 @@
 import ActionForm, { AdminInput } from "@/components/admin/ActionForm";
 import { updateStoreSettingsAction } from "@/lib/actions/admin";
 import { getStoreSettings } from "@/lib/data/store-settings";
-import { getProductCodeFormat, formatProductCode } from "@/lib/product-codes";
 
 export default async function AdminSettingsPage() {
-  const [settings, productCodeFormat] = await Promise.all([getStoreSettings(), getProductCodeFormat()]);
+  const settings = await getStoreSettings();
 
   return (
     <div className="space-y-6">
@@ -19,7 +18,6 @@ export default async function AdminSettingsPage() {
 
       <section className="panel p-5">
         <ActionForm action={updateStoreSettingsAction} submitLabel="Save settings" className="grid gap-5 md:grid-cols-2">
-          <input type="hidden" name="product_code_format" value={productCodeFormat} />
           <label className="space-y-1 text-sm font-medium text-navy-950">
             Minimum order quantity
             <AdminInput name="minimum_quantity" type="number" min={5} required defaultValue={settings.minOrderQuantity} />
@@ -52,24 +50,10 @@ export default async function AdminSettingsPage() {
       </section>
 
       <section className="panel p-5">
-        <h2 className="font-display text-lg text-navy-950">Product Code Settings</h2>
+        <h2 className="font-display text-lg text-navy-950">Product codes</h2>
         <p className="mt-2 max-w-2xl text-sm text-ink-600">
-          A Product Code is the unique code used to identify each product. You can find it in the Products list and on the product edit page. Saving a different format updates every existing Product Code immediately, as well as codes created for new products.
+          Product codes are permanent and generated from each category&apos;s prefix. Manage prefixes in Catalog &rarr; Categories.
         </p>
-        <ActionForm action={updateStoreSettingsAction} submitLabel="Save and Update All Product Codes" confirmMessage="This will immediately replace every existing Product Code using the new format. Continue?" className="mt-4 grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
-          <input type="hidden" name="minimum_quantity" value={settings.minOrderQuantity} />
-          <input type="hidden" name="gift_wrap_price" value={settings.giftWrapPrice} />
-          <input type="hidden" name="free_shipping_threshold" value={settings.freeShippingThreshold} />
-          <input type="hidden" name="shipping_charge" value={settings.shippingCharge} />
-          <input type="hidden" name="gst_rate_percent" value={settings.gstRatePercent} />
-          <input type="hidden" name="shipping_message" value={settings.shippingMessage} />
-          <input type="hidden" name="shipping_timeline" value={settings.shippingTimeline} />
-          <label className="space-y-1 text-sm font-medium text-navy-950">
-            Product Code Format
-            <AdminInput name="product_code_format" required defaultValue={productCodeFormat} placeholder="GG-DIW-{NUMBER:4}" />
-            <span className="block text-xs font-normal text-ink-600">Use {'{NUMBER:4}'} for a four-digit running number. Example: {formatProductCode(productCodeFormat, 1)}.</span>
-          </label>
-        </ActionForm>
       </section>
 
       <section className="panel p-5">

@@ -6,7 +6,13 @@ import { useRouter } from "next/navigation";
 import { Loader2, MessageCircle, Minus, Plus, Upload, X } from "lucide-react";
 import type { Product } from "@/types";
 import { useCart } from "@/components/cart/CartProvider";
-import { PERSONALIZATION_MAX_LENGTH, buildWhatsAppUrl } from "@/lib/config/store";
+import {
+  MAX_DIRECT_PURCHASE_QUANTITY,
+  PERSONALIZATION_MAX_LENGTH,
+  SALES_QUOTE_MESSAGE,
+  STORE_CONTACT,
+  buildWhatsAppUrl,
+} from "@/lib/config/store";
 import { checkDeliveryAvailability } from "@/lib/services/delivery";
 import { formatPrice } from "@/lib/utils";
 import { resolveUnitPrice } from "@/lib/pricing";
@@ -41,6 +47,7 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
   const [deliveryMessage, setDeliveryMessage] = useState(shippingTimeline);
   const [cartMessage, setCartMessage] = useState<string | null>(null);
   const validQuantity = quantity >= minimumQuantity;
+  const requiresSalesQuote = quantity > MAX_DIRECT_PURCHASE_QUANTITY;
   const whatsappHref = buildWhatsAppUrl(
     `Hi Gifta Guru, I want to enquire about ${product.name}. Quantity: ${quantity}.`,
   );
@@ -122,7 +129,29 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
 
         <p className="field-hint mt-2.5">Minimum order quantity: {minimumQuantity} units</p>
 
-        {validQuantity ? (
+        {requiresSalesQuote ? (
+          <div className="mt-3 border-l-2 border-gold-600 pl-4">
+            <p className="text-sm font-semibold text-navy-950">Sales quote required</p>
+            <p className="field-hint mt-1">{SALES_QUOTE_MESSAGE}</p>
+            <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm font-semibold text-navy-950">
+              <a href={`tel:${STORE_CONTACT.phoneHref}`} className="link-underline">
+                Call {STORE_CONTACT.phone}
+              </a>
+              <a href={whatsappHref} target="_blank" rel="noreferrer" className="link-underline">
+                WhatsApp
+              </a>
+              <a href={`mailto:${STORE_CONTACT.email}`} className="link-underline">
+                {STORE_CONTACT.email}
+              </a>
+              <Link
+                href={`/bulk-enquiry?product=${encodeURIComponent(product.name)}&code=${encodeURIComponent(product.productCode ?? "")}&quantity=${quantity}`}
+                className="link-underline"
+              >
+                Fill enquiry form
+              </Link>
+            </p>
+          </div>
+        ) : validQuantity ? (
           <p className="mt-2 text-sm font-semibold text-navy-950">
             {formatPrice(unitPrice)} / unit &middot; {formatPrice(lineTotal)} total for {quantity}
           </p>
@@ -236,20 +265,32 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
       </div>
 
       {/* Actions ----------------------------------------------------------- */}
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <button type="button" onClick={addConfiguredItem} className="btn btn-primary flex-1">
-          Add to Cart
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            if (addConfiguredItem()) router.push("/checkout");
-          }}
-          className="btn btn-secondary flex-1"
-        >
-          Buy Now
-        </button>
-      </div>
+      {requiresSalesQuote ? (
+        <div className="flex flex-wrap gap-3">
+          <ProductEnquiryButton product={product} quantity={quantity} label="Request a sales quote" />
+          <a
+            href={`mailto:${STORE_CONTACT.email}?subject=${encodeURIComponent(`Quote request: ${product.name} (${quantity} units)`)}`}
+            className="btn btn-secondary"
+          >
+            Email sales
+          </a>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <button type="button" onClick={addConfiguredItem} className="btn btn-primary flex-1">
+            Add to Cart
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (addConfiguredItem()) router.push("/checkout");
+            }}
+            className="btn btn-secondary flex-1"
+          >
+            Buy Now
+          </button>
+        </div>
+      )}
 
       {cartMessage ? (
         <p role="status" className="text-sm font-medium text-navy-950">

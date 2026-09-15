@@ -50,7 +50,7 @@ export default async function AdminProductDetailPage({ params }: { params: Promi
           <p className="mt-1 text-sm text-ink-600">
             {product.slug} &middot; {product.category?.name ?? "Uncategorized"}
           </p>
-          {defaultVariant?.sku ? <p className="mt-1 text-sm text-ink-600">Product code: {defaultVariant.sku}</p> : null}
+          {product.productCode ? <p className="mt-1 text-sm text-ink-600">Product code: {product.productCode}</p> : null}
         </div>
         <div className="flex items-center gap-2">
           <span className={`badge ${product.status === "active" ? "badge-positive" : product.status === "draft" ? "badge-attention" : ""}`}>
@@ -153,10 +153,11 @@ export default async function AdminProductDetailPage({ params }: { params: Promi
                 Slug
                 <AdminInput name="slug" defaultValue={product.slug} />
               </label>
-              <label className="space-y-1 text-sm font-medium text-navy-950">
+              <div className="space-y-1 text-sm font-medium text-navy-950">
                 Product code
-                <AdminInput name="productCode" defaultValue={defaultVariant?.sku ?? ""} placeholder="GG-SET-25-STD" />
-              </label>
+                <p className="field-input bg-sunken text-ink-700">{product.productCode ?? defaultVariant?.sku ?? "Will be backfilled"}</p>
+                <span className="block text-xs font-normal text-ink-600">Permanent after creation; category changes do not change it.</span>
+              </div>
               <label className="space-y-1 text-sm font-medium text-navy-950">
                 Category
                 <select name="categoryId" defaultValue={product.categoryId ?? ""} className="field-input text-sm">

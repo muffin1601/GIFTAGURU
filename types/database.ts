@@ -62,6 +62,7 @@ export interface CategoryRow {
   id: string;
   slug: string;
   name: string;
+  code_prefix: string | null;
   description: string | null;
   image_url: string | null;
   sort_order: number;
@@ -86,6 +87,7 @@ export interface ProductRow {
   id: string;
   slug: string;
   name: string;
+  product_code: string | null;
   description: string | null;
   category_id: string | null;
   base_price: number;

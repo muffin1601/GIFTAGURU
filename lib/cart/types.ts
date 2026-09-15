@@ -24,6 +24,8 @@ export interface CartViewItem {
   priceTiers: PriceTier[];
   quantity: number;
   minQuantity: number;
+  /** Quantities of 100+ are quoted by sales and cannot be checked out online. */
+  requiresSalesQuote: boolean;
   /** Server-resolved price actually charged at this quantity. */
   unitPrice: number;
   lineTotal: number;

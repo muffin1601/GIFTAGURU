@@ -39,6 +39,10 @@ export default async function AdminCategoryDetailPage({ params }: { params: Prom
               Slug
               <AdminInput name="slug" defaultValue={category.slug} />
             </label>
+            <label className="space-y-1 text-sm font-medium text-navy-950">
+              Product code prefix
+              <AdminInput name="codePrefix" required defaultValue={category.codePrefix ?? ""} maxLength={6} pattern="[A-Za-z0-9]{2,6}" />
+            </label>
             <label className="space-y-1 text-sm font-medium text-navy-950 sm:col-span-2">
               Description
               <AdminTextarea name="description" rows={3} defaultValue={category.description ?? ""} />

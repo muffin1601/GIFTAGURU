@@ -5,14 +5,22 @@ import { MessageSquare, X } from "lucide-react";
 import LeadForm from "@/components/forms/LeadForm";
 import type { Product } from "@/types";
 
-export default function ProductEnquiryButton({ product }: { product: Product }) {
+export default function ProductEnquiryButton({
+  product,
+  quantity,
+  label = "Need a bulk quote?",
+}: {
+  product: Product;
+  quantity?: number;
+  label?: string;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
     <>
       <button type="button" onClick={() => setOpen(true)} className="inline-flex items-center gap-2 text-sm font-semibold text-navy-950 hover:text-gold-700">
         <MessageSquare className="h-4 w-4" />
-        Need a bulk quote?
+        {label}
       </button>
       {open ? (
         <div className="fixed inset-0 z-50 flex items-end bg-navy-950/40 p-0 sm:items-center sm:justify-center sm:p-6" role="dialog" aria-modal="true">
@@ -33,10 +41,11 @@ export default function ProductEnquiryButton({ product }: { product: Product }) 
               defaults={{
                 productId: product.id,
                 productName: product.name,
+                productCode: product.productCode,
                 productSlug: product.slug,
                 productUrl: typeof window !== "undefined" ? window.location.href : "",
-                quantity: String(product.minQuantity),
-                message: `Interested in ${product.name}.`,
+                quantity: quantity && quantity <= 100 ? "51-100" : quantity ? "101-250" : String(product.minQuantity),
+                message: `Interested in ${product.name}${quantity ? ` for ${quantity} units` : ""}.`,
               }}
               onSuccess={() => setOpen(false)}
             />

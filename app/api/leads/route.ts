@@ -54,7 +54,7 @@ export async function POST(request: Request) {
       brandingRequired: parsed.data.brandingRequired,
       brandingOptions: parsed.data.brandingOptions,
       logoUrl: parsed.data.logoUrl,
-      metadata: { requirementType: parsed.data.requirementType ?? null },
+      metadata: { requirementType: parsed.data.requirementType ?? null, productCode: parsed.data.productCode ?? null },
     },
   });
 

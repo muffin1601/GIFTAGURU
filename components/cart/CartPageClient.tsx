@@ -7,6 +7,7 @@ import { Minus, Plus } from "lucide-react";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
 import { cartItemUnitPrice, useCart } from "@/components/cart/CartProvider";
+import { MAX_DIRECT_PURCHASE_QUANTITY, SALES_QUOTE_MESSAGE } from "@/lib/config/store";
 import { formatPrice } from "@/lib/utils";
 
 export default function CartPageClient({ signedIn = false }: { signedIn?: boolean }) {
@@ -26,6 +27,7 @@ export default function CartPageClient({ signedIn = false }: { signedIn?: boolea
     error,
   } = useCart();
   const [quantityMessage, setQuantityMessage] = useState<string | null>(null);
+  const requiresSalesQuote = items.some((item) => item.requiresSalesQuote);
 
   // Same formula as checkout and the server order route -- shipping and GST
   // only depend on the merchandise+gift-wrap subtotal, not the address, so
@@ -95,12 +97,16 @@ export default function CartPageClient({ signedIn = false }: { signedIn?: boolea
                   {item.logoFileName ? (
                     <p className="type-meta mt-1">Logo: {item.logoFileName}</p>
                   ) : null}
-                  {item.giftWrap ? (
+                  {item.giftWrap && !item.requiresSalesQuote ? (
                     <p className="type-meta mt-1">Gift wrap: {formatPrice(giftWrapPrice)}</p>
                   ) : null}
-                  <p className="mt-2.5 text-sm font-semibold text-navy-950">
-                    {formatPrice(cartItemUnitPrice(item))} / unit
-                  </p>
+                  {item.requiresSalesQuote ? (
+                    <p className="field-error mt-2.5 text-sm">{SALES_QUOTE_MESSAGE}</p>
+                  ) : (
+                    <p className="mt-2.5 text-sm font-semibold text-navy-950">
+                      {formatPrice(cartItemUnitPrice(item))} / unit
+                    </p>
+                  )}
                   {item.exceedsStock ? (
                     <p role="status" className="field-error mt-1.5 text-xs">
                       Only {item.maxQuantity} in stock — reduce the quantity to check out.
@@ -133,7 +139,13 @@ export default function CartPageClient({ signedIn = false }: { signedIn?: boolea
                       // here just avoids an inevitable round-trip rejection.
                       disabled={pending || item.quantity >= item.maxQuantity}
                       className="px-3 text-navy-950 transition-colors duration-200 hover:text-gold-600 disabled:opacity-50"
-                      onClick={() => updateQuantity(item.lineId, item.quantity + 1)}
+                      onClick={() => {
+                        if (item.quantity >= MAX_DIRECT_PURCHASE_QUANTITY) {
+                          setQuantityMessage(SALES_QUOTE_MESSAGE);
+                          return;
+                        }
+                        updateQuantity(item.lineId, item.quantity + 1);
+                      }}
                     >
                       <Plus className="h-4 w-4" aria-hidden="true" strokeWidth={1.5} />
                     </button>
@@ -169,6 +181,13 @@ export default function CartPageClient({ signedIn = false }: { signedIn?: boolea
         <aside className="h-fit lg:sticky lg:top-32" aria-label="Order summary">
           <h2 className="type-eyebrow">Order Summary</h2>
 
+          {requiresSalesQuote ? (
+            <div className="mt-5 border-y border-line py-5">
+              <p className="font-semibold text-navy-950">Sales quote required</p>
+              <p className="type-body mt-2">{SALES_QUOTE_MESSAGE}</p>
+              <Link href="/bulk-enquiry" className="btn btn-primary mt-4">Request a quote</Link>
+            </div>
+          ) : (
           <dl className="mt-5 border-t border-line text-sm">
             {[
               ["Merchandise", formatPrice(merchandiseSubtotal)],
@@ -186,16 +205,19 @@ export default function CartPageClient({ signedIn = false }: { signedIn?: boolea
               <dd className="font-display text-xl text-navy-950">{formatPrice(grandTotal)}</dd>
             </div>
           </dl>
+          )}
 
           {/* Checkout requires an account. Sending a signed-out shopper
               straight to /login (rather than to /checkout, which would bounce
               them) keeps the step visible instead of surprising. The basket is
               merged into their account on sign-in, so nothing is lost. */}
-          <Button href={signedIn ? "/checkout" : "/login?next=/checkout"} className="mt-3 w-full">
-            {signedIn ? "Continue to Checkout" : "Sign in to Checkout"}
-          </Button>
+          {!requiresSalesQuote ? (
+            <Button href={signedIn ? "/checkout" : "/login?next=/checkout"} className="mt-3 w-full">
+              {signedIn ? "Continue to Checkout" : "Sign in to Checkout"}
+            </Button>
+          ) : null}
 
-          {!signedIn ? (
+          {!signedIn && !requiresSalesQuote ? (
             <p className="type-meta mt-3 text-center">
               Your cart is saved. New customer?{" "}
               <Link href="/signup?next=/checkout" className="link-underline text-navy-950">
