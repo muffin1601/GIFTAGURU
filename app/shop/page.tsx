@@ -5,6 +5,7 @@ import PageHeader from "@/components/ui/PageHeader";
 import ProductCard from "@/components/ui/ProductCard";
 import { countProducts, searchProducts } from "@/lib/data/products";
 import { pageMetadata } from "@/lib/seo/metadata";
+import BusinessBuyerGuide from "@/components/content/BusinessBuyerGuide";
 
 export const dynamic = "force-dynamic";
 
@@ -103,6 +104,14 @@ export default async function ShopPage({
           </nav>
         ) : null}
       </Container>
+      <BusinessBuyerGuide
+        title="Choosing gifts for a business programme"
+        paragraphs={[
+          "Use the catalogue to shortlist sets, then match the choice to the programme: onboarding, employee appreciation, client relationships, leadership gifting or corporate events. Product pages show current unit and volume pricing, while a quote can cover a mixed or branded requirement.",
+          "For larger lists, an enquiry is often the quickest route to a relevant recommendation because quantity, personalisation and delivery requirements influence the right selection.",
+        ]}
+        links={[{ label: "Corporate gifting solutions", href: "/corporate-gifting" }, { label: "Employee welcome kits", href: "/gifting/employee-onboarding" }, { label: "Request a bulk quote", href: "/bulk-enquiry" }]}
+      />
     </>
   );
 }

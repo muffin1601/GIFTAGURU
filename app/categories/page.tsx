@@ -4,6 +4,7 @@ import Container from "@/components/ui/Container";
 import CategoryCard from "@/components/ui/CategoryCard";
 import { getFeaturedCollectionsAsCategories } from "@/lib/data/collections";
 import { pageMetadata } from "@/lib/seo/metadata";
+import BusinessBuyerGuide from "@/components/content/BusinessBuyerGuide";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,14 @@ export default async function CategoriesPage() {
           ))}
         </Container>
       </section>
+      <BusinessBuyerGuide
+        title="How businesses choose a corporate gift collection"
+        paragraphs={[
+          "Choose a collection around the role the gift plays. Joining and stationery-led sets suit onboarding and recurring employee programmes, premium and luxury sets suit important relationships, and eco-friendly choices give sustainability-led organisations a more considered option.",
+          "Every collection can be explored as a starting point, then refined for branding, recipient lists and quantity through a corporate enquiry.",
+        ]}
+        links={[{ label: "Plan employee welcome kits", href: "/gifting/employee-onboarding" }, { label: "Browse client gifting ideas", href: "/gifting/client-appreciation" }, { label: "Request corporate pricing", href: "/bulk-enquiry" }]}
+      />
     </>
   );
 }

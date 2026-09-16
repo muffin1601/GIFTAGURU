@@ -6,6 +6,7 @@ import Button from "@/components/ui/Button";
 import LeadForm from "@/components/forms/LeadForm";
 import { buildWhatsAppUrl, STORE_CONTACT } from "@/lib/config/store";
 import { pageMetadata } from "@/lib/seo/metadata";
+import BusinessBuyerGuide from "@/components/content/BusinessBuyerGuide";
 
 export const metadata: Metadata = pageMetadata({
   title: "Contact | Gifta Guru",
@@ -51,6 +52,14 @@ export default function ContactPage() {
           <LeadForm type="contact" source="Contact page" />
         </Container>
       </section>
+      <BusinessBuyerGuide
+        title="What to include in a corporate gifting enquiry"
+        paragraphs={[
+          "The most useful starting point is the business occasion, recipient count and the type of relationship the gift should support. A joining kit, employee recognition gift and senior-client gift are usually selected differently even when they share a similar budget.",
+          "If branding or multi-location delivery matters, include that in your enquiry. The team can then recommend relevant current products rather than sending a generic catalogue.",
+        ]}
+        links={[{ label: "Employee onboarding gifts", href: "/gifting/employee-onboarding" }, { label: "Corporate gifts for clients", href: "/gifting/client-appreciation" }, { label: "Bulk corporate gifting", href: "/gifting/bulk-corporate-gifting" }]}
+      />
     </>
   );
 }

@@ -3,6 +3,7 @@ import PageHeader from "@/components/ui/PageHeader";
 import LeadForm from "@/components/forms/LeadForm";
 import FAQ from "@/components/home/FAQ";
 import { pageMetadata } from "@/lib/seo/metadata";
+import BusinessBuyerGuide from "@/components/content/BusinessBuyerGuide";
 
 // This file's default export and metadata are re-exported verbatim at
 // /bulk-enquiry (see app/bulk-enquiry/page.tsx) -- same component, same
@@ -50,6 +51,14 @@ export default async function BulkOrdersPage({
           />
         </div>
       </section>
+      <BusinessBuyerGuide
+        title="Planning a bulk corporate gift order"
+        paragraphs={[
+          "Bulk orders work best when the recipient group and purpose are agreed before a set is selected. Employee programmes often need consistency and re-ordering; client or leadership lists may need a more premium presentation; event lists need a useful item that travels well.",
+          "Share the quantity, intended recipients, approximate budget and branding requirement in your enquiry. Product pricing and availability are confirmed from the current catalogue rather than assumed from a generic package.",
+        ]}
+        links={[{ label: "Employee gifting programmes", href: "/gifting/employee-appreciation" }, { label: "Custom branded gifts", href: "/custom-gifts" }, { label: "Corporate Diwali gifts", href: "/occasions/diwali-corporate-gifts" }]}
+      />
       <FAQ />
     </>
   );
