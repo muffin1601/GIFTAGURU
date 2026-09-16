@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Script from "next/script";
@@ -11,6 +11,7 @@ import { groupIntoShipments, totalShipping } from "@/lib/checkout/shipments";
 import { isValidIndianPinCode } from "@/lib/services/delivery";
 import { SALES_QUOTE_MESSAGE } from "@/lib/config/store";
 import { formatPrice } from "@/lib/utils";
+import { trackBeginCheckout } from "@/lib/analytics/ga4";
 
 interface RazorpayResponse {
   razorpay_order_id: string;
@@ -121,6 +122,23 @@ export default function CheckoutClient({
   const [pending, setPending] = useState(false);
   const [billingSameAsShipping, setBillingSameAsShipping] = useState(true);
   const requiresSalesQuote = items.some((item) => item.requiresSalesQuote);
+  const checkoutTracked = useRef(false);
+
+  useEffect(() => {
+    if (checkoutTracked.current || items.length === 0 || requiresSalesQuote) return;
+    checkoutTracked.current = true;
+    trackBeginCheckout({
+      value: grandTotal,
+      items: items.map((item) => ({
+        item_id: item.productCode ?? item.productId,
+        item_name: item.name,
+        ...(item.category ? { item_category: item.category } : {}),
+        ...(item.variantName ? { item_variant: item.variantName } : {}),
+        price: cartItemUnitPrice(item),
+        quantity: item.quantity,
+      })),
+    });
+  }, [grandTotal, items, requiresSalesQuote]);
 
   async function submitCheckout(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

@@ -13,6 +13,7 @@ import {
   updateCartQuantityAction,
   type CartActionResult,
 } from "@/lib/actions/cart";
+import { trackAddToCart } from "@/lib/analytics/ga4";
 
 /**
  * Client view over the server-owned cart.
@@ -53,7 +54,7 @@ interface CartContextValue extends StoreSettings {
   /** Customer-facing message from the last rejected mutation, if any. */
   error: string | null;
   clearError: () => void;
-  addItem: (product: Product, options?: number | AddCartItemOptions) => void;
+  addItem: (product: Product, options?: number | AddCartItemOptions) => Promise<CartActionResult>;
   /** Addressed by cart-line id, NOT product id: the same product can occupy
    *  several lines with different personalization. */
   updateQuantity: (lineId: string, quantity: number) => void;
@@ -99,14 +100,18 @@ export function CartProvider({
     (patch: OptimisticPatch, action: () => Promise<CartActionResult>) => {
       const ticket = ++sequence.current;
       setError(null);
-      startTransition(async () => {
-        applyPatch(patch);
-        const result = await action();
-        if (ticket !== sequence.current) return;
-        // Replacing with the server's cart is simultaneously the commit and
-        // the rollback; on failure it is simply the pre-mutation state.
-        setCart(result.cart);
-        if (result.error) setError(result.error);
+      return new Promise<CartActionResult>((resolve) => {
+        startTransition(async () => {
+          applyPatch(patch);
+          const result = await action();
+          if (ticket === sequence.current) {
+            // Replacing with the server's cart is simultaneously the commit and
+            // the rollback; on failure it is simply the pre-mutation state.
+            setCart(result.cart);
+            if (result.error) setError(result.error);
+          }
+          resolve(result);
+        });
       });
     },
     [applyPatch],
@@ -128,14 +133,14 @@ export function CartProvider({
       error,
       clearError: () => setError(null),
 
-      addItem(product, options) {
+      async addItem(product, options) {
         const normalized = typeof options === "number" ? { quantity: options } : options ?? {};
         const quantity = Math.max(normalized.quantity ?? minOrderQuantity, product.minQuantity, minOrderQuantity);
 
         // No optimistic patch for adds: the line id is minted by the database,
         // and inventory may reject the add outright. The transition's `pending`
         // flag carries the feedback instead of a fabricated row.
-        dispatch({ type: "replace", cart: optimisticCart }, () =>
+        const result = await dispatch({ type: "replace", cart: optimisticCart }, () =>
           addToCartAction({
             productRef: product.id,
             quantity,
@@ -147,6 +152,28 @@ export function CartProvider({
             },
           }),
         );
+        if (!result.error) {
+          // The server may clamp a requested quantity to current stock. Report
+          // the committed delta, never the button's requested quantity.
+          const previousQuantity = optimisticCart.items
+            .filter((item) => item.productId === product.id)
+            .reduce((sum, item) => sum + item.quantity, 0);
+          const actualLine = result.cart.items.find((item) => item.productId === product.id);
+          const actualQuantity = result.cart.items
+            .filter((item) => item.productId === product.id)
+            .reduce((sum, item) => sum + item.quantity, 0) - previousQuantity;
+          if (actualQuantity > 0) {
+          trackAddToCart({
+            item_id: actualLine?.productCode ?? product.productCode ?? product.id,
+            item_name: product.name,
+            ...(actualLine?.category ?? product.category ? { item_category: actualLine?.category ?? product.category } : {}),
+            ...(actualLine?.variantName ? { item_variant: actualLine.variantName } : {}),
+            price: actualLine?.unitPrice ?? resolveUnitPrice(product.price ?? 0, product.priceTiers, quantity),
+            quantity: actualQuantity,
+          });
+          }
+        }
+        return result;
       },
 
       updateQuantity(lineId, quantity) {

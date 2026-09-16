@@ -25,9 +25,9 @@ export const dynamic = "force-dynamic";
  * positioning. It now owns the broad head terms explicitly.
  */
 export const metadata: Metadata = pageMetadata({
-  title: "Corporate Gifts & Personalized Corporate Gifting | Gifta Guru",
+  title: "Corporate Gifting Company in India | Custom & Bulk Gifts | Gifta Guru",
   description:
-    "Corporate gifts and custom gift sets with logo branding. Employee welcome kits, client gifting, luxury and eco sets, with bulk pricing across India.",
+    "Customised corporate gifts for employees, clients, events and festive occasions. Explore branded gift sets, welcome kits and bulk gifting solutions across India.",
   path: "",
 });
 

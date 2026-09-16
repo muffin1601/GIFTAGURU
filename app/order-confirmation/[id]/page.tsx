@@ -8,6 +8,7 @@ import { getSessionUser } from "@/lib/auth/session";
 import { isDatabaseConfigured } from "@/lib/env";
 import { formatPrice } from "@/lib/utils";
 import { pageMetadata } from "@/lib/seo/metadata";
+import PurchaseTracker from "@/components/analytics/PurchaseTracker";
 
 export function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   return params.then(({ id }) =>
@@ -43,11 +44,18 @@ export default async function OrderConfirmationPage({ params }: { params: Promis
         select: {
           orderNumber: true,
           total: true,
+          taxTotal: true,
+          shippingTotal: true,
           status: true,
           paymentStatus: true,
           deliveryStatus: true,
           createdAt: true,
-          items: { select: { id: true, productName: true, quantity: true, lineTotal: true, variant: { select: { sku: true } } } },
+          items: {
+            select: {
+              id: true, productName: true, productCode: true, variantName: true, unitPrice: true, quantity: true, lineTotal: true,
+              variant: { select: { sku: true } }, product: { select: { category: { select: { name: true } } } },
+            },
+          },
         },
       })
     : null;
@@ -66,6 +74,22 @@ export default async function OrderConfirmationPage({ params }: { params: Promis
 
         {order ? (
           <div className="mt-8 border-t border-line pt-6">
+            {order.paymentStatus === "paid" ? (
+              <PurchaseTracker
+                transactionId={order.orderNumber}
+                value={Number(order.total)}
+                tax={Number(order.taxTotal)}
+                shipping={Number(order.shippingTotal)}
+                items={order.items.map((item) => ({
+                  item_id: item.variant?.sku ?? item.productCode ?? item.id,
+                  item_name: item.productName,
+                  ...(item.product?.category?.name ? { item_category: item.product.category.name } : {}),
+                  ...(item.variantName ? { item_variant: item.variantName } : {}),
+                  price: Number(item.unitPrice),
+                  quantity: item.quantity,
+                }))}
+              />
+            ) : null}
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="type-eyebrow">Summary</h2>
               <div className="flex flex-wrap gap-2">

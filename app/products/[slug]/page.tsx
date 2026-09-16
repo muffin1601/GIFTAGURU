@@ -20,6 +20,7 @@ import { breadcrumbSchema, faqPageSchema, productSchema } from "@/lib/seo/schema
 import { getProductSeoContent } from "@/lib/seo/content/products";
 import { productClusterLinks } from "@/lib/seo/content/clusters";
 import type { Product } from "@/types";
+import ViewItemTracker from "@/components/analytics/ViewItemTracker";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -125,6 +126,16 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             reviewCount: product.reviewCount,
           }),
         ]}
+      />
+      <ViewItemTracker
+        item={{
+          item_id: product.variants.find((variant) => variant.isDefault)?.sku ?? product.variants[0]?.sku ?? product.id,
+          item_name: product.name,
+          ...(product.categoryName ? { item_category: product.categoryName } : {}),
+          ...(product.variants[0]?.name ? { item_variant: product.variants[0].name } : {}),
+          price: product.basePrice,
+          quantity: 1,
+        }}
       />
       <Container className="py-6 pb-28 sm:py-10 lg:pb-16">
         <nav className="type-meta flex flex-wrap items-center gap-2" aria-label="Breadcrumb">

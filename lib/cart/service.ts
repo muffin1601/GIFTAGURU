@@ -151,7 +151,7 @@ export async function getCartView(): Promise<CartView> {
           variant: {
             include: {
               inventory: true,
-              product: { include: { priceTiers: true, images: { orderBy: { sortOrder: "asc" }, take: 1 } } },
+              product: { include: { category: { select: { name: true } }, priceTiers: true, images: { orderBy: { sortOrder: "asc" }, take: 1 } } },
             },
           },
         },
@@ -186,7 +186,7 @@ type CartItemWithRelations = Prisma.CartItemGetPayload<{
     variant: {
       include: {
         inventory: true;
-        product: { include: { priceTiers: true; images: true } };
+        product: { include: { category: true; priceTiers: true; images: true } };
       };
     };
   };
@@ -229,6 +229,8 @@ function buildCartView(items: CartItemWithRelations[], settings: StoreSettings):
         slug: product.slug,
         name: product.name,
         productCode: item.variant.sku || undefined,
+        category: product.category?.name,
+        variantName: item.variant.name,
         image: product.images[0]?.url,
         price,
         priceTiers,

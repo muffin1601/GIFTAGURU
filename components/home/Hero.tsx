@@ -8,11 +8,11 @@ import { cn } from "@/lib/utils";
 
 const slides = [
   {
-    eyebrow: "Joining Gifts",
+    eyebrow: "Corporate Gifting India",
     label: "Welcome",
-    title: "Welcome kits that make day one feel considered.",
+    title: "Corporate gifting solutions for businesses across India.",
     description:
-      "Curated onboarding gifts with notebooks, pens, desk accessories and custom branding for new hires.",
+      "Plan branded gifts, employee welcome kits and bulk gifting programmes for teams, clients and business events.",
     image: "/BANNERS/JOINING.png",
     alt: "Joining gift collection by Gifta Guru",
     href: "/categories/joining-gifts",
