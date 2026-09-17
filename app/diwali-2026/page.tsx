@@ -31,6 +31,11 @@ import { diwali2026 as content } from "@/lib/seo/content/seasonal";
  */
 
 const PATH = "/diwali-2026";
+const HIGHLIGHTED_HAMPER_SLUGS = [
+  "diwali-signature-hamper",
+  "diwali-celebration-hamper",
+  "diwali-grand-hamper",
+];
 
 export const metadata: Metadata = pageMetadata({
   title: `${content.seoTitle} | Gifta Guru`,
@@ -43,7 +48,12 @@ export const metadata: Metadata = pageMetadata({
 export default async function Diwali2026Page() {
   // Expanded so a product stored under an aliased slug in the database still
   // resolves; without this the card is silently missing from the grid.
-  const products = await getProductsBySlugs(expandProductSlugs(content.recommendedProductSlugs));
+  const [products, highlightedHampers] = await Promise.all([
+    getProductsBySlugs(expandProductSlugs(content.recommendedProductSlugs)),
+    getProductsBySlugs(expandProductSlugs(HIGHLIGHTED_HAMPER_SLUGS)),
+  ]);
+  const highlightedSlugs = new Set(HIGHLIGHTED_HAMPER_SLUGS);
+  const otherDiwaliProducts = products.filter((product) => !highlightedSlugs.has(product.slug));
 
   return (
     <>
@@ -74,7 +84,7 @@ export default async function Diwali2026Page() {
        * Hero. The image sits in a fixed-ratio box on both breakpoints so it
        * reserves its space before loading -- the copy never reflows.
        * ---------------------------------------------------------------- */}
-      <section className="border-b border-line">
+      <section className="border-b border-line bg-cream-100">
         <Container className="pt-6 sm:pt-8">
           <nav className="type-meta flex flex-wrap items-center gap-2" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-navy-950">
@@ -122,6 +132,45 @@ export default async function Diwali2026Page() {
           </div>
         </Container>
       </section>
+
+      {highlightedHampers.length > 0 ? (
+        <section className="overflow-hidden bg-navy-950 py-14 sm:py-20">
+          <Container>
+            <div className="relative border border-gold-500/40 px-5 py-8 sm:px-8 sm:py-10 lg:px-12">
+              <div aria-hidden="true" className="absolute left-0 top-0 h-1 w-28 bg-gold-400" />
+              <div className="max-w-3xl">
+                <span className="type-eyebrow text-gold-300">Diwali 2026 spotlight</span>
+                <h2 className="type-h2 mt-4 text-cream-100">Highlighted Diwali Hampers</h2>
+                <p className="type-lead mt-4 text-cream-100/75">
+                  Three considered hamper options for festive employee lists, key clients and leadership gifting.
+                </p>
+              </div>
+
+              <div className="mt-10 grid gap-6 lg:grid-cols-3">
+                {highlightedHampers.map((product, index) => (
+                  <div key={product.id} className="bg-cream-100 p-5 sm:p-6">
+                    <span className="type-eyebrow text-gold-700">Hamper 0{index + 1}</span>
+                    <ProductCard product={product} />
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-10 flex flex-wrap items-center gap-5">
+                <Button
+                  href="/bulk-enquiry"
+                  variant="primary"
+                  className="!border-gold-400 !bg-gold-400 !text-navy-950 hover:!border-gold-300 hover:!bg-gold-300"
+                >
+                  Request a Diwali Quote
+                </Button>
+                <p className="type-meta text-cream-100/70">
+                  Branding, personalisation and delivery plans are quoted for your recipient list.
+                </p>
+              </div>
+            </div>
+          </Container>
+        </section>
+      ) : null}
 
       <Container className="py-14 sm:py-16">
         {/* Intro + the editorial H2 sections. */}
@@ -230,14 +279,14 @@ export default async function Diwali2026Page() {
           </div>
         </section>
 
-        {products.length > 0 ? (
+        {otherDiwaliProducts.length > 0 ? (
           <section className="mt-16 border-t border-line pt-10">
             <h2 className="type-h2">Diwali Gift Kits and Gift Sets</h2>
             <p className="type-body mt-4 max-w-3xl">
-              Existing catalogue Gift Sets selected for employee, client, partner and leadership Diwali gifting.
+              More catalogue Gift Sets selected for employee, client, partner and leadership Diwali gifting.
             </p>
             <div className="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
-              {products.map((product) => (
+              {otherDiwaliProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>

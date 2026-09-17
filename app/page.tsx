@@ -6,6 +6,7 @@ import WhyChooseUs from "@/components/home/WhyChooseUs";
 import CorporateSolutions from "@/components/home/CorporateSolutions";
 import CustomGifting from "@/components/home/CustomGifting";
 import HowItWorks from "@/components/home/HowItWorks";
+import DiwaliHampers from "@/components/home/DiwaliHampers";
 import FeaturedProducts from "@/components/home/FeaturedProducts";
 import SeoIntro from "@/components/home/SeoIntro";
 import BulkOrderCTA from "@/components/home/BulkOrderCTA";
@@ -43,6 +44,7 @@ export default function Home() {
       <CorporateSolutions />
       <CustomGifting />
       <HowItWorks />
+      <DiwaliHampers />
       <FeaturedProducts />
       <SeoIntro />
       <BulkOrderCTA />
