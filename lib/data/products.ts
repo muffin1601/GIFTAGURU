@@ -9,6 +9,33 @@ import {
 import type { Product } from "@/types";
 import type { StorefrontProductDetail } from "@/types/storefront";
 
+// The database stores a complete gallery for every hamper. Keep the local
+// catalog equally useful when no database is configured, so each dedicated
+// product page still shows all of the images in its public/Hampers folder.
+const fallbackProductGalleries: Record<string, string[]> = {
+  "diwali-signature-hamper": [
+    "/Hampers/set 1/gift_set_1600x1600.webp",
+    "/Hampers/set 1/gift_hamper_1600x1600_transparent.webp",
+    "/Hampers/set 1/gift_hamper_1600x1600(1).webp",
+  ],
+  "diwali-celebration-hamper": [
+    "/Hampers/set 2/diwali_hamper_final_1600x1600.webp",
+    "/Hampers/set 2/diwali_hamper_1600x1600_transparent.webp",
+    "/Hampers/set 2/FINAL_1600x1600_TRANSPARENT_GIFT_HAMPER.webp",
+    "/Hampers/set 2/gift_hamper_1600x1600_final.webp",
+  ],
+  "diwali-grand-hamper": [
+    "/Hampers/set 3/gift_hamper_1600x1600_clean (1).webp",
+    "/Hampers/set 3/gift_hamper_1600x1600(2) (1).webp",
+    "/Hampers/set 3/Gift_Hamper_1600x1600(3).webp",
+  ],
+};
+
+function fallbackGallery(product: Product): { url: string; alt: string }[] {
+  const images = fallbackProductGalleries[product.slug] ?? (product.image ? [product.image] : []);
+  return images.map((url, index) => ({ url, alt: `${product.name} image ${index + 1}` }));
+}
+
 interface ProductListRow {
   id: string;
   slug: string;
@@ -530,7 +557,7 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
       occasionTags: [],
       avgRating: 0,
       reviewCount: 0,
-      images: fallback.image ? [{ url: fallback.image, alt: fallback.name }] : [],
+      images: fallbackGallery(fallback),
       variants: [
         {
           id: fallback.id,
@@ -589,7 +616,7 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
       // No invented ratings -- the product page hides the rating when count is 0.
       avgRating: 0,
       reviewCount: 0,
-      images: fallback.image ? [{ url: fallback.image, alt: fallback.name }] : [],
+      images: fallbackGallery(fallback),
       variants: [
         {
           id: fallback.id,

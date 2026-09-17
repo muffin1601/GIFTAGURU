@@ -164,6 +164,34 @@ export const diwali2026: SeasonalHubContent = {
       ],
     },
     {
+      heading: "Corporate Diwali Hampers for Every Recipient Tier",
+      body: [
+        "The most useful corporate Diwali hamper programme is rarely one-size-fits-all. Many businesses choose a coordinated Diwali hamper for employees and channel partners, then reserve a more premium Diwali gift for key clients, senior leaders and long-standing relationships.",
+        "Start with the recipient group, not a generic festive gift list. A company-wide employee hamper should feel consistent and useful; a premium client hamper may benefit from more restrained branding or recipient-name personalisation. The same Diwali campaign can support both when the tiers are planned together.",
+        "Gifta Guru's Diwali hamper selection focuses on non-food corporate gift sets. That makes it suitable for businesses looking for branded Diwali gifts that remain useful after the festival, rather than sweets or dry-fruit hampers with short shelf lives.",
+      ],
+      bullets: [
+        "Employee Diwali hampers for broad corporate recipient lists",
+        "Premium Diwali gifts for clients, leaders and selected partners",
+        "Corporate festive gifts with logo and personalisation options",
+        "One enquiry covering multiple recipient tiers and locations",
+      ],
+    },
+    {
+      heading: "How to Plan Bulk Diwali Gifting for Your Company",
+      body: [
+        "Bulk Diwali gifting becomes easier when the brief is clear before the product shortlist begins. Share the total quantity, whether all recipients receive the same hamper, the branding requirement and any delivery split across offices, cities or named recipients.",
+        "For customised Diwali hampers, artwork approval and recipient details should be decided early. This gives the team the right information to confirm the available personalisation approach for the selected corporate gift set and to prepare a quote around your actual campaign.",
+        "Whether you are searching for Diwali gift hampers for employees, corporate Diwali gifts for clients or premium festive gifts for leadership, a structured recipient list helps avoid a compromise choice. It also makes it easier to run an employee tier and an executive tier in the same Diwali order.",
+      ],
+      bullets: [
+        "Confirm recipient groups and quantities before requesting a quote",
+        "Choose logo branding, recipient names or a message-card requirement",
+        "Tell the team about office-wise or city-wise delivery splits",
+        "Build employee and premium-client tiers into one Diwali gifting plan",
+      ],
+    },
+    {
       heading: "Diwali Gifts for Employees",
       body: [
         "Employee Diwali gifting has one constraint that outweighs the rest: everyone gets the same thing, and everyone compares. That pushes the decision towards a set that looks generous at volume and is genuinely useful at a desk, rather than towards a novelty item that photographs well once.",
