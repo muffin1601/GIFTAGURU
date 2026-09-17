@@ -359,6 +359,9 @@ export const diwali2026: SeasonalHubContent = {
   // Real catalog slugs, weighted towards the finishes that suit the festive
   // quarter. Any slug that no longer resolves simply does not render a card.
   recommendedProductSlugs: [
+    "diwali-signature-hamper",
+    "diwali-celebration-hamper",
+    "diwali-grand-hamper",
     "burgundy-relationship-gift-set",
     "black-gold-premium-notebook-set",
     "luxury-clutch-executive-set",

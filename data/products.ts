@@ -37,6 +37,9 @@ const productSeedTuples: ProductSeedTuple[] = [
   ["grey-folio-notebook-set", "Grey Folio & Notebook Set", "premium-gift-sets", "Grey folio, notebook, and pen kit for polished business gifting.", 1799, 20, "/Gifta Guru/Set 22/gray_folio_pen_1200x1200_transparent.png"],
   ["white-premium-corporate-gift-set", "White Premium Corporate Gift Set", "premium-gift-sets", "White premium gift set for festive campaigns and client gifting.", 1999, 20, "/Gifta Guru/Set 23/white_gift_set_1200x1200_transparent.png", true],
   ["grey-planner-corporate-set", "Grey Planner Corporate Set", "office-stationery", "Grey planner and black pen set for practical employee appreciation.", 1299, 30, "/Gifta Guru/Set 24/grey_notebook_gift_set_1200x1200.png"],
+  ["diwali-signature-hamper", "Diwali Signature Hamper", "premium-gift-sets", "A curated corporate Diwali hamper presented for employee, client, and partner gifting.", 1999, 20, "/Hampers/set 1/gift_set_1600x1600.webp", true],
+  ["diwali-celebration-hamper", "Diwali Celebration Hamper", "premium-gift-sets", "A festive corporate hamper with a polished presentation for Diwali gifting programmes.", 2999, 15, "/Hampers/set 2/diwali_hamper_final_1600x1600.webp", true],
+  ["diwali-grand-hamper", "Diwali Grand Hamper", "luxury-gift-sets", "A premium Diwali hamper for important clients, leadership teams, and special festive moments.", 3999, 10, "/Hampers/set 3/gift_hamper_1600x1600_clean (1).webp", true],
 ];
 
 const productSeeds = productSeedTuples.map(([slug, name, category, description, price, , image, featured = false], index) => ({

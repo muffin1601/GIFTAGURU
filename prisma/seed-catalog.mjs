@@ -62,12 +62,22 @@ const productMeta = {
   24: ["Grey Planner Corporate Set", "office-stationery", ["corporate-gifts", "employee-appreciation-gifts"], 1299, 30],
 };
 
+const hamperMeta = [
+  ["set 1", "Diwali Signature Hamper", "premium-gift-sets", ["corporate-gifts", "premium-gifts", "festive-corporate-gifts", "gift-sets-hampers"], 1999, 20, "GG-HAMP-01-STD"],
+  ["set 2", "Diwali Celebration Hamper", "premium-gift-sets", ["corporate-gifts", "premium-gifts", "festive-corporate-gifts", "gift-sets-hampers"], 2999, 15, "GG-HAMP-02-STD"],
+  ["set 3", "Diwali Grand Hamper", "luxury-gift-sets", ["corporate-gifts", "luxury-gifts", "festive-corporate-gifts", "gift-sets-hampers"], 3999, 10, "GG-HAMP-03-STD"],
+];
+
 function slugify(value) {
   return value.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
 function publicUrl(setName, fileName) {
   return `/Gifta Guru/${setName}/${fileName}`;
+}
+
+function hamperPublicUrl(setName, fileName) {
+  return `/Hampers/${setName}/${fileName}`;
 }
 
 async function one(sql, params = []) {
@@ -193,9 +203,62 @@ async function seedProducts() {
   }
 }
 
+async function seedHampers() {
+  for (const [folder, name, categorySlug, collectionSlugs, price, minOrderQuantity, sku] of hamperMeta) {
+    console.log(`Seeding hamper ${folder}: ${name}`);
+    const category = await one("select id from public.categories where slug = $1", [categorySlug]);
+    const product = await one(
+      `insert into public.products
+       (slug, name, description, category_id, base_price, compare_at_price, is_customizable,
+        min_order_quantity, occasion_tags, status, is_featured, avg_rating, review_count)
+       values ($1, $2, $3, $4, $5, $6, true, $7, $8, 'active', true, 0, 0)
+       on conflict (slug) do update set name = excluded.name, description = excluded.description,
+       category_id = excluded.category_id, base_price = excluded.base_price,
+       compare_at_price = excluded.compare_at_price, min_order_quantity = excluded.min_order_quantity,
+       occasion_tags = excluded.occasion_tags, status = excluded.status, is_featured = excluded.is_featured
+       returning id`,
+      [slugify(name), name, `${name} curated for corporate Diwali gifting, custom branding, and bulk festive orders.`, category.id, price, Math.round(price * 1.18), minOrderQuantity, collectionSlugs],
+    );
+    const variant = await one(
+      `insert into public.product_variants (product_id, name, sku, is_default)
+       values ($1, 'Standard', $2, true)
+       on conflict (sku) do update set product_id = excluded.product_id, name = excluded.name, is_default = excluded.is_default
+       returning id`,
+      [product.id, sku],
+    );
+    await one(
+      `insert into public.inventory (variant_id, quantity_available, quantity_reserved)
+       values ($1, 500, 0)
+       on conflict (variant_id) do update set quantity_available = excluded.quantity_available, quantity_reserved = 0`,
+      [variant.id],
+    );
+    await pool.query("delete from public.product_collection_mappings where product_id = $1", [product.id]);
+    for (const collectionSlug of collectionSlugs) {
+      const collection = await one("select id from public.collections where slug = $1", [collectionSlug]);
+      if (collection) await one(
+        `insert into public.product_collection_mappings (product_id, collection_id)
+         values ($1, $2) on conflict do nothing`,
+        [product.id, collection.id],
+      );
+    }
+    await pool.query("delete from public.product_images where product_id = $1", [product.id]);
+    const files = (await readdir(path.join(process.cwd(), "public", "Hampers", folder), { withFileTypes: true }))
+      .filter((entry) => entry.isFile() && /\.(png|jpe?g|webp)$/i.test(entry.name))
+      .sort((a, b) => a.name.localeCompare(b.name));
+    for (const [index, file] of files.entries()) {
+      await one(
+        `insert into public.product_images (product_id, variant_id, url, alt_text, sort_order)
+         values ($1, $2, $3, $4, $5)`,
+        [product.id, variant.id, hamperPublicUrl(folder, file.name), `${name} image ${index + 1}`, index],
+      );
+    }
+  }
+}
+
 try {
   await upsertTaxonomy();
   await seedProducts();
+  await seedHampers();
   const counts = await one(
     `select
       (select count(*)::int from public.products) as products,
