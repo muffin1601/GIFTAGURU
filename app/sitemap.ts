@@ -6,6 +6,7 @@ import { categories as fallbackCategories } from "@/data/categories";
 import { allLandingHubPaths, allLandingPages } from "@/lib/seo/content";
 import { seasonalHubs } from "@/lib/seo/content/seasonal";
 import { getPublishedBlogPosts } from "@/lib/blog/data";
+import { ncrServiceAreas } from "@/lib/seo/locations";
 
 /**
  * Database-driven. The previous version listed URLs from data/products.ts
@@ -36,6 +37,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/about",
     "/contact",
     "/blog",
+    "/locations",
+    "/locations/new-delhi",
+    ...ncrServiceAreas.map((area) => `/locations/${area.slug}`),
     "/privacy-policy",
     "/terms-and-conditions",
   ];

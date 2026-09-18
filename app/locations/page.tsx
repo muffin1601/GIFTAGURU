@@ -1,0 +1,11 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import Container from "@/components/ui/Container";
+import JsonLd from "@/components/seo/JsonLd";
+import { pageMetadata } from "@/lib/seo/metadata";
+import { breadcrumbSchema } from "@/lib/seo/schema";
+import { ncrServiceAreas } from "@/lib/seo/locations";
+
+export const metadata: Metadata = pageMetadata({ title: "Corporate Gifting Locations | Gifta Guru", description: "Gifta Guru supports corporate gifting programmes across India, with its New Delhi office available for business enquiries.", path: "/locations" });
+
+export default function LocationsPage() { return <><JsonLd data={breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Locations", path: "/locations" }])} /><section className="border-b border-line"><Container className="py-14"><span className="type-eyebrow">Locations</span><h1 className="type-h1 mt-4">Corporate gifting support across India</h1><p className="type-lead mt-5 max-w-3xl">Gifta Guru supports pan-India corporate gifting and multi-location dispatch. Our listed business office is in New Delhi.</p></Container></section><Container className="py-14"><article className="max-w-3xl border-t border-line pt-6"><p className="type-eyebrow">Office location</p><h2 className="mt-3 font-display text-3xl text-navy-950"><Link href="/locations/new-delhi">Corporate gifting in New Delhi</Link></h2><p className="type-body mt-4">Speak with our New Delhi team about branded gifts, employee kits, client gifting and delivery planning for a corporate programme.</p><Link href="/locations/new-delhi" className="link-underline type-meta mt-5 inline-block">View New Delhi details</Link></article><section className="mt-14 border-t border-line pt-8"><p className="type-eyebrow">NCR service areas</p><h2 className="type-h2 mt-3">Corporate Diwali gifting delivery coverage</h2><p className="type-body mt-4 max-w-3xl">These pages cover corporate Diwali gift planning and delivery requirements for NCR recipient lists. They are service-area pages, not local-office claims.</p><ul className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{ncrServiceAreas.map((area) => <li key={area.slug}><Link href={`/locations/${area.slug}`} className="link-underline type-body text-navy-950">Corporate Diwali gifts in {area.name}</Link></li>)}</ul></section></Container></>; }

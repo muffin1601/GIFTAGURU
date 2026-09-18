@@ -12,7 +12,7 @@ const DEFAULT_DATE = new Date("2026-01-15T00:00:00.000Z");
 /** Existing long-form guides are the initial editorial library. They are
  * exposed only at /blog; /guides permanently redirects, avoiding duplicate
  * content while the database-backed manager becomes the ongoing source. */
-const builtInPosts: BlogPost[] = guidePages.map((guide, index) => ({
+const guidePosts: BlogPost[] = guidePages.map((guide, index) => ({
   slug: guide.slug,
   title: guide.h1,
   excerpt: guide.intro[0],
@@ -36,6 +36,39 @@ const builtInPosts: BlogPost[] = guidePages.map((guide, index) => ({
   publishedAt: DEFAULT_DATE,
   updatedAt: DEFAULT_DATE,
 }));
+
+const techDiwaliPost: BlogPost = {
+  slug: "tech-corporate-gifting-kits",
+  title: "Corporate Tech Gifting Kits for Diwali",
+  excerpt: "A practical guide to branded corporate gadgets, technology gifts and Diwali tech gifting kits for employee and client programmes.",
+  category: "Tech Gifts",
+  featuredImageUrl: DEFAULT_IMAGE,
+  featuredImageAlt: "Corporate Diwali gifting collection by Gifta Guru",
+  authorName: "Gifta Guru Team",
+  seoTitle: "Corporate Tech Gifting Kits for Diwali",
+  metaDescription: "Plan corporate technology gifts, branded electronics gifts and Diwali tech gifting kits for employees and clients.",
+  focusKeyword: "corporate tech gifting kits diwali",
+  isFeatured: true,
+  publishedAt: DEFAULT_DATE,
+  updatedAt: DEFAULT_DATE,
+  sections: [
+    { heading: "Choose corporate technology gifts by recipient", body: ["Branded corporate gadgets work best when the recipient group and use case are clear. A Diwali tech gift for employees should be useful across a broad team; a Diwali tech gift for clients should be considered for the relationship and appropriate for the recipient’s policy."] },
+    { heading: "Build a corporate tech gifting kit", bullets: ["Start with one useful technology gift rather than adding filler", "Keep branding restrained so the item remains useful after Diwali", "Use a consistent kit for employee lists and a premium tier for selected clients", "Confirm the recipient list and delivery split before finalising the kit"] },
+    { heading: "Plan branded tech Diwali gifts", body: ["A corporate tech gifting kit needs the same planning as any Diwali programme: recipient groups, branding, approvals and delivery locations. Share those requirements in the enquiry so the recommendation is based on the actual campaign rather than a generic electronics list."] },
+  ],
+  faqs: [
+    { question: "What belongs in a corporate tech gifting kit?", answer: "Choose one useful technology gift as the anchor, then build only the supporting items that improve the presentation or usefulness of the kit." },
+    { question: "Can branded electronics gifts work for Diwali?", answer: "Yes, when branding is appropriately restrained and the item suits the employee or client recipient group." },
+  ],
+  relatedLinks: [
+    { label: "Tech and electronics gifts", href: "/categories/tech-electronics" },
+    { label: "Corporate Diwali gifts", href: "/diwali-2026" },
+    { label: "Request a corporate gifting quote", href: "/bulk-enquiry" },
+  ],
+  recommendedProductSlugs: [],
+};
+
+const builtInPosts: BlogPost[] = [techDiwaliPost, ...guidePosts];
 
 function stringArray(value: unknown): string[] {
   return Array.isArray(value) && value.every((item) => typeof item === "string") ? value : [];

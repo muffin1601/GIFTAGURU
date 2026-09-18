@@ -1,0 +1,12 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import Button from "@/components/ui/Button";
+import Container from "@/components/ui/Container";
+import JsonLd from "@/components/seo/JsonLd";
+import { pageMetadata } from "@/lib/seo/metadata";
+import { breadcrumbSchema } from "@/lib/seo/schema";
+import { STORE_CONTACT } from "@/lib/config/store";
+
+export const metadata: Metadata = pageMetadata({ title: "Corporate Gifting in New Delhi | Gifta Guru", description: "Plan branded corporate gifts, employee welcome kits, client gifts and bulk gifting with Gifta Guru's New Delhi office.", path: "/locations/new-delhi" });
+
+export default function NewDelhiLocationPage() { return <><JsonLd data={breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Locations", path: "/locations" }, { name: "New Delhi", path: "/locations/new-delhi" }])} /><section className="border-b border-line"><Container className="py-14"><nav className="type-meta flex gap-2" aria-label="Breadcrumb"><Link href="/">Home</Link><span>/</span><Link href="/locations">Locations</Link><span>/</span><span>New Delhi</span></nav><span className="type-eyebrow mt-8 block">New Delhi office</span><h1 className="type-h1 mt-4">Corporate gifting in New Delhi</h1><p className="type-lead mt-5 max-w-3xl">Plan practical branded gifts, employee welcome kits, client gifting and bulk orders with Gifta Guru’s New Delhi team. Delivery requirements can be discussed for programmes across India.</p><Button href="/bulk-enquiry" variant="primary" className="mt-8">Request a Custom Quote</Button></Container></section><Container className="py-14"><div className="max-w-3xl"><h2 className="type-h2">Talk to our team</h2><p className="type-body mt-4">{STORE_CONTACT.address}</p><p className="type-body mt-2"><a className="link-underline" href={`tel:${STORE_CONTACT.phoneHref}`}>{STORE_CONTACT.phone}</a> · <a className="link-underline" href={`mailto:${STORE_CONTACT.email}`}>{STORE_CONTACT.email}</a></p><h2 className="type-h2 mt-12">Useful corporate gifting pages</h2><ul className="mt-5 space-y-3"><li><Link className="link-underline" href="/corporate-gifting">Corporate gifting solutions</Link></li><li><Link className="link-underline" href="/gifting/employee-onboarding">Employee onboarding gifts</Link></li><li><Link className="link-underline" href="/gifting/client-appreciation">Client gifts</Link></li></ul></div></Container></>; }

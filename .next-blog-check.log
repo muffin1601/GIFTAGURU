@@ -1,0 +1,13 @@
+
+> giftaguru@0.1.0 dev
+> next dev
+
+⚠ Port 3000 is in use by process 166020, using available port 3002 instead.
+▲ Next.js 16.3.3 (Turbopack)
+- Local:         http://localhost:3002
+- Network:       http://192.168.1.31:3002
+- Environments: .env
+✓ Ready in 863ms
+✓ Running next.config.ts took 48ms
+Creating turbopack project { dir: 'C:\\Users\\Admin\\Desktop\\Sana\\GIFTAGURU', testMode: true }
+
