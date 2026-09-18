@@ -7,6 +7,8 @@
  * a dynamic route renders, while the SEO validator protects it from regressions.
  */
 export const legacySeoRedirects = [
+  { source: "/guides", destination: "/blog" },
+  { source: "/guides/:slug", destination: "/blog/:slug" },
   { source: "/categories/client-gifts", destination: "/gifting/client-appreciation" },
   { source: "/categories/corporate-gifts", destination: "/corporate-gifting" },
   { source: "/categories/employee-appreciation-gifts", destination: "/gifting/employee-appreciation" },

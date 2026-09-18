@@ -81,7 +81,7 @@ export const footerColumns: { heading: string; links: NavLink[] }[] = [
     heading: "Company",
     links: [
       { label: "About", href: "/about" },
-      { label: "Gifting Guides", href: "/guides" },
+      { label: "Corporate Gifting Blog", href: "/blog" },
       { label: "Privacy Policy", href: "/privacy-policy" },
       { label: "Terms and Conditions", href: "/terms-and-conditions" },
     ],

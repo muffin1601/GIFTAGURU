@@ -5,6 +5,7 @@ import { siteUrl } from "@/lib/env";
 import { categories as fallbackCategories } from "@/data/categories";
 import { allLandingHubPaths, allLandingPages } from "@/lib/seo/content";
 import { seasonalHubs } from "@/lib/seo/content/seasonal";
+import { getPublishedBlogPosts } from "@/lib/blog/data";
 
 /**
  * Database-driven. The previous version listed URLs from data/products.ts
@@ -34,6 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/bulk-enquiry",
     "/about",
     "/contact",
+    "/blog",
     "/privacy-policy",
     "/terms-and-conditions",
   ];
@@ -54,26 +56,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  // Editorial SEO pages (industries, gifting use-cases, occasions, multi-piece
-  // gift sets, guides) plus their five hubs. Read from the same registry the
+  // Editorial SEO pages (industries, gifting use-cases, occasions and multi-piece
+  // gift sets) plus their hubs. Guides now permanently redirect to /blog, so
+  // they must never be emitted beside their canonical blog URLs.
   // routes and the footer read from, so a page cannot exist without being
   // listed here.
   const landingEntries: MetadataRoute.Sitemap = [
-    ...allLandingHubPaths().map((path) => ({
+    ...allLandingHubPaths().filter((path) => path !== "/guides").map((path) => ({
       url: `${base}${path}`,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
-    ...allLandingPages().map((page) => ({
+    ...allLandingPages().filter((page) => page.family !== "guides").map((page) => ({
       url: `${base}${page.path}`,
       changeFrequency: "monthly" as const,
-      priority: page.family === "guides" ? 0.5 : 0.6,
+      priority: 0.6,
     })),
   ];
 
   if (!isDatabaseConfigured()) {
     // No database configured (e.g. a fresh checkout of this repo): fall back
     // to the bundled fixture categories rather than emit an empty sitemap.
+    const posts = await getPublishedBlogPosts();
     return [
       ...staticEntries,
       ...seasonalEntries,
@@ -83,10 +87,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: "weekly" as const,
         priority: 0.7,
       })),
+      ...posts.map((post) => ({
+        url: `${base}/blog/${post.slug}`,
+        lastModified: post.updatedAt,
+        changeFrequency: "monthly" as const,
+        priority: 0.5,
+        images: [`${base}${post.featuredImageUrl}`],
+      })),
     ];
   }
 
-  const [collections, products] = await Promise.all([
+  const [collections, products, posts] = await Promise.all([
     prisma.collection.findMany({
       where: { isPublished: true },
       select: { slug: true, updatedAt: true },
@@ -95,6 +106,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       where: { status: "active" },
       select: { slug: true, updatedAt: true },
     }),
+    getPublishedBlogPosts(),
   ]);
 
   return [
@@ -112,6 +124,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: product.updatedAt,
       changeFrequency: "weekly" as const,
       priority: 0.6,
+    })),
+    ...posts.map((post) => ({
+      url: `${base}/blog/${post.slug}`,
+      lastModified: post.updatedAt,
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+      images: [`${base}${post.featuredImageUrl}`],
     })),
   ];
 }

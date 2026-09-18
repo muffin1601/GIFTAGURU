@@ -85,6 +85,30 @@ export function faqPageSchema(faqs: { question: string; answer: string }[]) {
   };
 }
 
+/** Schema for a visible, published blog article. No ratings, claims or dates
+ * are inferred here: callers provide only fields the page renders. */
+export function blogPostingSchema(input: {
+  path: string;
+  title: string;
+  excerpt: string;
+  featuredImageUrl: string;
+  authorName?: string;
+  publishedAt: Date;
+  updatedAt: Date;
+}) {
+  return {
+    "@type": "BlogPosting",
+    headline: input.title,
+    description: input.excerpt,
+    mainEntityOfPage: `${siteUrl()}${input.path}`,
+    image: [absoluteUrl(input.featuredImageUrl)],
+    datePublished: input.publishedAt.toISOString(),
+    dateModified: input.updatedAt.toISOString(),
+    author: { "@type": "Organization", name: input.authorName ?? SITE_NAME },
+    publisher: { "@id": organizationId() },
+  };
+}
+
 /**
  * ItemList JSON-LD for a category/collection listing. Describes the products
  * actually rendered in the grid, in the order they appear, so the markup

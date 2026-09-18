@@ -22,6 +22,14 @@ enum ProductStatus {
   @@map("product_status")
 }
 
+enum BlogPostStatus {
+  draft
+  published
+  archived
+
+  @@map("blog_post_status")
+}
+
 enum CartStatus {
   active
   merged
@@ -278,6 +286,37 @@ model Testimonial {
   updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@map("testimonials")
+}
+
+/// Editorial posts use a JSON document instead of raw HTML. This keeps the
+/// public renderer free from arbitrary markup while still allowing sections,
+/// FAQs and contextual links to be managed in the existing admin.
+model BlogPost {
+  id               String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug             String         @unique
+  title            String
+  excerpt          String         @db.Text
+  content          Json
+  category         String
+  featuredImageUrl String?        @map("featured_image_url")
+  featuredImageAlt String?        @map("featured_image_alt")
+  authorName       String?        @map("author_name")
+  seoTitle         String?        @map("seo_title")
+  metaDescription  String?        @map("meta_description")
+  canonicalUrl     String?        @map("canonical_url")
+  ogTitle          String?        @map("og_title")
+  ogDescription    String?        @map("og_description")
+  ogImageUrl       String?        @map("og_image_url")
+  focusKeyword     String?        @map("focus_keyword")
+  status           BlogPostStatus @default(draft)
+  isFeatured       Boolean        @default(false) @map("is_featured")
+  publishedAt      DateTime?      @map("published_at") @db.Timestamptz(6)
+  createdAt        DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([status, publishedAt])
+  @@index([category])
+  @@map("blog_posts")
 }
 
 model AuditLog {

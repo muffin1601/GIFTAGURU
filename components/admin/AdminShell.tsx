@@ -52,6 +52,7 @@ const sections = [
     links: [
       { label: "FAQs", href: "/admin/faqs", Icon: ClipboardList },
       { label: "Testimonials", href: "/admin/testimonials", Icon: MessageSquareQuote },
+      { label: "Blog", href: "/admin/blog", Icon: ClipboardList },
     ],
   },
   {

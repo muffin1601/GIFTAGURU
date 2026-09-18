@@ -36,7 +36,7 @@ export default function CorporateGiftingPage() {
               ["Custom branded corporate gifts", "/custom-gifts"],
               ["Conference and event gifting", "/gifting/events-conferences"],
               ["Corporate Diwali gifts", "/occasions/diwali-corporate-gifts"],
-              ["Corporate gifting guide", "/guides/corporate-gifting-guide"],
+              ["Corporate gifting guide", "/blog/corporate-gifting-guide"],
             ].map(([label, href]) => (
               <li key={href}>
                 <Link href={href} className="link-underline type-body text-navy-950">{label}</Link>
