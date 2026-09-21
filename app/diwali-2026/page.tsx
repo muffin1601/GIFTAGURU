@@ -12,6 +12,7 @@ import { pageMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema, faqPageSchema, itemListSchema } from "@/lib/seo/schema";
 import { expandProductSlugs } from "@/lib/seo/content/products";
 import { diwali2026 as content } from "@/lib/seo/content/seasonal";
+import DiwaliLeadTracker from "@/components/analytics/DiwaliLeadTracker";
 
 /**
  * The Diwali 2026 seasonal hub.
@@ -22,8 +23,8 @@ import { diwali2026 as content } from "@/lib/seo/content/seasonal";
  * a structure -- hero, recipient grid, gifting tiers -- that the shared
  * LandingPageView deliberately does not offer.
  *
- * It is a Server Component end to end. The only client boundary on the page is
- * ProductCard, which owns the add-to-cart button; nothing else here ships JS.
+ * It stays server-rendered apart from the product cards and the tiny Meta
+ * conversion tracker, which fires once when this campaign page is viewed.
  *
  * Every internal link below points at a route that already exists, and every
  * product card is resolved against the live catalog -- a deleted product drops
@@ -57,6 +58,7 @@ export default async function Diwali2026Page() {
 
   return (
     <>
+      <DiwaliLeadTracker />
       <JsonLd
         data={[
           {

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Check, Loader2 } from "lucide-react";
 import Container from "@/components/ui/Container";
 import SocialIcon from "@/components/ui/SocialIcon";
+import { trackLead } from "@/lib/analytics/meta";
 
 interface BulkEnquiryFormProps {
   productInterest?: string;
@@ -56,6 +57,7 @@ export default function BulkEnquiryForm({ productInterest = "" }: BulkEnquiryFor
     setStatus("success");
     setMessage(payload.message ?? "Bulk enquiry received.");
     setWhatsappUrl(payload.whatsappUrl ?? null);
+    trackLead();
     form.reset();
   }
 

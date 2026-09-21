@@ -2,6 +2,7 @@
 
 import { cloneElement, isValidElement, useState, type ReactElement } from "react";
 import { Check, Loader2, Upload, X } from "lucide-react";
+import { trackLead } from "@/lib/analytics/meta";
 
 type LeadType = "general" | "contact" | "bulk_order" | "product" | "collection" | "customization" | "chatbot" | "consultation";
 
@@ -115,6 +116,7 @@ export default function LeadForm({ type, source, compact = false, defaults = {},
 
     setStatus("success");
     setMessage(result.message ?? "Thanks. We received your enquiry.");
+    trackLead();
     form.reset();
     onSuccess?.();
   }
