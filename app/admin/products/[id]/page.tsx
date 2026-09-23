@@ -189,7 +189,7 @@ export default async function AdminProductDetailPage({ params }: { params: Promi
               </label>
               <label className="space-y-1 text-sm font-medium text-navy-950">
                 Minimum order quantity
-                <AdminInput name="minOrderQuantity" type="number" min={5} required defaultValue={Math.max(5, product.minOrderQuantity)} />
+                <AdminInput name="minOrderQuantity" type="number" min={1} required defaultValue={Math.max(1, product.minOrderQuantity)} />
               </label>
               <div className="flex items-center gap-5">
                 <label className="flex items-center gap-2 text-sm font-medium text-navy-950">
@@ -275,7 +275,7 @@ export default async function AdminProductDetailPage({ params }: { params: Promi
                 <input type="hidden" name="productId" value={product.id} />
                 <label className="text-xs font-semibold text-ink-600 sm:col-span-1">
                   Min quantity
-                  <AdminInput name="minQuantity" type="number" min={5} required className="mt-1" />
+                  <AdminInput name="minQuantity" type="number" min={1} required className="mt-1" />
                 </label>
                 <label className="text-xs font-semibold text-ink-600 sm:col-span-1">
                   Unit price (INR)

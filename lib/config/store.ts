@@ -2,8 +2,9 @@
 // checkout come from lib/data/store-settings.ts (admin-configurable via
 // /admin/settings) -- everything below is the fallback used before the store
 // has been configured, or if the database is unreachable.
-export const MIN_ORDER_QUANTITY = 5;
-export const MIN_ORDER_QUANTITY_MESSAGE = "You must select at least 5 products.";
+/** The store-wide floor. Individual products can set any MOQ at or above this. */
+export const MIN_ORDER_QUANTITY = 1;
+export const MIN_ORDER_QUANTITY_MESSAGE = "You must select at least 1 product.";
 /** Online pricing is available for quantities from the MOQ through this limit. */
 export const MAX_DIRECT_PURCHASE_QUANTITY = 99;
 export const SALES_QUOTE_MESSAGE =

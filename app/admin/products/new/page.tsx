@@ -52,7 +52,7 @@ export default async function NewProductPage() {
           </label>
           <label className="space-y-1 text-sm font-medium text-navy-950">
             Minimum order quantity
-            <AdminInput name="minOrderQuantity" type="number" min={5} defaultValue={5} required />
+            <AdminInput name="minOrderQuantity" type="number" min={1} defaultValue={1} required />
           </label>
           <label className="flex items-center gap-2 text-sm font-medium text-navy-950">
             <input type="checkbox" name="isCustomizable" value="true" defaultChecked className="h-4 w-4 accent-navy-950" />

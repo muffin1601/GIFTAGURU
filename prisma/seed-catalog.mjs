@@ -63,9 +63,9 @@ const productMeta = {
 };
 
 const hamperMeta = [
-  ["set 1", "Diwali Signature Hamper", "premium-gift-sets", ["corporate-gifts", "premium-gifts", "festive-corporate-gifts", "gift-sets-hampers"], 1999, 20, "GG-HAMP-01-STD"],
-  ["set 2", "Diwali Celebration Hamper", "premium-gift-sets", ["corporate-gifts", "premium-gifts", "festive-corporate-gifts", "gift-sets-hampers"], 2999, 15, "GG-HAMP-02-STD"],
-  ["set 3", "Diwali Grand Hamper", "luxury-gift-sets", ["corporate-gifts", "luxury-gifts", "festive-corporate-gifts", "gift-sets-hampers"], 3999, 10, "GG-HAMP-03-STD"],
+  ["set 1", "Diwali Signature Hamper", "premium-gift-sets", ["corporate-gifts", "premium-gifts", "festive-corporate-gifts", "gift-sets-hampers"], 1999, 5, "GG-HAMP-01-STD"],
+  ["set 2", "Diwali Celebration Hamper", "premium-gift-sets", ["corporate-gifts", "premium-gifts", "festive-corporate-gifts", "gift-sets-hampers"], 2999, 5, "GG-HAMP-02-STD"],
+  ["set 3", "Diwali Grand Hamper", "luxury-gift-sets", ["corporate-gifts", "luxury-gifts", "festive-corporate-gifts", "gift-sets-hampers"], 3999, 5, "GG-HAMP-03-STD"],
 ];
 
 const diwaliKitMeta = [
@@ -269,7 +269,7 @@ async function seedDiwaliKits() {
     const slug = slugify(name);
     const product = await one(
       `insert into public.products (slug, name, description, category_id, base_price, compare_at_price, is_customizable, min_order_quantity, occasion_tags, status, is_featured, avg_rating, review_count)
-       values ($1, $2, $3, $4, $5, $6, true, 20, $7, 'active', true, 0, 0)
+       values ($1, $2, $3, $4, $5, $6, true, 5, $7, 'active', true, 0, 0)
        on conflict (slug) do update set name = excluded.name, description = excluded.description, category_id = excluded.category_id, base_price = excluded.base_price, compare_at_price = excluded.compare_at_price, status = excluded.status, is_featured = excluded.is_featured
        returning id`,
       [slug, name, `${name} for corporate Diwali gifts, employee gifting and client festive campaigns.`, category.id, price, Math.round(price * 1.18), ["corporate-gifts", "festive-corporate-gifts", "gift-sets-hampers"]],
