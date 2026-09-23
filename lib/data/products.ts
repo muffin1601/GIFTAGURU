@@ -14,20 +14,20 @@ import type { StorefrontProductDetail } from "@/types/storefront";
 // product page still shows all of the images in its public/Hampers folder.
 const fallbackProductGalleries: Record<string, string[]> = {
   "diwali-signature-hamper": [
-    "/Hampers/set 1/gift_set_1600x1600.webp",
-    "/Hampers/set 1/gift_hamper_1600x1600_transparent.webp",
-    "/Hampers/set 1/gift_hamper_1600x1600(1).webp",
+    "/Hampers/set 1/1 (1).webp",
+    "/Hampers/set 1/1 (2).webp",
+    "/Hampers/set 1/1 (3).webp",
   ],
   "diwali-celebration-hamper": [
-    "/Hampers/set 2/diwali_hamper_final_1600x1600.webp",
-    "/Hampers/set 2/diwali_hamper_1600x1600_transparent.webp",
-    "/Hampers/set 2/FINAL_1600x1600_TRANSPARENT_GIFT_HAMPER.webp",
-    "/Hampers/set 2/gift_hamper_1600x1600_final.webp",
+    "/Hampers/set 2/1 (1).webp",
+    "/Hampers/set 2/1 (2).webp",
+    "/Hampers/set 2/1 (3).webp",
+    "/Hampers/set 2/1 (4).webp",
   ],
   "diwali-grand-hamper": [
-    "/Hampers/set 3/gift_hamper_1600x1600_clean (1).webp",
-    "/Hampers/set 3/gift_hamper_1600x1600(2) (1).webp",
-    "/Hampers/set 3/Gift_Hamper_1600x1600(3).webp",
+    "/Hampers/set 3/1 (1).webp",
+    "/Hampers/set 3/1 (2).webp",
+    "/Hampers/set 3/1 (3).webp",
   ],
 };
 

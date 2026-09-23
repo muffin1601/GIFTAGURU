@@ -199,11 +199,7 @@ async function seedProducts() {
     await pool.query("delete from public.product_images where product_id = $1", [product.id]);
     const files = (await readdir(path.join(productRoot, dir.name), { withFileTypes: true }))
       .filter((entry) => entry.isFile() && /\.(png|jpe?g|webp)$/i.test(entry.name))
-      .sort((a, b) => {
-        const aGift = a.name.toLowerCase().includes("gift_set") || a.name.toLowerCase().includes("corporate_gift_set");
-        const bGift = b.name.toLowerCase().includes("gift_set") || b.name.toLowerCase().includes("corporate_gift_set");
-        return Number(bGift) - Number(aGift) || a.name.localeCompare(b.name);
-      });
+      .sort((a, b) => Number(/^1 \(1\)\./i.test(b.name)) - Number(/^1 \(1\)\./i.test(a.name)) || a.name.localeCompare(b.name));
 
     for (const [index, file] of files.entries()) {
       await one(
@@ -256,7 +252,7 @@ async function seedHampers() {
     await pool.query("delete from public.product_images where product_id = $1", [product.id]);
     const files = (await readdir(path.join(process.cwd(), "public", "Hampers", folder), { withFileTypes: true }))
       .filter((entry) => entry.isFile() && /\.(png|jpe?g|webp)$/i.test(entry.name))
-      .sort((a, b) => a.name.localeCompare(b.name));
+      .sort((a, b) => Number(/^1 \(1\)\./i.test(b.name)) - Number(/^1 \(1\)\./i.test(a.name)) || a.name.localeCompare(b.name));
     for (const [index, file] of files.entries()) {
       await one(
         `insert into public.product_images (product_id, variant_id, url, alt_text, sort_order)

@@ -17,6 +17,7 @@
     "db:push": "prisma db push",
     "db:seed": "node prisma/seed-catalog.mjs",
     "db:seed:diwali": "node prisma/seed-diwali-kits.mjs",
+    "db:refresh-images": "node prisma/refresh-product-images.mjs",
     "db:apply-sql": "node prisma/apply-sql.mjs supabase/migrations/0001_init.sql",
     "db:migrate": "node prisma/migrate.mjs",
     "db:migrate:status": "node prisma/migrate.mjs --status",

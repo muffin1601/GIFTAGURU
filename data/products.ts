@@ -60,7 +60,11 @@ const productSeeds = productSeedTuples.map(([slug, name, category, description, 
   // These codes are the matching standard-variant SKUs defined in prisma/seed-catalog.mjs.
   productCode: `GG-SET-${String(index + 1).padStart(2, "0")}-STD`,
   minQuantity: MIN_ORDER_QUANTITY,
-  image,
+  image: index < 24
+    ? `/Gifta Guru/Set ${index + 1}/1 (1).png`
+    : index < 27
+      ? `/Hampers/set ${index - 23}/1 (1).webp`
+      : image,
   featured,
 }));
 
