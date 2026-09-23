@@ -1,4 +1,4 @@
-import Image from "next/image";
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ActionForm, { AdminInput, AdminSelect, AdminTextarea } from "@/components/admin/ActionForm";
@@ -76,7 +76,10 @@ export default async function AdminProductDetailPage({ params }: { params: Promi
                 {product.images.map((image, index) => (
                   <div key={image.id} className="space-y-2">
                     <div className="relative aspect-square overflow-hidden border border-line bg-sunken">
-                      <Image src={image.url} alt={image.altText ?? product.name} fill sizes="140px" className="object-contain p-2" />
+                      {/* Admin records can include legacy image URLs. A native image keeps a bad
+                          record from taking down the whole product editor; the broken asset is
+                          visible and can be replaced from this screen. */}
+                      <img src={image.url} alt={image.altText ?? product.name} className="h-full w-full object-contain p-2" />
                       {index === 0 ? (
                         <span className="absolute left-1 top-1 bg-navy-950 px-2 py-0.5 text-[10px] font-semibold text-cream-100">
                           Primary

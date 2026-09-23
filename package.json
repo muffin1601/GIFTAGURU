@@ -18,6 +18,7 @@
     "db:seed": "node prisma/seed-catalog.mjs",
     "db:seed:diwali": "node prisma/seed-diwali-kits.mjs",
     "db:refresh-images": "node prisma/refresh-product-images.mjs",
+    "admin:audit": "node prisma/audit-admin-data.mjs",
     "db:set-store-minimum": "node prisma/set-store-minimum-order.mjs",
     "db:apply-sql": "node prisma/apply-sql.mjs supabase/migrations/0001_init.sql",
     "db:migrate": "node prisma/migrate.mjs",

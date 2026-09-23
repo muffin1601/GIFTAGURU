@@ -1,4 +1,4 @@
-import Image from "next/image";
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import ActionForm, { AdminInput, AdminTextarea } from "@/components/admin/ActionForm";
 import { createCollectionAction } from "@/lib/actions/catalog";
@@ -73,12 +73,10 @@ export default async function AdminCollectionsPage() {
             >
               <div className="relative aspect-[4/3] bg-sunken">
                 {collection.imageUrl ? (
-                  <Image
+                  <img
                     src={collection.imageUrl}
                     alt=""
-                    fill
-                    sizes="(min-width: 1280px) 25vw, 50vw"
-                    className="object-cover"
+                    className="h-full w-full object-cover"
                   />
                 ) : null}
               </div>
