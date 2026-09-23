@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import ActionForm, { AdminInput, AdminSelect, AdminTextarea } from "@/components/admin/ActionForm";
 import PrintOrderDocuments from "@/components/admin/PrintOrderDocuments";
@@ -116,7 +115,12 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
                 return (
                   <div key={item.id} className="grid gap-4 py-4 md:grid-cols-[88px_1fr_auto]">
                     <div className="relative aspect-square overflow-hidden border border-line bg-sunken">
-                      {image ? <Image src={image} alt={item.productName} fill sizes="88px" className="object-contain p-2" /> : null}
+                      {image ? (
+                        // Product-image URLs are admin-managed and can point to external storage hosts.
+                        // A native image avoids rejecting an order page when a host is not in Next's allow-list.
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={image} alt={item.productName} className="h-full w-full object-contain p-2" />
+                      ) : null}
                     </div>
                     <div className="text-sm">
                       <p className="font-semibold text-navy-950">{item.productName}</p>

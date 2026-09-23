@@ -27,6 +27,7 @@ export default function PrintOrderDocuments({
   items,
   shippingAddress,
   shipments,
+  variant = "panel",
 }: {
   orderNumber: string;
   placedAt: string;
@@ -36,6 +37,7 @@ export default function PrintOrderDocuments({
   items: PrintItem[];
   shippingAddress: Address;
   shipments: Shipment[];
+  variant?: "panel" | "slip-button";
 }) {
   const openPrintWindow = (title: string, content: string) => {
     const popup = window.open("", "_blank", "width=900,height=700");
@@ -69,6 +71,14 @@ export default function PrintOrderDocuments({
     const slips = destinations.map((destination, index) => `<section class="slip"><div class="header"><div><p class="muted">Gifta Guru delivery label</p><p class="order">${escapeHtml(orderNumber)}</p></div><div class="right"><strong>${shipments.length > 1 ? `Package ${index + 1} of ${shipments.length}` : "Delivery address"}</strong><br><span class="muted">${escapeHtml(placedAt)}</span></div></div><div class="section"><h2>Deliver to</h2><div class="to">${addressHtml(destination.address)}</div></div><div class="section"><h2>Package contents</h2><p>${destination.items.map((item) => `${escapeHtml(item.name)} × ${item.quantity}`).join("<br>")}</p></div></section>`).join("");
     openPrintWindow(`Address slip ${orderNumber}`, slips);
   };
+
+  if (variant === "slip-button") {
+    return (
+      <button type="button" onClick={printAddressSlips} className="inline-flex items-center justify-center gap-1.5 btn btn-primary whitespace-nowrap px-3 py-2 text-xs">
+        <Printer className="h-3.5 w-3.5" aria-hidden="true" /> Print slip
+      </button>
+    );
+  }
 
   return (
     <section className="panel p-5">

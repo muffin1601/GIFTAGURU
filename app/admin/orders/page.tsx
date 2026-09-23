@@ -2,6 +2,7 @@ import Link from "next/link";
 import { OrderStatus, PaymentStatus, type Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/utils";
+import PrintOrderDocuments from "@/components/admin/PrintOrderDocuments";
 
 const orderStatuses: OrderStatus[] = ["pending", "confirmed", "processing", "ready_to_ship", "shipped", "out_for_delivery", "delivered", "cancelled", "refunded"];
 const paymentStatuses: PaymentStatus[] = ["pending", "paid", "failed", "refunded"];
@@ -38,7 +39,11 @@ export default async function AdminOrdersPage({
       orderBy: params?.sort === "oldest" ? { createdAt: "asc" } : { createdAt: "desc" },
       skip: (page - 1) * pageSize,
       take: pageSize,
-      include: { user: { select: { fullName: true } } },
+      include: {
+        user: { select: { fullName: true } },
+        items: { select: { productName: true, variantName: true, productCode: true, quantity: true } },
+        shipments: { include: { items: { select: { productName: true, quantity: true } } } },
+      },
     }),
     prisma.order.count({ where }),
   ]);
@@ -75,11 +80,12 @@ export default async function AdminOrdersPage({
                 <th className="px-4 py-3">Order</th>
                 <th className="px-4 py-3">Delivery</th>
                 <th className="px-4 py-3">Date</th>
+                <th className="px-4 py-3"><span className="sr-only">Actions</span></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-line">
               {orders.map((order) => {
-                const address = order.shippingAddress as { name?: string } | null;
+                const address = order.shippingAddress as { name?: string; company?: string; phone?: string; line1?: string; line2?: string; landmark?: string; city?: string; state?: string; postalCode?: string; country?: string } | null;
                 return (
                   <tr key={order.id}>
                     <td className="px-4 py-3 font-semibold text-navy-950"><Link href={`/admin/orders/${order.orderNumber}`}>{order.orderNumber}</Link></td>
@@ -93,6 +99,23 @@ export default async function AdminOrdersPage({
                     <td className="px-4 py-3">{order.status}</td>
                     <td className="px-4 py-3">{order.deliveryStatus}</td>
                     <td className="px-4 py-3">{order.createdAt.toLocaleDateString("en-IN")}</td>
+                    <td className="px-4 py-3">
+                      <PrintOrderDocuments
+                        variant="slip-button"
+                        orderNumber={order.orderNumber}
+                        placedAt={order.createdAt.toLocaleString("en-IN")}
+                        customerEmail={order.email}
+                        customerPhone={order.phone}
+                        total={formatPrice(Number(order.total))}
+                        items={order.items.map((item) => ({ name: item.productName, variant: item.variantName, sku: item.productCode, quantity: item.quantity }))}
+                        shippingAddress={address ?? {}}
+                        shipments={order.shipments.map((shipment) => ({
+                          label: shipment.label,
+                          address: shipment.address as { name?: string; company?: string; phone?: string; line1?: string; line2?: string; landmark?: string; city?: string; state?: string; postalCode?: string; country?: string },
+                          items: shipment.items.map((item) => ({ name: item.productName, quantity: item.quantity })),
+                        }))}
+                      />
+                    </td>
                   </tr>
                 );
               })}
