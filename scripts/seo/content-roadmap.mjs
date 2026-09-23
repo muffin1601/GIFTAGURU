@@ -1,5 +1,5 @@
 /**
- * Generates SEO_CONTENT_ROADMAP.md from the live content modules.
+ * Generates docs/SEO_CONTENT_ROADMAP.md from the live content modules.
  *
  * Generated rather than hand-written so the roadmap cannot drift from what the
  * application actually publishes: change a meta description in code and the
@@ -195,5 +195,5 @@ w("August, and new-year planner gifting must be ordered in November to arrive");
 w("before the planner stops being useful.");
 w();
 
-fs.writeFileSync(path.join(ROOT, "SEO_CONTENT_ROADMAP.md"), out.join("\n"));
-console.log(`Wrote SEO_CONTENT_ROADMAP.md (${out.length} lines)`);
+fs.writeFileSync(path.join(ROOT, "docs", "SEO_CONTENT_ROADMAP.md"), out.join("\n"));
+console.log(`Wrote docs/SEO_CONTENT_ROADMAP.md (${out.length} lines)`);

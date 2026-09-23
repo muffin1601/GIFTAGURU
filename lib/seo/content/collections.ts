@@ -12,7 +12,7 @@
  * Gift Set. Two pages cannot own one primary. Resolution: the category page is
  * the canonical owner (it is a browse-intent query best served by a listing of
  * every eco set), and the Sage Green product moved to "sustainable gift set for
- * employees" -- previously its strongest secondary. See SEO_IMPLEMENTATION_REPORT.md.
+ * employees" -- previously its strongest secondary. See docs/SEO_IMPLEMENTATION_REPORT.md.
  *
  * Likewise "custom stationery gift set" is deliberately NOT a Premium category
  * target even though the pack lists it there: the Complete Stationery Gift Set

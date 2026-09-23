@@ -40,6 +40,15 @@ const productSeedTuples: ProductSeedTuple[] = [
   ["diwali-signature-hamper", "Diwali Signature Hamper", "premium-gift-sets", "A curated corporate Diwali hamper presented for employee, client, and partner gifting.", 1999, 20, "/Hampers/set 1/gift_set_1600x1600.webp", true],
   ["diwali-celebration-hamper", "Diwali Celebration Hamper", "premium-gift-sets", "A festive corporate hamper with a polished presentation for Diwali gifting programmes.", 2999, 15, "/Hampers/set 2/diwali_hamper_final_1600x1600.webp", true],
   ["diwali-grand-hamper", "Diwali Grand Hamper", "luxury-gift-sets", "A premium Diwali hamper for important clients, leadership teams, and special festive moments.", 3999, 10, "/Hampers/set 3/gift_hamper_1600x1600_clean (1).webp", true],
+  ["white-festive-flask-tumbler-hamper", "White Festive Flask & Tumbler Hamper", "premium-gift-sets", "A white flask, insulated tumbler, chocolates and diya gift box for corporate Diwali gifting.", 1899, 20, "/Diwali kits/Set 1/Primary.webp", true],
+  ["tan-executive-diary-flask-gift-set", "Tan Executive Diary & Flask Gift Set", "premium-gift-sets", "A tan diary, pen and flask gift box for premium employee and client Diwali gifting.", 2499, 15, "/Diwali kits/Set 2/Primary.webp", true],
+  ["white-notebook-flask-gift-set", "White Notebook & Flask Gift Set", "premium-gift-sets", "A white notebook, pen and flask corporate Diwali gift set.", 1999, 20, "/Diwali kits/Set 3/Primary.webp", true],
+  ["copper-festive-bottle-diya-hamper", "Copper Festive Bottle & Diya Hamper", "premium-gift-sets", "A copper bottle, festive diya and treats hamper for corporate Diwali gifting.", 1699, 25, "/Diwali kits/Set 4/Primary.webp", true],
+  ["copper-celebration-hamper", "Copper Celebration Hamper", "premium-gift-sets", "A copper tumbler, festive treats and diya hamper for employee Diwali gifts.", 1999, 20, "/Diwali kits/Set 5/Primary.webp", true],
+  ["black-festive-flask-cookie-hamper", "Black Festive Flask & Cookie Hamper", "premium-gift-sets", "A black flask, cookies and festive diya hamper for corporate Diwali gifting.", 1799, 25, "/Diwali kits/Set 6/primary (1).webp", true],
+  ["black-celebration-flask-mug-hamper", "Black Celebration Flask & Mug Hamper", "premium-gift-sets", "A black flask, mug, chocolates and diya gift hamper for clients and employees.", 2199, 20, "/Diwali kits/Set 7/Primary_2.webp", true],
+  ["executive-black-mug-diary-gift-box", "Executive Black Mug & Diary Gift Box", "luxury-gift-sets", "A black diary, insulated mug, chocolates and diya gift box for premium corporate Diwali gifting.", 2399, 15, "/Diwali kits/Set 8/Primary_1.webp", true],
+  ["premium-diya-glass-gift-box", "Premium Diya & Glass Gift Box", "luxury-gift-sets", "A premium glassware and diya gift box for client and leadership Diwali gifting.", 1499, 20, "/Diwali kits/Set 9/Primary.webp", true],
 ];
 
 const productSeeds = productSeedTuples.map(([slug, name, category, description, price, , image, featured = false], index) => ({

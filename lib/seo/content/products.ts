@@ -77,7 +77,7 @@ export interface ProductSeoContent {
   faqs: ProductFaq[];
 }
 
-export const productSeoContent: ProductSeoContent[] = [
+const baseProductSeoContent: ProductSeoContent[] = [
   {
     slug: "executive-onboarding-essentials-set",
     cluster: "onboarding-welcome-kits",
@@ -1359,6 +1359,44 @@ export const productSeoContent: ProductSeoContent[] = [
       { question: "Can executive Diwali gifts include personalisation?", answer: "Branding and personalisation options can be confirmed for your selected product and recipient list when you request a quote." },
     ],
   },
+];
+
+const diwaliKitSeoDetails = [
+  ["white-festive-flask-tumbler-hamper", "White Festive Flask & Tumbler Hamper", "white flask and tumbler Diwali gift set", "a white flask, insulated tumbler, festive chocolates and decorative diyas"],
+  ["tan-executive-diary-flask-gift-set", "Tan Executive Diary & Flask Gift Set", "executive Diwali diary and flask gift set", "a tan diary, matching pen and insulated flask"],
+  ["white-notebook-flask-gift-set", "White Notebook & Flask Gift Set", "white notebook and flask corporate gift set", "a white notebook, pen and insulated flask"],
+  ["copper-festive-bottle-diya-hamper", "Copper Festive Bottle & Diya Hamper", "copper bottle Diwali corporate gift hamper", "a copper-finish bottle, festive treats and decorative diyas"],
+  ["copper-celebration-hamper", "Copper Celebration Hamper", "copper Diwali gift hamper for employees", "copper-finish tumblers, festive treats and decorative diyas"],
+  ["black-festive-flask-cookie-hamper", "Black Festive Flask & Cookie Hamper", "black flask Diwali corporate gift hamper", "a black flask, cookies, festive chocolates and decorative diyas"],
+  ["black-celebration-flask-mug-hamper", "Black Celebration Flask & Mug Hamper", "black flask and mug Diwali gift hamper", "a black flask, insulated mug, festive chocolates and decorative diyas"],
+  ["executive-black-mug-diary-gift-box", "Executive Black Mug & Diary Gift Box", "executive black mug and diary Diwali gift box", "a black diary, insulated mug, festive chocolates and decorative diyas"],
+  ["premium-diya-glass-gift-box", "Premium Diya & Glass Gift Box", "premium diya and glass Diwali gift box", "two glass containers and decorative diyas in a premium presentation box"],
+] as const;
+
+export const productSeoContent: ProductSeoContent[] = [
+  ...baseProductSeoContent,
+  ...diwaliKitSeoDetails.map(([slug, name, primaryKeyword, contents]) => ({
+    slug,
+    cluster: "client-relationship-gifting" as const,
+    primaryKeyword,
+    secondaryKeywords: ["corporate Diwali gifts", "Diwali gift kits for employees", "Diwali gifts for clients", "branded Diwali corporate gifts", "bulk Diwali corporate gifts", "corporate Diwali gift hampers"],
+    seoTitle: `${name} | Corporate Diwali Gift Kit`,
+    metaDescription: `${name} for corporate Diwali gifting, employee gift kits and client festive campaigns. Explore branding and bulk-order options.`,
+    h1: name,
+    shortDescription: `${name} is a considered Diwali corporate gift kit presented with ${contents}, for employee, client and business-partner festive gifting.`,
+    detailedDescription: [
+      `This ${primaryKeyword} brings together ${contents} in one presentation-ready gift box. It is suited to corporate Diwali gifts where the recipient should receive a complete festive gesture rather than a single promotional item.`,
+      `For Diwali gift kits for employees, use a consistent selection across the team and add your logo or a message card where available. For Diwali gifts for clients, the same set can support a more personal presentation for key accounts, partners and senior contacts.`,
+      `Bulk Diwali corporate gifts need a clear recipient count, branding brief and delivery plan. Share those details with Gifta Guru to discuss available customisation and multi-location delivery for this festive corporate gift hamper.`,
+    ],
+    keyFeatures: ["Primary presentation image selected for the product gallery", "Corporate Diwali gift-kit presentation", "Suitable for employee, client and partner lists", "Branding and message-card options available on request", "Bulk corporate Diwali gifting support", "Multi-location delivery planning"],
+    useCases: ["Diwali gifts for employees", "Diwali gifts for clients and key accounts", "Corporate festive gifting programmes", "Bulk Diwali corporate gift orders"],
+    faqs: [
+      { question: `Is the ${name} suitable for corporate Diwali gifting?`, answer: "Yes. It is presented as a complete Diwali gift kit for employee, client, partner and business-recipient lists." },
+      { question: "Can this Diwali gift kit be branded?", answer: "Share your logo, quantity and selected product with the team to confirm available branding and message-card options." },
+      { question: "Can I order this Diwali hamper in bulk?", answer: "Yes. Provide the recipient quantity and delivery split for guidance on a bulk corporate Diwali gifting order." },
+    ],
+  })),
 ];
 
 /** Indexed by the canonical slug AND every alias, so either form resolves. */
