@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import ActionForm, { AdminInput, AdminSelect, AdminTextarea } from "@/components/admin/ActionForm";
+import PrintOrderDocuments from "@/components/admin/PrintOrderDocuments";
 import { updateDeliveryAction, updateOrderStatusAction } from "@/lib/actions/admin";
 import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/utils";
@@ -33,6 +34,8 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
     company?: string;
     phone?: string;
     line1?: string;
+    line2?: string;
+    landmark?: string;
     city?: string;
     state?: string;
     postalCode?: string;
@@ -64,6 +67,21 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
               <Info label="Total" value={formatPrice(Number(order.total))} />
             </dl>
           </section>
+
+          <PrintOrderDocuments
+            orderNumber={order.orderNumber}
+            placedAt={order.createdAt.toLocaleString("en-IN")}
+            customerEmail={order.email}
+            customerPhone={order.phone}
+            total={formatPrice(Number(order.total))}
+            items={order.items.map((item) => ({ name: item.productName, variant: item.variantName, quantity: item.quantity, sku: item.variant?.sku ?? item.productCode }))}
+            shippingAddress={address ?? {}}
+            shipments={order.shipments.map((shipment) => ({
+              label: shipment.label,
+              address: shipment.address as { name?: string; company?: string; phone?: string; line1?: string; line2?: string; landmark?: string; city?: string; state?: string; postalCode?: string; country?: string },
+              items: shipment.items.map((item) => ({ name: item.productName, quantity: item.quantity })),
+            }))}
+          />
 
           <section className="panel p-5">
             <h2 className="font-display text-2xl text-navy-950">Customer and delivery</h2>

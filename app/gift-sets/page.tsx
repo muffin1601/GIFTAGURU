@@ -62,6 +62,20 @@ export default function GiftSetsHubPage() {
             "Every configuration supports company logo branding, and the notebook or journal in each can carry an individual recipient name. Adding a name to a three-piece set does more for how the gift lands than adding a fourth item to it.",
           ],
         },
+        {
+          heading: "Corporate gift kits by recipient and occasion",
+          body: [
+            "Corporate gift kits should be chosen for the recipient before their piece count. A two or three item corporate gift kit is often enough for a broad employee list, a new employee welcome kit or an event delegate programme because every item can be useful and the presentation stays compact. Four item corporate gift sets add the substance that client gifting and middle-tier recognition often need. Larger premium and luxury corporate gift kits are best reserved for leadership, flagship accounts and important partners, where the relationship supports a more considered presentation.",
+            "For Diwali corporate gifting, the same structure makes procurement simpler. Choose a consistent Diwali gift kit for employees, then consider a premium Diwali corporate gift set for clients and senior recipients. The aim is not to increase item count for its own sake. Each piece should earn its place, work together visually and fit securely in the box. A well-presented three-piece gift set regularly makes a stronger impression than a padded four-piece set.",
+          ],
+        },
+        {
+          heading: "Branded, customised and sustainable gift sets",
+          body: [
+            "Logo branding turns a gift set into a company programme, while a recipient name turns it into a personal gesture. Many teams use both: understated branding on the box and a name, initials or message card inside. The available branding method depends on the selected product, so use the product page and bulk enquiry to confirm what is possible before planning a personalised run.",
+            "Sustainable corporate gift kits deserve the same level of scrutiny as any other set. Look for materials and packaging that fit the brief, then make sure the contents are useful enough to stay in use. This is especially important for eco-friendly Diwali gift kits, employee welcome kits and large corporate gifting programmes, where a durable desk item has a longer life than a novelty product.",
+          ],
+        },
       ]}
     />
   );

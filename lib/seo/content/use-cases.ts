@@ -605,4 +605,93 @@ export const useCasePages: LandingPageContent[] = [
       { label: "custom logo branding options", href: "/custom-gifts" },
     ],
   },
+  {
+    slug: "tech-corporate-gifts",
+    primaryKeyword: "corporate tech gifts",
+    secondaryKeywords: [
+      "tech corporate gifts",
+      "branded tech gifts",
+      "customized tech gifts",
+      "premium tech corporate gifts",
+      "corporate technology gifts",
+      "corporate electronics gifts",
+      "branded corporate gadgets",
+      "tech gifts for employees",
+      "tech gifts for clients",
+      "corporate tech gifting kits",
+      "diwali tech corporate gifts",
+    ],
+    seoTitle: "Corporate Tech Gifts & Branded Gadget Gift Kits",
+    metaDescription:
+      "Corporate tech gifts and branded gadget gift kits for employees, clients and Diwali gifting. Plan customised technology gifts and bulk delivery with Gifta Guru.",
+    h1: "Corporate Tech Gifts & Branded Gadget Gift Kits",
+    intro: [
+      "Corporate tech gifts work best when they solve a small, everyday problem. Useful technology gifts and desk accessories earn a place in an employee's routine, while branded tech gifting kits give a client or partner something more considered than a giveaway. The right choice depends on who will receive it, how often they will use it and whether the gift needs to travel to individual addresses.",
+      "For a company-wide programme, choose a practical, easy-to-pack corporate tech gift rather than a complicated gadget. For a shorter client or leadership list, a premium corporate gift kit with a technology-led item can support a more polished presentation. Product pages remain the source of truth for each item's exact features, compatibility and available customisation.",
+    ],
+    sections: [
+      {
+        heading: "Choosing technology gifts for employees",
+        body: [
+          "Tech gifts for employees need to be useful across roles. A large, specialist gadget may suit a narrow audience but becomes difficult to distribute fairly across a full team. Start with the working environment instead: remote teams need compact items that travel safely; office teams often value desk-ready accessories; new employees need a kit that complements their first-day essentials rather than duplicating them.",
+          "Corporate tech gifting can sit alongside a notebook, planner or welcome card in a coordinated kit. This lets the company create a useful employee gift without depending on one electronic item to carry the whole experience. For employee welcome kits, use branding consistently and consider adding names where the gift marks an individual joining moment.",
+        ],
+      },
+      {
+        heading: "Branded tech gifts for clients and partners",
+        body: [
+          "Tech gifts for clients should feel selected for the relationship, not sent as generic promotional merchandise. A restrained logo, quality presentation and a useful purpose are more important than novelty. For key accounts, pair a technology-led item with a premium corporate gift kit or a personalised message so the gift has context beyond the brand mark.",
+          "Channel partners, distributors and event speakers may need a more scalable approach. In those cases, branded corporate gadgets can be used as part of a tiered programme: a dependable standard kit for the broader group and a premium technology gift for a small list of high-value contacts. This keeps the gifting logic clear without forcing one item onto every recipient.",
+        ],
+      },
+      {
+        heading: "Customized tech gifts and bulk corporate orders",
+        body: [
+          "Customised tech gifts require an accurate brief before production starts. Share the recipient count, intended use, logo files, preferred branding placement and delivery split when requesting a quote. The selected product determines the available application method, so artwork should be reviewed against the live product rather than assumed from a generic image.",
+          "For bulk corporate tech gifting, packaging and delivery planning matter as much as the item itself. Confirm whether the order goes to one office, several city offices or named home addresses. A clear split lets the team recommend a practical gift kit and quote the programme around the actual dispatch requirement. For repeat employee programmes, preserve the approved artwork and product specification so future batches stay consistent.",
+        ],
+      },
+      {
+        heading: "Diwali tech corporate gifts and premium tiers",
+        body: [
+          "Diwali tech corporate gifts can be a useful alternative for companies that want festive gifting to remain relevant after the season. Use a consistent technology-led gift kit for employees or a broader partner list, then create a premium Diwali tech gift tier for clients, leadership and selected business relationships. A premium tier should offer a better overall presentation, not simply a larger logo.",
+          "The same campaign can include branded tech gifts, sustainable desk items and traditional corporate gift sets when each tier has a clear recipient purpose. Start with the size of the list and the relationship, then choose products that fit the programme. This avoids a one-size-fits-all Diwali gift that is either too expensive for volume or too ordinary for key accounts.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "What are good corporate tech gifts for employees?",
+        answer:
+          "Choose useful, easy-to-distribute technology gifts or desk accessories that fit a range of roles. For a stronger employee experience, combine the selected tech item with a notebook, pen or welcome card in a coordinated corporate gifting kit.",
+      },
+      {
+        question: "Can corporate tech gifts be branded with our logo?",
+        answer:
+          "Branding availability depends on the selected product and its material. Share your logo and product shortlist with the enquiry so the available customisation approach can be confirmed before production.",
+      },
+      {
+        question: "How should we plan bulk delivery for corporate gadgets?",
+        answer:
+          "Provide the total quantity and whether delivery is to one office, multiple offices or individual recipients. That lets the team plan packaging and quote the delivery split around the actual programme.",
+      },
+      {
+        question: "Are tech gifts suitable for corporate Diwali gifting?",
+        answer:
+          "Yes. A practical tech-led gift can work well for employee and partner lists, while a more premium gift kit can be reserved for key clients and leadership. Choose the tier by recipient relationship and the product by its long-term usefulness.",
+      },
+    ],
+    recommendedProductSlugs: [
+      "compact-corporate-welcome-kit",
+      "executive-onboarding-essentials-set",
+      "client-appreciation-desk-set",
+      "black-gold-premium-notebook-set",
+    ],
+    relatedLinks: [
+      { label: "corporate Diwali gift kits", href: "/diwali-2026" },
+      { label: "employee welcome kits", href: "/gifting/employee-onboarding" },
+      { label: "bulk corporate gifting", href: "/gifting/bulk-corporate-gifting" },
+      { label: "custom branded gifts", href: "/custom-gifts" },
+    ],
+  },
 ];
