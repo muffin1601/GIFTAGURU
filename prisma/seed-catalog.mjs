@@ -3,6 +3,7 @@ import "dotenv/config";
 import { readdir } from "node:fs/promises";
 import path from "node:path";
 import { Pool } from "pg";
+import { contentRecord, hamperContent } from "./product-content-data.mjs";
 
 const connectionString = process.env.DIRECT_URL || process.env.DATABASE_URL;
 
@@ -63,9 +64,9 @@ const productMeta = {
 };
 
 const hamperMeta = [
-  ["set 1", "Diwali Signature Hamper", "premium-gift-sets", ["corporate-gifts", "premium-gifts", "festive-corporate-gifts", "gift-sets-hampers"], 1999, 5, "GG-HAMP-01-STD"],
-  ["set 2", "Diwali Celebration Hamper", "premium-gift-sets", ["corporate-gifts", "premium-gifts", "festive-corporate-gifts", "gift-sets-hampers"], 2999, 5, "GG-HAMP-02-STD"],
-  ["set 3", "Diwali Grand Hamper", "luxury-gift-sets", ["corporate-gifts", "luxury-gifts", "festive-corporate-gifts", "gift-sets-hampers"], 3999, 5, "GG-HAMP-03-STD"],
+  ["set 1", "diwali-signature-hamper", "Utsav-on-the-go Hamper", "premium-gift-sets", ["corporate-gifts", "premium-gifts", "festive-corporate-gifts", "gift-sets-hampers"], 1999, 5, "GG-HAMP-01-STD"],
+  ["set 2", "diwali-celebration-hamper", "The Diwali Delight Box", "premium-gift-sets", ["corporate-gifts", "premium-gifts", "festive-corporate-gifts", "gift-sets-hampers"], 2999, 5, "GG-HAMP-02-STD"],
+  ["set 3", "diwali-grand-hamper", "Shubh Utsav Hamper", "luxury-gift-sets", ["corporate-gifts", "luxury-gifts", "festive-corporate-gifts", "gift-sets-hampers"], 3999, 5, "GG-HAMP-03-STD"],
 ];
 
 const diwaliKitMeta = [
@@ -212,20 +213,25 @@ async function seedProducts() {
 }
 
 async function seedHampers() {
-  for (const [folder, name, categorySlug, collectionSlugs, price, minOrderQuantity, sku] of hamperMeta) {
+  for (const [folder, slug, name, categorySlug, collectionSlugs, price, minOrderQuantity, sku] of hamperMeta) {
     console.log(`Seeding hamper ${folder}: ${name}`);
     const category = await one("select id from public.categories where slug = $1", [categorySlug]);
+    const structured = contentRecord(hamperContent[slug]);
     const product = await one(
       `insert into public.products
        (slug, name, description, category_id, base_price, compare_at_price, is_customizable,
-        min_order_quantity, occasion_tags, status, is_featured, avg_rating, review_count)
-       values ($1, $2, $3, $4, $5, $6, true, $7, $8, 'active', true, 0, 0)
+        min_order_quantity, occasion_tags, status, is_featured, avg_rating, review_count,
+        long_description, key_features, specifications, package_includes, content_source, last_verified_at)
+       values ($1, $2, $3, $4, $5, $6, true, $7, $8, 'active', true, 0, 0, $9, $10::jsonb, $11::jsonb, $12::jsonb, $13, now())
        on conflict (slug) do update set name = excluded.name, description = excluded.description,
        category_id = excluded.category_id, base_price = excluded.base_price,
        compare_at_price = excluded.compare_at_price, min_order_quantity = excluded.min_order_quantity,
-       occasion_tags = excluded.occasion_tags, status = excluded.status, is_featured = excluded.is_featured
+       occasion_tags = excluded.occasion_tags, status = excluded.status, is_featured = excluded.is_featured,
+       long_description = excluded.long_description, key_features = excluded.key_features,
+       specifications = excluded.specifications, package_includes = excluded.package_includes,
+       content_source = excluded.content_source, last_verified_at = excluded.last_verified_at
        returning id`,
-      [slugify(name), name, `${name} curated for corporate Diwali gifting, custom branding, and bulk festive orders.`, category.id, price, Math.round(price * 1.18), minOrderQuantity, collectionSlugs],
+      [slug, name, structured.description ?? `${name} curated for corporate Diwali gifting, custom branding, and bulk festive orders.`, category.id, price, Math.round(price * 1.18), minOrderQuantity, collectionSlugs, structured.longDescription, JSON.stringify(structured.keyFeatures), JSON.stringify(structured.specifications), JSON.stringify(structured.packageIncludes), "User-provided Diwali hamper references"],
     );
     const variant = await one(
       `insert into public.product_variants (product_id, name, sku, is_default)

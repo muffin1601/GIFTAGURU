@@ -16,6 +16,8 @@ import {
 } from "@/lib/actions/catalog";
 import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/utils";
+import ProductContentEditor from "@/components/admin/ProductContentEditor";
+import { asFaqs, asFeatures, asSpecifications, asStringItems } from "@/lib/product-content";
 
 export default async function AdminProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -176,6 +178,20 @@ export default async function AdminProductDetailPage({ params }: { params: Promi
                 Description
                 <AdminTextarea name="description" rows={4} defaultValue={product.description ?? ""} />
               </label>
+              <ProductContentEditor value={{
+                longDescription: product.longDescription,
+                keyFeatures: asFeatures(product.keyFeatures),
+                specifications: asSpecifications(product.specifications),
+                packageIncludes: asStringItems(product.packageIncludes),
+                customizationOptions: asStringItems(product.customizationOptions),
+                brandingMethods: asStringItems(product.brandingMethods),
+                additionalDetails: asSpecifications(product.additionalDetails),
+                faqs: asFaqs(product.faqs),
+                seoDescription: product.seoDescription,
+                contentSource: product.contentSource,
+                sourceUrl: product.sourceUrl,
+                lastVerifiedAt: product.lastVerifiedAt?.toISOString() ?? null,
+              }} />
               <label className="space-y-1 text-sm font-medium text-navy-950">
                 Base price (INR)
                 <AdminInput name="basePrice" type="number" min={0} step="0.01" required defaultValue={Number(product.basePrice)} />

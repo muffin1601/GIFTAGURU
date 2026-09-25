@@ -342,6 +342,18 @@ model Product {
   name                  String
   productCode           String?                    @unique @map("product_code")
   description           String?
+  longDescription       String?                    @map("long_description") @db.Text
+  keyFeatures           Json                       @default("[]") @map("key_features")
+  specifications        Json                       @default("[]")
+  packageIncludes       Json                       @default("[]") @map("package_includes")
+  customizationOptions  Json                       @default("[]") @map("customization_options")
+  brandingMethods       Json                       @default("[]") @map("branding_methods")
+  additionalDetails     Json                       @default("[]") @map("additional_details")
+  faqs                   Json                       @default("[]")
+  seoDescription        String?                    @map("seo_description") @db.Text
+  contentSource         String?                    @map("content_source")
+  sourceUrl             String?                    @map("source_url")
+  lastVerifiedAt        DateTime?                  @map("last_verified_at") @db.Timestamptz(6)
   categoryId            String?                    @map("category_id") @db.Uuid
   basePrice             Decimal                    @map("base_price") @db.Decimal(10, 2)
   compareAtPrice        Decimal?                   @map("compare_at_price") @db.Decimal(10, 2)

@@ -36,6 +36,15 @@ export interface StorefrontProductDetail {
   slug: string;
   name: string;
   description: string | null;
+  longDescription: string | null;
+  keyFeatures: { title: string; description: string }[];
+  specifications: { label: string; value: string }[];
+  packageIncludes: string[];
+  customizationOptions: string[];
+  brandingMethods: string[];
+  additionalDetails: { label: string; value: string }[];
+  faqs: { question: string; answer: string }[];
+  seoDescription: string | null;
   categorySlug: string | null;
   categoryName: string | null;
   basePrice: number;

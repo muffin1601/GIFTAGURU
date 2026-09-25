@@ -2,6 +2,7 @@ import ActionForm, { AdminInput, AdminTextarea } from "@/components/admin/Action
 import { createProductAction } from "@/lib/actions/catalog";
 import { prisma } from "@/lib/prisma";
 import ProductCategoryCodePreview from "@/components/admin/ProductCategoryCodePreview";
+import ProductContentEditor from "@/components/admin/ProductContentEditor";
 
 export default async function NewProductPage() {
   const [categories, sequences] = await Promise.all([
@@ -42,6 +43,7 @@ export default async function NewProductPage() {
             Description
             <AdminTextarea name="description" rows={3} />
           </label>
+          <ProductContentEditor />
           <label className="space-y-1 text-sm font-medium text-navy-950">
             Base price (INR)
             <AdminInput name="basePrice" type="number" min={0} step="0.01" required />

@@ -8,6 +8,19 @@ import {
 } from "@/data/products";
 import type { Product } from "@/types";
 import type { StorefrontProductDetail } from "@/types/storefront";
+import { asFaqs, asFeatures, asSpecifications, asStringItems } from "@/lib/product-content";
+
+const emptyProductContent = {
+  longDescription: null,
+  keyFeatures: [],
+  specifications: [],
+  packageIncludes: [],
+  customizationOptions: [],
+  brandingMethods: [],
+  additionalDetails: [],
+  faqs: [],
+  seoDescription: null,
+};
 
 // The database stores a complete gallery for every hamper. Keep the local
 // catalog equally useful when no database is configured, so each dedicated
@@ -75,6 +88,15 @@ interface ProductDetailRow {
   slug: string;
   name: string;
   description: string | null;
+  long_description: string | null;
+  key_features: unknown;
+  specifications: unknown;
+  package_includes: unknown;
+  customization_options: unknown;
+  branding_methods: unknown;
+  additional_details: unknown;
+  faqs: unknown;
+  seo_description: string | null;
   base_price: number;
   compare_at_price: number | null;
   is_customizable: boolean;
@@ -497,6 +519,15 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
       slug: product.slug,
       name: product.name,
       description: product.description,
+      longDescription: product.longDescription,
+      keyFeatures: asFeatures(product.keyFeatures),
+      specifications: asSpecifications(product.specifications),
+      packageIncludes: asStringItems(product.packageIncludes),
+      customizationOptions: asStringItems(product.customizationOptions),
+      brandingMethods: asStringItems(product.brandingMethods),
+      additionalDetails: asSpecifications(product.additionalDetails),
+      faqs: asFaqs(product.faqs),
+      seoDescription: product.seoDescription,
       categorySlug: product.category?.slug ?? null,
       categoryName: product.category?.name ?? null,
       basePrice: toNumber(product.basePrice),
@@ -548,6 +579,7 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
       slug: fallback.slug,
       name: fallback.name,
       description: fallback.description,
+      ...emptyProductContent,
       categorySlug: fallback.category,
       categoryName: fallback.category,
       basePrice: fallback.price ?? 0,
@@ -585,6 +617,8 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
     .from("products")
     .select(
       `id, slug, name, description, base_price, compare_at_price, is_customizable,
+       long_description, key_features, specifications, package_includes, customization_options,
+       branding_methods, additional_details, faqs, seo_description,
        min_order_quantity, occasion_tags, avg_rating, review_count,
        categories(slug, name),
        product_images(url, alt_text, sort_order),
@@ -606,6 +640,7 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
       slug: fallback.slug,
       name: fallback.name,
       description: fallback.description,
+      ...emptyProductContent,
       categorySlug: fallback.category,
       categoryName: fallback.category,
       basePrice: fallback.price ?? 0,
@@ -665,6 +700,15 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
     slug: row.slug,
     name: row.name,
     description: row.description,
+    longDescription: row.long_description,
+    keyFeatures: asFeatures(row.key_features),
+    specifications: asSpecifications(row.specifications),
+    packageIncludes: asStringItems(row.package_includes),
+    customizationOptions: asStringItems(row.customization_options),
+    brandingMethods: asStringItems(row.branding_methods),
+    additionalDetails: asSpecifications(row.additional_details),
+    faqs: asFaqs(row.faqs),
+    seoDescription: row.seo_description,
     categorySlug: category?.slug ?? null,
     categoryName: category?.name ?? null,
     basePrice: row.base_price,

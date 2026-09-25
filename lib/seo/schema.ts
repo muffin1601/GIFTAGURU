@@ -141,6 +141,7 @@ interface ProductSchemaInput {
   inStock: boolean;
   avgRating?: number;
   reviewCount?: number;
+  material?: string;
 }
 
 /**
@@ -162,6 +163,7 @@ export function productSchema(input: ProductSchemaInput) {
     // help, so root-relative paths must be resolved here explicitly.
     image: input.images.map((image) => absoluteUrl(image)),
     ...(input.sku ? { sku: input.sku } : {}),
+    ...(input.material ? { material: input.material } : {}),
     brand: { "@type": "Brand", name: SITE_NAME },
     offers: {
       "@type": "Offer",

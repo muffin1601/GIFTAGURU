@@ -43,9 +43,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const seo = getProductSeoContent(product.slug);
 
   const description = seo
-    ? seo.metaDescription
+    ? product.seoDescription || seo.metaDescription
     : truncateDescription(
-        product.description || `${product.name}, curated for corporate gifting by Gifta Guru.`,
+        product.seoDescription || product.longDescription || product.description || `${product.name}, curated for corporate gifting by Gifta Guru.`,
       );
 
   return pageMetadata({
@@ -102,6 +102,19 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const inStock = product.variants.some((variant) => variant.inStock);
   const seo = getProductSeoContent(product.slug);
   const clusterLinks = seo ? productClusterLinks[seo.cluster] : [];
+  const hasStructuredContent = Boolean(
+    product.longDescription || product.keyFeatures.length || product.specifications.length ||
+    product.packageIncludes.length || product.customizationOptions.length ||
+    product.brandingMethods.length || product.additionalDetails.length || product.faqs.length,
+  );
+  const visibleFaqs = product.faqs.length > 0 ? product.faqs : (hasStructuredContent ? [] : seo?.faqs ?? []);
+  const schemaDescription = product.seoDescription || product.longDescription || product.description || `${product.name}, curated for corporate gifting by Gifta Guru.`;
+  const material = product.specifications.find((item) => item.label.toLowerCase().startsWith("material"))?.value;
+  const displaySpecifications = product.specifications.length > 0 ? product.specifications : [
+    ...(product.variants[0]?.sku ? [{ label: "Product code", value: product.variants[0].sku }] : []),
+    { label: "Minimum quantity", value: `${minimumQuantity} units` },
+    { label: "Customization", value: product.isCustomizable ? "Available" : "Not available" },
+  ];
 
   return (
     <>
@@ -113,10 +126,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             { name: product.name, path: `/products/${product.slug}` },
           ]),
           // Only ever the FAQs rendered visibly further down this page.
-          faqPageSchema(seo?.faqs ?? []),
+          faqPageSchema(visibleFaqs),
           productSchema({
             name: product.name,
-            description: product.description || `${product.name}, curated for corporate gifting by Gifta Guru.`,
+            description: schemaDescription,
             slug: product.slug,
             images: product.images.map((image) => image.url),
             sku: product.variants[0]?.sku ?? undefined,
@@ -124,6 +137,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             inStock,
             avgRating: product.avgRating || undefined,
             reviewCount: product.reviewCount,
+            material,
           }),
         ]}
       />
@@ -164,7 +178,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               </div>
             ) : null}
 
-            <p className="type-lead mt-5">{seo?.shortDescription ?? product.description}</p>
+            <p className="type-lead mt-5">{hasStructuredContent ? product.description : seo?.shortDescription ?? product.description}</p>
 
             <div className="mt-8 flex flex-wrap items-baseline gap-x-3 gap-y-1 border-t border-line pt-8">
               <span className="font-display text-3xl text-navy-950">
@@ -255,9 +269,45 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           ))}
         </div>
 
-        <section className="mt-16 border-t border-line pt-10">
-          <h2 className="type-h2">Product details</h2>
-          <div className="mt-8 max-w-3xl">
+        {hasStructuredContent ? (
+          <div className="mt-16 max-w-5xl space-y-14 border-t border-line pt-10">
+            {product.longDescription ? (
+              <section aria-labelledby="product-description">
+                <h2 id="product-description" className="type-h2">Product description</h2>
+                <p className="type-body mt-6 max-w-4xl whitespace-pre-line">{product.longDescription}</p>
+              </section>
+            ) : null}
+            {product.keyFeatures.length > 0 ? (
+              <section aria-labelledby="key-features">
+                <h2 id="key-features" className="type-h2">Key features</h2>
+                <ul className="mt-6 grid gap-x-10 gap-y-5 md:grid-cols-2">
+                  {product.keyFeatures.map((feature) => <li key={`${feature.title}-${feature.description}`} className="border-b border-line pb-4"><h3 className="font-semibold text-navy-950">{feature.title}</h3><p className="type-body mt-1">{feature.description}</p></li>)}
+                </ul>
+              </section>
+            ) : null}
+            {displaySpecifications.length > 0 ? (
+              <section aria-labelledby="specifications">
+                <h2 id="specifications" className="type-h2">Specifications</h2>
+                <dl className="mt-6 max-w-4xl border-t border-line">
+                  {displaySpecifications.map((specification) => <div key={`${specification.label}-${specification.value}`} className="grid gap-1 border-b border-line py-3 sm:grid-cols-[minmax(10rem,0.7fr)_1.5fr] sm:gap-8"><dt className="font-semibold text-navy-950">{specification.label}</dt><dd className="type-body break-words">{specification.value}</dd></div>)}
+                </dl>
+              </section>
+            ) : null}
+            {product.packageIncludes.length > 0 ? (
+              <section aria-labelledby="package-includes">
+                <h2 id="package-includes" className="type-h2">{product.packageIncludes.length > 1 && product.name.toLowerCase().includes("hamper") ? "Hamper includes" : "Package includes"}</h2>
+                <ul className="mt-6 grid gap-3 sm:grid-cols-2">{product.packageIncludes.map((item) => <li key={item} className="type-body flex gap-3"><span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-600" /><span>{item}</span></li>)}</ul>
+              </section>
+            ) : null}
+            {product.customizationOptions.length > 0 ? <section aria-labelledby="customization-options"><h2 id="customization-options" className="type-h2">Customization options</h2><ul className="mt-6 space-y-3">{product.customizationOptions.map((item) => <li key={item} className="type-body">{item}</li>)}</ul></section> : null}
+            {product.brandingMethods.length > 0 ? <section aria-labelledby="branding-methods"><h2 id="branding-methods" className="type-h2">Branding methods</h2><ul className="mt-6 space-y-3">{product.brandingMethods.map((item) => <li key={item} className="type-body">{item}</li>)}</ul></section> : null}
+            {product.additionalDetails.length > 0 ? <section aria-labelledby="additional-details"><h2 id="additional-details" className="type-h2">Additional product details</h2><dl className="mt-6 max-w-4xl border-t border-line">{product.additionalDetails.map((detail) => <div key={`${detail.label}-${detail.value}`} className="grid gap-1 border-b border-line py-3 sm:grid-cols-[minmax(10rem,0.7fr)_1.5fr] sm:gap-8"><dt className="font-semibold text-navy-950">{detail.label}</dt><dd className="type-body break-words">{detail.value}</dd></div>)}</dl></section> : null}
+            {product.faqs.length > 0 ? <section aria-labelledby="product-faq"><h2 id="product-faq" className="type-h2">Frequently asked questions</h2><dl className="mt-8 max-w-4xl space-y-8">{product.faqs.map((faq) => <div key={faq.question}><dt className="font-display text-lg text-navy-950">{faq.question}</dt><dd className="type-body mt-2">{faq.answer}</dd></div>)}</dl></section> : null}
+          </div>
+        ) : (
+          <section className="mt-16 border-t border-line pt-10">
+            <h2 className="type-h2">Product details</h2>
+            <div className="mt-8 max-w-3xl">
             <ProductDetailAccordion
               sections={[
                 {
@@ -307,13 +357,14 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                 },
               ]}
             />
-          </div>
-        </section>
+            </div>
+          </section>
+        )}
 
         {/* Editorial SEO content. Present for the 24 catalog sets that have an
             entry in lib/seo/content/products.ts; a product added later simply
             renders the sections above until copy is written for it. */}
-        {seo ? (
+        {seo && !hasStructuredContent ? (
           <>
             <section className="mt-16 border-t border-line pt-10">
               <h2 className="type-h2">About this gift set</h2>

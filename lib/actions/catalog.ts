@@ -11,6 +11,7 @@ import { prisma } from "@/lib/prisma";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { slugify } from "@/lib/utils";
 import { MIN_ORDER_QUANTITY } from "@/lib/config/store";
+import { productContentFromFormData } from "@/lib/product-content";
 import {
   allocateCategoryProductCode,
   isValidProductCodePrefix,
@@ -328,6 +329,8 @@ export async function createProductAction(_state: ActionState, formData: FormDat
   const admin = await requireAdmin();
   const parsed = createProductSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid product." };
+  const content = productContentFromFormData(formData);
+  if (!content.success) return { error: content.error.issues[0]?.message ?? "Invalid product content." };
 
   if (parsed.data.compareAtPrice && Number(parsed.data.compareAtPrice) <= parsed.data.basePrice) {
     return { error: "Compare-at price must be higher than the selling price." };
@@ -351,6 +354,18 @@ export async function createProductAction(_state: ActionState, formData: FormDat
       productCode,
       slug,
       description: parsed.data.description || null,
+      longDescription: content.data.longDescription || null,
+      keyFeatures: content.data.keyFeatures,
+      specifications: content.data.specifications,
+      packageIncludes: content.data.packageIncludes,
+      customizationOptions: content.data.customizationOptions,
+      brandingMethods: content.data.brandingMethods,
+      additionalDetails: content.data.additionalDetails,
+      faqs: content.data.faqs,
+      seoDescription: content.data.seoDescription || null,
+      contentSource: content.data.contentSource || null,
+      sourceUrl: content.data.sourceUrl || null,
+      lastVerifiedAt: content.data.lastVerifiedAt ? new Date(`${content.data.lastVerifiedAt}T00:00:00.000Z`) : null,
       categoryId: parsed.data.categoryId,
       basePrice: parsed.data.basePrice,
       compareAtPrice: parsed.data.compareAtPrice ? Number(parsed.data.compareAtPrice) : null,
@@ -383,6 +398,8 @@ export async function updateProductAction(_state: ActionState, formData: FormDat
   const admin = await requireAdmin();
   const parsed = updateProductSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid product." };
+  const content = productContentFromFormData(formData);
+  if (!content.success) return { error: content.error.issues[0]?.message ?? "Invalid product content." };
 
   if (parsed.data.compareAtPrice && Number(parsed.data.compareAtPrice) <= parsed.data.basePrice) {
     return { error: "Compare-at price must be higher than the selling price." };
@@ -405,6 +422,18 @@ export async function updateProductAction(_state: ActionState, formData: FormDat
         name: parsed.data.name,
         slug,
         description: parsed.data.description || null,
+        longDescription: content.data.longDescription || null,
+        keyFeatures: content.data.keyFeatures,
+        specifications: content.data.specifications,
+        packageIncludes: content.data.packageIncludes,
+        customizationOptions: content.data.customizationOptions,
+        brandingMethods: content.data.brandingMethods,
+        additionalDetails: content.data.additionalDetails,
+        faqs: content.data.faqs,
+        seoDescription: content.data.seoDescription || null,
+        contentSource: content.data.contentSource || null,
+        sourceUrl: content.data.sourceUrl || null,
+        lastVerifiedAt: content.data.lastVerifiedAt ? new Date(`${content.data.lastVerifiedAt}T00:00:00.000Z`) : null,
         categoryId: parsed.data.categoryId || null,
         basePrice: parsed.data.basePrice,
         compareAtPrice: parsed.data.compareAtPrice ? Number(parsed.data.compareAtPrice) : null,
