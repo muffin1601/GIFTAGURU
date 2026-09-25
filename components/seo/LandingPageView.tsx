@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import Container from "@/components/ui/Container";
 import ProductCard from "@/components/ui/ProductCard";
 import Button from "@/components/ui/Button";
@@ -8,6 +9,18 @@ import { breadcrumbSchema, faqPageSchema } from "@/lib/seo/schema";
 import { expandProductSlugs } from "@/lib/seo/content/products";
 import type { LandingFamily, LandingPageContent } from "@/lib/seo/content/types";
 import { landingFamilies } from "@/lib/seo/content/types";
+
+function heroImage(family: LandingFamily) {
+  const images: Record<LandingFamily, string> = {
+    industries: "/BANNERS/LUXURY.png",
+    gifting: "/BANNERS/JOINING.png",
+    occasions: "/BANNERS/LUXURY.png",
+    "gift-sets": "/BANNERS/PREMIUM.png",
+    guides: "/BANNERS/ECO.png",
+  };
+
+  return images[family];
+}
 
 /**
  * The single renderer behind every editorial SEO landing page (industry,
@@ -48,7 +61,7 @@ export default async function LandingPageView({
         ]}
       />
 
-      <section className="border-b border-line">
+      <section className="border-b border-line bg-sunken">
         <Container className="pt-6 sm:pt-8">
           <nav className="type-meta flex flex-wrap items-center gap-2" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-navy-950">Home</Link>
@@ -58,8 +71,8 @@ export default async function LandingPageView({
             <span className="text-navy-950">{content.h1}</span>
           </nav>
         </Container>
-        <Container className="pb-14 pt-6 sm:pb-16">
-          <div className="max-w-3xl">
+        <Container className="grid gap-8 pb-10 pt-6 sm:pb-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(20rem,1.1fr)] lg:items-center lg:gap-12 lg:pb-0">
+          <div className="max-w-3xl lg:py-12">
             <span className="type-eyebrow">{config.label}</span>
             <h1 className="type-h1 mt-4">{content.h1}</h1>
             {content.intro.map((paragraph) => (
@@ -69,10 +82,20 @@ export default async function LandingPageView({
               Request a Custom Quote
             </Button>
           </div>
+          <div className="relative order-first aspect-[16/9] overflow-hidden rounded-[3px] border border-line bg-surface lg:order-none lg:aspect-auto lg:self-stretch">
+            <Image
+              src={heroImage(family)}
+              alt={`${config.label} corporate gifting`}
+              fill
+              priority
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-contain px-4 sm:px-8"
+            />
+          </div>
         </Container>
       </section>
 
-      <Container className="py-14 sm:py-16">
+      <Container className="section">
         <div className="max-w-3xl space-y-12">
           {content.sections.map((section) => (
             <section key={section.heading}>

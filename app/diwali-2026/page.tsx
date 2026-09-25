@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
-import ProductCard from "@/components/ui/ProductCard";
+import HomeProductCard from "@/components/home/HomeProductCard";
 import JsonLd from "@/components/seo/JsonLd";
 import { getProductsBySlugs } from "@/lib/data/products";
 import { siteUrl } from "@/lib/env";
@@ -135,6 +135,30 @@ export default async function Diwali2026Page() {
         </Container>
       </section>
 
+      {otherDiwaliProducts.length > 0 ? (
+        <section className="border-b border-line bg-surface">
+          <Container className="section">
+            <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+              <div className="max-w-3xl">
+                <span className="type-eyebrow">Diwali 2026 catalogue</span>
+                <h2 className="type-h2 mt-3">Explore Diwali Gift Kits and Gift Sets</h2>
+                <p className="type-body mt-4">
+                  Corporate-ready Diwali gifting options for employee, client, partner and leadership lists.
+                </p>
+              </div>
+              <Link href="/gift-sets" className="link-underline text-sm text-navy-950">
+                Browse all corporate gift sets
+              </Link>
+            </div>
+            <div className="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+              {otherDiwaliProducts.map((product) => (
+                <HomeProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </Container>
+        </section>
+      ) : null}
+
       {highlightedHampers.length > 0 ? (
         <section className="overflow-hidden bg-navy-950 py-14 sm:py-20">
           <Container>
@@ -152,7 +176,7 @@ export default async function Diwali2026Page() {
                 {highlightedHampers.map((product, index) => (
                   <div key={product.id} className="bg-cream-100 p-5 sm:p-6">
                     <span className="type-eyebrow text-gold-700">Hamper 0{index + 1}</span>
-                    <ProductCard product={product} />
+                    <HomeProductCard product={product} />
                   </div>
                 ))}
               </div>
@@ -280,23 +304,6 @@ export default async function Diwali2026Page() {
             ))}
           </div>
         </section>
-
-        {otherDiwaliProducts.length > 0 ? (
-          <section className="mt-16 border-t border-line pt-10">
-            <h2 className="type-h2">Diwali Gift Kits and Gift Sets</h2>
-            <p className="type-body mt-4 max-w-3xl">
-              More catalogue Gift Sets selected for employee, client, partner and leadership Diwali gifting.
-            </p>
-            <div className="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
-              {otherDiwaliProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-            <Link href="/gift-sets" className="link-underline mt-10 inline-block text-navy-950">
-              Browse all corporate gift sets
-            </Link>
-          </section>
-        ) : null}
 
         {/* FAQs. Rendered visibly here and marked up above from the same array,
             so the FAQPage structured data can never describe hidden content. */}

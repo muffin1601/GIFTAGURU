@@ -7,6 +7,18 @@ import { breadcrumbSchema } from "@/lib/seo/schema";
 import type { LandingFamily, LandingPageContent, LandingSection } from "@/lib/seo/content/types";
 import { landingFamilies } from "@/lib/seo/content/types";
 
+function heroImage(family: LandingFamily) {
+  const images: Record<LandingFamily, string> = {
+    industries: "/BANNERS/LUXURY.png",
+    gifting: "/BANNERS/JOINING.png",
+    occasions: "/BANNERS/LUXURY.png",
+    "gift-sets": "/BANNERS/PREMIUM.png",
+    guides: "/BANNERS/ECO.png",
+  };
+
+  return images[family];
+}
+
 /**
  * Hub page for a landing-page family. Its job is crawl depth: every editorial
  * page sits one click from a hub, and every hub sits one click from the footer,
@@ -45,7 +57,7 @@ export default function LandingHubView({
         ])}
       />
 
-      <section className="border-b border-line">
+      <section className="border-b border-line bg-sunken">
         <Container className="pt-6 sm:pt-8">
           <nav className="type-meta flex flex-wrap items-center gap-2" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-navy-950">Home</Link>
@@ -53,8 +65,8 @@ export default function LandingHubView({
             <span className="text-navy-950">{config.label}</span>
           </nav>
         </Container>
-        <Container className="pb-14 pt-6 sm:pb-16">
-          <div className="max-w-3xl">
+        <Container className="grid gap-8 pb-10 pt-6 sm:pb-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(20rem,1.1fr)] lg:items-center lg:gap-12 lg:pb-0">
+          <div className="max-w-3xl lg:py-12">
             <span className="type-eyebrow">{config.label}</span>
             <h1 className="type-h1 mt-4">{title}</h1>
             {intro.map((paragraph) => (
@@ -64,10 +76,20 @@ export default function LandingHubView({
               Request a Custom Quote
             </Button>
           </div>
+          <div className="relative order-first aspect-[16/9] overflow-hidden rounded-[3px] border border-line bg-surface lg:order-none lg:aspect-auto lg:self-stretch">
+            <Image
+              src={heroImage(family)}
+              alt={`${config.label} corporate gifting`}
+              fill
+              priority
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-contain px-4 sm:px-8"
+            />
+          </div>
         </Container>
       </section>
 
-      <Container className="py-14 sm:py-16">
+      <Container className="section">
         {visualGallery.length > 0 ? (
           <section className="border-b border-line pb-14 sm:pb-16">
             <div className="max-w-3xl">
@@ -80,7 +102,7 @@ export default function LandingHubView({
             </div>
             <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {visualGallery.map((image) => (
-                <figure key={image.src} className="overflow-hidden border border-line bg-surface">
+                <figure key={image.src} className="overflow-hidden rounded-[3px] border border-line bg-surface">
                   <div className="relative aspect-[4/3]">
                     <Image
                       src={image.src}

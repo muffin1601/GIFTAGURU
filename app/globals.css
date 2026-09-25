@@ -88,6 +88,62 @@ body {
   font-synthesis-weight: none;
 }
 
+/* Homepage-only geometry: every actionable control and image surface carries
+   the requested tight 3px radius. Full-bleed section bands stay square so
+   they continue to read as page structure rather than floating cards. */
+.homepage .btn,
+.homepage [class*="overflow-hidden"] {
+  border-radius: 3px;
+}
+
+/* Homepage premium system -------------------------------------------------
+   The carousel establishes the tone: dark navy, warm paper-like surfaces,
+   precise rules and generous product photography. These scoped rules carry
+   that same treatment through every homepage section without affecting the
+   catalogue, account or admin routes. */
+.homepage-premium > section {
+  border-color: var(--color-line);
+}
+
+.homepage-premium .section {
+  padding-block: clamp(3rem, 2.25rem + 4vw, 5.5rem);
+}
+
+.homepage-premium .section.bg-sunken {
+  background-color: #f4f0e8;
+}
+
+.homepage-premium .section.bg-surface {
+  background-color: #ffffff;
+}
+
+.homepage-premium > section:nth-child(2) {
+  background-color: var(--color-navy-950);
+  border-color: var(--color-navy-900);
+}
+
+.homepage-premium > section:nth-child(2) li {
+  color: rgb(255 255 255 / 0.82);
+  border-color: rgb(255 255 255 / 0.16);
+}
+
+.homepage-premium .type-eyebrow {
+  letter-spacing: 0.16em;
+}
+
+.homepage-premium .section [class*="overflow-hidden"] {
+  background-color: var(--color-surface);
+  border-color: var(--color-line-strong);
+}
+
+.homepage-premium .section a.group:hover [class*="overflow-hidden"] {
+  border-color: var(--color-navy-900);
+}
+
+.homepage-premium .section article {
+  min-width: 0;
+}
+
 /* Display type is set tighter and optically lighter than the UI sans. */
 .font-display {
   letter-spacing: -0.015em;
@@ -197,6 +253,7 @@ body {
       border-color var(--dur-base) var(--ease-ui),
       color var(--dur-base) var(--ease-ui);
     cursor: pointer;
+    border-radius: 3px;
   }
 
   .btn:disabled,
@@ -268,6 +325,7 @@ body {
     color: var(--color-ink-900);
     background-color: var(--color-surface);
     border: 1px solid var(--color-line);
+    border-radius: 3px;
     transition:
       border-color var(--dur-base) var(--ease-ui),
       background-color var(--dur-base) var(--ease-ui);
@@ -305,6 +363,7 @@ body {
   .panel {
     background-color: var(--color-surface);
     border: 1px solid var(--color-line);
+    border-radius: 3px;
   }
 
   .rule {
@@ -323,6 +382,7 @@ body {
     letter-spacing: 0.06em;
     text-transform: uppercase;
     border: 1px solid var(--color-line-strong);
+    border-radius: 3px;
     color: var(--color-ink-700);
   }
   .badge-positive {

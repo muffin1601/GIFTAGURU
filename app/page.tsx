@@ -1,16 +1,5 @@
 import type { Metadata } from "next";
-import Hero from "@/components/home/Hero";
-import HeroBenefits from "@/components/home/HeroBenefits";
-import GiftCategories from "@/components/home/GiftCategories";
-import WhyChooseUs from "@/components/home/WhyChooseUs";
-import CorporateSolutions from "@/components/home/CorporateSolutions";
-import CustomGifting from "@/components/home/CustomGifting";
-import HowItWorks from "@/components/home/HowItWorks";
-import DiwaliHampers from "@/components/home/DiwaliHampers";
-import FeaturedProducts from "@/components/home/FeaturedProducts";
-import SeoIntro from "@/components/home/SeoIntro";
-import BulkOrderCTA from "@/components/home/BulkOrderCTA";
-import Testimonials from "@/components/home/Testimonials";
+import CorporateHomepage from "@/components/home/CorporateHomepage";
 import FAQ from "@/components/home/FAQ";
 import JsonLd from "@/components/seo/JsonLd";
 import { pageMetadata } from "@/lib/seo/metadata";
@@ -37,19 +26,10 @@ export default function Home() {
     <>
       {/* Mirrors the FAQ section rendered at the bottom of this page. */}
       <JsonLd data={faqPageSchema(faqs.map(({ question, answer }) => ({ question, answer })))} />
-      <Hero />
-      <HeroBenefits />
-      <GiftCategories />
-      <WhyChooseUs />
-      <CorporateSolutions />
-      <CustomGifting />
-      <HowItWorks />
-      <DiwaliHampers />
-      <FeaturedProducts />
-      <SeoIntro />
-      <BulkOrderCTA />
-      <Testimonials />
-      <FAQ />
+      <div className="homepage">
+        <CorporateHomepage />
+        <FAQ />
+      </div>
     </>
   );
 }
