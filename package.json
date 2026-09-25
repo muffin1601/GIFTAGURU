@@ -19,6 +19,7 @@
     "db:seed:diwali": "node prisma/seed-diwali-kits.mjs",
     "db:backfill:product-content": "node prisma/backfill-product-content.mjs",
     "db:backfill:catalog-content": "node prisma/backfill-catalog-content.mjs",
+    "db:backfill:image-specifications": "node prisma/backfill-image-specifications.mjs",
     "db:audit:product-content": "node prisma/audit-product-content.mjs",
     "db:refresh-images": "node prisma/refresh-product-images.mjs",
     "admin:audit": "node prisma/audit-admin-data.mjs",
