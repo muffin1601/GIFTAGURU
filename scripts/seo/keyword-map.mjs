@@ -99,7 +99,7 @@ const INDUSTRY_PAGE = {
 
 /** Industry tags with no dedicated page -- covered as sections on the hub. */
 const HUB_COVERED_INDUSTRIES = new Set([
-  "Automotive", "Construction / Infrastructure", "Coworking", "Government / PSU",
+  "Automotive", "Construction / Infrastructure", "Coworking", "Government   / PSU",
   "Hospitality / Travel", "Legal", "Logistics", "Media / Marketing",
   "Recruitment / HR", "Renewable Energy / ESG", "Telecom", "HR / Employee Experience",
   "ESG / Sustainability", "Events / Conferences",
