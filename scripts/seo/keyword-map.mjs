@@ -507,7 +507,7 @@ const onBothSheets = mapped.filter((m) => m.sheets.length > 1).length;
  * two inventories can be reconciled rather than silently diverging. */
 const workbookKeys = new Set(mapped.map((m) => norm(m.keyword)));
 const declaredNotInWorkbook = [...declared.keys()].filter((k) => !workbookKeys.has(k));
-
+  
 console.log(`Workbook rows read: ${keywordRows.length} (both sheets)`);
 console.log(`Distinct keywords mapped: ${mapped.length} -> SEO_KEYWORD_MAP.csv`);
 console.log(`  ...of which appear on both sheets: ${onBothSheets}`);

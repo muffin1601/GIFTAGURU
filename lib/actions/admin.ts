@@ -252,46 +252,96 @@ export async function updateCustomizationAction(_state: { error?: string; succes
   return { success: "Customization request updated." };
 }
 
+const optionalPositiveInteger = z.preprocess(
+  (value) => value === "" || value === null ? undefined : value,
+  z.coerce.number().int().min(1).optional(),
+);
+
+const optionalDate = z.preprocess(
+  (value) => value === "" || value === null ? undefined : value,
+  z.string().optional(),
+);
+
+const couponSchema = z.object({
+  code: z.string().trim().min(3).max(40).transform((value) => value.toUpperCase()),
+  description: z.string().trim().max(300).optional(),
+  type: z.enum(["percentage", "fixed"]),
+  value: z.coerce.number().positive(),
+  minOrderValue: z.coerce.number().min(0).default(0),
+  maxUses: optionalPositiveInteger,
+  perUserLimit: optionalPositiveInteger,
+  startsAt: optionalDate,
+  expiresAt: optionalDate,
+  isActive: z.string().optional().transform((value) => value === "true"),
+}).superRefine((coupon, context) => {
+  if (coupon.type === "percentage" && coupon.value > 100) {
+    context.addIssue({ code: "custom", path: ["value"], message: "Percentage discounts cannot exceed 100%." });
+  }
+  if (coupon.startsAt && coupon.expiresAt && new Date(coupon.startsAt) >= new Date(coupon.expiresAt)) {
+    context.addIssue({ code: "custom", path: ["expiresAt"], message: "Expiry date must be after the start date." });
+  }
+});
+
+function couponData(coupon: z.infer<typeof couponSchema>) {
+  return {
+    code: coupon.code,
+    description: coupon.description || null,
+    type: coupon.type,
+    value: coupon.value,
+    minOrderValue: coupon.minOrderValue,
+    maxUses: coupon.maxUses ?? null,
+    perUserLimit: coupon.perUserLimit ?? null,
+    startsAt: coupon.startsAt ? new Date(coupon.startsAt) : null,
+    expiresAt: coupon.expiresAt ? new Date(coupon.expiresAt) : null,
+    isActive: coupon.isActive,
+  };
+}
+
 export async function createCouponAction(_state: { error?: string; success?: string }, formData: FormData) {
   const admin = await requireAdmin();
-  const parsed = z.object({
-    code: z.string().trim().min(3).max(40).transform((value) => value.toUpperCase()),
-    description: z.string().trim().max(300).optional(),
-    type: z.enum(["percentage", "fixed"]),
-    value: z.coerce.number().positive(),
-    minOrderValue: z.coerce.number().min(0).default(0),
-    maxUses: z.coerce.number().int().min(1).optional(),
-    perUserLimit: z.coerce.number().int().min(1).optional(),
-    expiresAt: z.string().optional(),
-  }).safeParse(Object.fromEntries(formData));
+  const parsed = couponSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid coupon." };
 
-  await prisma.discount.upsert({
-    where: { code: parsed.data.code },
-    update: {
-      description: parsed.data.description,
-      type: parsed.data.type,
-      value: parsed.data.value,
-      minOrderValue: parsed.data.minOrderValue,
-      maxUses: parsed.data.maxUses,
-      perUserLimit: parsed.data.perUserLimit,
-      expiresAt: parsed.data.expiresAt ? new Date(parsed.data.expiresAt) : null,
-      isActive: true,
-    },
-    create: {
-      code: parsed.data.code,
-      description: parsed.data.description,
-      type: parsed.data.type,
-      value: parsed.data.value,
-      minOrderValue: parsed.data.minOrderValue,
-      maxUses: parsed.data.maxUses,
-      perUserLimit: parsed.data.perUserLimit,
-      expiresAt: parsed.data.expiresAt ? new Date(parsed.data.expiresAt) : null,
-    },
-  });
-  await logAdminAction(admin, { action: "coupon.saved", entityType: "discount", entityId: parsed.data.code, after: parsed.data });
+  const existing = await prisma.discount.findUnique({ where: { code: parsed.data.code } });
+  if (existing) return { error: "That coupon code already exists. Edit it below instead." };
+  const coupon = await prisma.discount.create({ data: couponData(parsed.data) });
+  await logAdminAction(admin, { action: "coupon.created", entityType: "discount", entityId: coupon.id, after: coupon });
   revalidatePath("/admin/coupons");
-  return { success: "Coupon saved." };
+  return { success: "Coupon created." };
+}
+
+export async function updateCouponAction(_state: { error?: string; success?: string }, formData: FormData) {
+  const admin = await requireAdmin();
+  const parsed = couponSchema.safeExtend({ id: z.string().uuid() }).safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid coupon." };
+
+  const before = await prisma.discount.findUnique({ where: { id: parsed.data.id } });
+  if (!before) return { error: "Coupon not found." };
+  const clash = await prisma.discount.findFirst({ where: { code: parsed.data.code, id: { not: parsed.data.id } } });
+  if (clash) return { error: "That coupon code is already in use." };
+
+  const coupon = await prisma.discount.update({ where: { id: parsed.data.id }, data: couponData(parsed.data) });
+  await logAdminAction(admin, { action: "coupon.updated", entityType: "discount", entityId: coupon.id, before, after: coupon });
+  revalidatePath("/admin/coupons");
+  return { success: "Coupon updated." };
+}
+
+export async function deleteCouponAction(_state: { error?: string; success?: string }, formData: FormData) {
+  const admin = await requireAdmin();
+  const parsed = z.object({ id: z.string().uuid() }).safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: "Invalid coupon." };
+
+  const coupon = await prisma.discount.findUnique({
+    where: { id: parsed.data.id },
+    include: { _count: { select: { usage: true } } },
+  });
+  if (!coupon) return { error: "Coupon not found." };
+  if (coupon._count.usage > 0) return { error: "This coupon has order history. Deactivate it instead of deleting it." };
+
+  await prisma.discount.delete({ where: { id: coupon.id } });
+  await logAdminAction(admin, { action: "coupon.deleted", entityType: "discount", entityId: coupon.id, before: coupon });
+  revalidatePath("/admin/coupons");
+  return { success: "Coupon deleted." };
 }
 
 // Every key here is actually read back by lib/data/store-settings.ts and used

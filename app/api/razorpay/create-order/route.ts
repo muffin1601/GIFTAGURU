@@ -8,6 +8,7 @@ import { getSessionUser } from "@/lib/auth/session";
 import { getActiveCartId } from "@/lib/cart/service";
 import { logger, errorMessage } from "@/lib/logger";
 import { groupIntoShipments, toAddressSnapshot, totalShipping } from "@/lib/checkout/shipments";
+import { DiscountValidationError, validateDiscountCode } from "@/lib/checkout/discounts";
 import { MAX_DIRECT_PURCHASE_QUANTITY, PERSONALIZATION_MAX_LENGTH, SALES_QUOTE_MESSAGE } from "@/lib/config/store";
 import { getStoreSettings } from "@/lib/data/store-settings";
 import { resolveUnitPrice } from "@/lib/pricing";
@@ -215,6 +216,17 @@ async function handleCreateOrder(request: Request) {
   });
 
   const subtotal = lineItems.reduce((sum, item) => sum + item.lineTotal, 0);
+  const discountCode = text(checkout.discountCode);
+  let appliedDiscount: Awaited<ReturnType<typeof validateDiscountCode>> | null = null;
+  if (discountCode) {
+    try {
+      appliedDiscount = await validateDiscountCode({ code: discountCode, subtotal, userId: sessionUser.id });
+    } catch (error) {
+      if (error instanceof DiscountValidationError) throw new CheckoutError(error.message);
+      throw error;
+    }
+  }
+  const discountTotal = appliedDiscount?.amount ?? 0;
 
   const primaryAddress = {
     name: text(checkout.name),
@@ -244,8 +256,8 @@ async function handleCreateOrder(request: Request) {
   });
 
   const shippingTotal = totalShipping(shipmentGroups);
-  const taxTotal = Math.round((subtotal * settings.gstRatePercent) / 100);
-  const total = subtotal + shippingTotal + taxTotal;
+  const taxTotal = Math.round(((subtotal - discountTotal) * settings.gstRatePercent) / 100);
+  const total = subtotal - discountTotal + shippingTotal + taxTotal;
 
   const dbOrder = await prisma.$transaction(async (tx) => {
     for (const item of lineItems) {
@@ -295,6 +307,7 @@ async function handleCreateOrder(request: Request) {
               country: "IN",
             },
         subtotal,
+        discountTotal,
         shippingTotal,
         taxTotal,
         total,
@@ -328,6 +341,41 @@ async function handleCreateOrder(request: Request) {
     await tx.orderStatusHistory.create({
       data: { orderId: created.id, toStatus: "pending", toPaymentStatus: "pending", toDeliveryStatus: "pending", note: "Order placed from storefront checkout." },
     });
+
+    if (appliedDiscount) {
+      // Updating first locks this coupon row for the transaction. Concurrent
+      // checkouts for the same code then serialize before the per-user count,
+      // so a one-use-per-customer coupon cannot be redeemed twice in parallel.
+      const claimed = await tx.discount.updateMany({
+        where: {
+          id: appliedDiscount.discount.id,
+          isActive: true,
+          ...(appliedDiscount.discount.maxUses !== null
+            ? { usedCount: { lt: appliedDiscount.discount.maxUses } }
+            : {}),
+        },
+        data: { usedCount: { increment: 1 } },
+      });
+      if (claimed.count !== 1) throw new CheckoutError("This coupon is no longer available.");
+
+      if (appliedDiscount.discount.perUserLimit !== null) {
+        const priorUsage = await tx.discountUsage.count({
+          where: { discountId: appliedDiscount.discount.id, userId: sessionUser.id },
+        });
+        if (priorUsage >= appliedDiscount.discount.perUserLimit) {
+          throw new CheckoutError("You have already used this coupon the maximum number of times.");
+        }
+      }
+
+      await tx.discountUsage.create({
+        data: {
+          discountId: appliedDiscount.discount.id,
+          orderId: created.id,
+          userId: sessionUser.id,
+          amountDiscounted: discountTotal,
+        },
+      });
+    }
 
     // Destinations are written after the items so each line can be pointed at
     // its shipment. Only recorded when the order actually splits: a

@@ -116,11 +116,21 @@ export default function CheckoutClient({
   });
 
   const shippingTotal = totalShipping(shipmentGroups);
-  const gstTotal = Math.round((subtotal * gstRatePercent) / 100);
-  const grandTotal = subtotal + shippingTotal + gstTotal;
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [billingSameAsShipping, setBillingSameAsShipping] = useState(true);
+  const [couponCode, setCouponCode] = useState("");
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [couponPending, setCouponPending] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    code: string;
+    description: string | null;
+    amount: number;
+    subtotal: number;
+  } | null>(null);
+  const discountTotal = appliedCoupon?.subtotal === subtotal ? appliedCoupon.amount : 0;
+  const gstTotal = Math.round(((subtotal - discountTotal) * gstRatePercent) / 100);
+  const grandTotal = subtotal - discountTotal + shippingTotal + gstTotal;
   const requiresSalesQuote = items.some((item) => item.requiresSalesQuote);
   const checkoutTracked = useRef(false);
 
@@ -129,6 +139,7 @@ export default function CheckoutClient({
     checkoutTracked.current = true;
     trackBeginCheckout({
       value: grandTotal,
+      coupon: appliedCoupon?.subtotal === subtotal ? appliedCoupon.code : undefined,
       items: items.map((item) => ({
         item_id: item.productCode ?? item.productId,
         item_name: item.name,
@@ -138,7 +149,37 @@ export default function CheckoutClient({
         quantity: item.quantity,
       })),
     });
-  }, [grandTotal, items, requiresSalesQuote]);
+  }, [appliedCoupon, grandTotal, items, requiresSalesQuote, subtotal]);
+
+  async function applyCoupon() {
+    setCouponPending(true);
+    setCouponError(null);
+    try {
+      const response = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ code: couponCode, subtotal }),
+      });
+      const payload = (await response.json()) as {
+        code?: string;
+        description?: string | null;
+        amount?: number;
+        error?: string;
+      };
+      if (!response.ok || !payload.code || typeof payload.amount !== "number") {
+        setAppliedCoupon(null);
+        setCouponError(payload.error ?? "Unable to apply this coupon.");
+        return;
+      }
+      setCouponCode(payload.code);
+      setAppliedCoupon({ code: payload.code, description: payload.description ?? null, amount: payload.amount, subtotal });
+    } catch {
+      setAppliedCoupon(null);
+      setCouponError("Unable to validate this coupon. Please try again.");
+    } finally {
+      setCouponPending(false);
+    }
+  }
 
   async function submitCheckout(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -177,6 +218,7 @@ export default function CheckoutClient({
 
     const checkout = Object.fromEntries(formData) as Record<string, FormDataEntryValue>;
     checkout.billingSameAsShipping = billingSameAsShipping ? "true" : "false";
+    checkout.discountCode = appliedCoupon?.subtotal === subtotal ? appliedCoupon.code : "";
     if (billingSameAsShipping) {
       checkout.billingName = String(formData.get("name") ?? "");
       checkout.billingAddress = String(formData.get("address") ?? "");
@@ -433,6 +475,42 @@ export default function CheckoutClient({
               </div>
             ))}
           </div>
+
+          <div className="mt-6 border-t border-line pt-5">
+            <label className="field-label" htmlFor="discountCode">Coupon code</label>
+            <div className="mt-2 flex gap-2">
+              <input
+                id="discountCode"
+                value={couponCode}
+                onChange={(event) => {
+                  setCouponCode(event.target.value.toUpperCase());
+                  setCouponError(null);
+                  if (event.target.value.toUpperCase() !== appliedCoupon?.code) setAppliedCoupon(null);
+                }}
+                className="field-input min-w-0 flex-1 uppercase"
+                placeholder="Enter code"
+                autoComplete="off"
+              />
+              <button
+                type="button"
+                onClick={applyCoupon}
+                disabled={couponPending || !couponCode.trim() || items.length === 0}
+                className="btn btn-secondary shrink-0"
+              >
+                {couponPending ? "Checking…" : "Apply"}
+              </button>
+            </div>
+            {couponError ? <p role="alert" className="field-error mt-2">{couponError}</p> : null}
+            {appliedCoupon && appliedCoupon.subtotal === subtotal ? (
+              <p className="mt-2 text-sm text-navy-950">
+                <span className="font-semibold">{appliedCoupon.code} applied.</span>{" "}
+                {appliedCoupon.description ?? `You save ${formatPrice(appliedCoupon.amount)}.`}
+              </p>
+            ) : appliedCoupon ? (
+              <p className="mt-2 text-sm text-ink-600">Your cart changed. Apply the coupon again.</p>
+            ) : null}
+          </div>
+
           <dl className="mt-6 border-t border-line pt-4 text-sm">
             <div className="flex justify-between gap-4 py-2">
               <dt className="text-ink-700">Merchandise</dt>
@@ -442,6 +520,12 @@ export default function CheckoutClient({
               <div className="flex justify-between gap-4 py-2">
                 <dt className="text-ink-700">Gift wrap</dt>
                 <dd className="text-navy-950">{formatPrice(giftWrapTotal)}</dd>
+              </div>
+            ) : null}
+            {discountTotal > 0 ? (
+              <div className="flex justify-between gap-4 py-2 text-gold-700">
+                <dt>Coupon ({appliedCoupon?.code})</dt>
+                <dd>-{formatPrice(discountTotal)}</dd>
               </div>
             ) : null}
             <div className="flex justify-between gap-4 py-2">
