@@ -28,12 +28,30 @@ const navLinkClass =
 const iconLinkClass =
   "inline-flex items-center justify-center p-2 text-navy-950 transition-colors duration-200 hover:text-gold-600";
 
+const quickLinks = [
+  { label: "Shop", href: "/shop" },
+  { label: "Track Order", href: "/track-order" },
+  { label: "Bulk Enquiry", href: "/bulk-enquiry" },
+  { label: "Contact", href: "/contact" },
+];
+
 export default function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-canvas">
       <div className="hidden bg-navy-950 text-cream-100/80 lg:block">
         <Container className="flex h-9 items-center justify-between text-xs tracking-wide">
-          <span>Premium corporate gifting, curated for modern businesses.</span>
+          <nav aria-label="Quick links" className="flex items-center gap-3">
+            <span className="text-cream-100/50">Important links</span>
+            {quickLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="border-l border-cream-100/20 pl-3 transition-colors duration-200 hover:text-gold-300"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
           <a
             href={`tel:${STORE_CONTACT.phoneHref}`}
             className="inline-flex items-center gap-1.5 transition-colors duration-200 hover:text-gold-300"
@@ -44,7 +62,7 @@ export default function Header() {
         </Container>
       </div>
 
-      <Container className="grid h-[4.5rem] grid-cols-[auto_1fr_auto] items-center gap-6">
+      <Container className="grid h-[4.75rem] grid-cols-[auto_1fr_auto] items-center gap-5 lg:h-20 lg:gap-8">
         <Link href="/" className="flex min-w-0 items-center" aria-label="Gifta Guru home">
           <Image
             src="/SBanners/SBanners/NEW LOGO.png"
@@ -56,41 +74,33 @@ export default function Header() {
           />
         </Link>
 
-        {/* gap tightens at lg so the seventh link fits at exactly 1024px
-            without wrapping; it opens back up once there is room. */}
-        <nav className="hidden items-center justify-center gap-5 lg:flex xl:gap-8">
-          <Link href="/" className={navLinkClass}>
-            Home
-          </Link>
-          <Link href="/shop" className={navLinkClass}>
-            Shop
-          </Link>
-          <CollectionsDropdown />
-          {/* Seasonal hub. Distinct from the evergreen
-              /occasions/diwali-corporate-gifts page, which stays where it is
-              and is linked from the hub rather than from the header. */}
-          <Link href="/diwali-2026" className={`${navLinkClass} whitespace-nowrap`}>
-            Diwali 2026
-          </Link>
-          <Link href="/corporate-gifting" className={navLinkClass}>
-            Corporate
-          </Link>
-          <Link href="/custom-gifts" className={navLinkClass}>
-            Custom Branding
-          </Link>
-          <Link href="/contact" className={navLinkClass}>
-            Contact
-          </Link>
-        </nav>
+        <form
+          action="/search"
+          role="search"
+          className="mx-auto hidden w-full max-w-[36rem] items-center rounded-[30px] border border-line-strong bg-surface px-2 xl:flex"
+        >
+          <Search className="ml-3 h-[1.1rem] w-[1.1rem] shrink-0 text-ink-500" aria-hidden="true" strokeWidth={1.5} />
+          <label htmlFor="header-search" className="sr-only">Search corporate gifts</label>
+          <input
+            id="header-search"
+            name="q"
+            type="search"
+            placeholder="Search gifts, collections and occasions"
+            className="min-w-0 flex-1 bg-transparent px-3 py-3 text-sm text-navy-950 outline-none placeholder:text-ink-500"
+          />
+          <button type="submit" className="rounded-[30px] bg-navy-950 px-5 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.1em] text-white transition-colors hover:bg-navy-800">
+            Search
+          </button>
+        </form>
 
         <div className="flex items-center justify-end gap-1">
           <Link
             href="/bulk-enquiry"
             className="mr-3 hidden border border-line-strong px-5 py-2.5 text-[0.75rem] font-semibold uppercase tracking-[0.08em] text-navy-950 transition-colors duration-200 hover:border-navy-950 xl:inline-flex"
           >
-            Request a Quote
+            Get a Quote
           </Link>
-          <Link href="/search" aria-label="Search" className={`hidden sm:inline-flex ${iconLinkClass}`}>
+          <Link href="/search" aria-label="Search" className={`hidden sm:inline-flex xl:hidden ${iconLinkClass}`}>
             <Search className="h-[1.15rem] w-[1.15rem]" aria-hidden="true" strokeWidth={1.5} />
           </Link>
           <Link href="/account" aria-label="Account" className={`hidden sm:inline-flex ${iconLinkClass}`}>
@@ -100,6 +110,21 @@ export default function Header() {
           <MobileNav links={mobileLinks} />
         </div>
       </Container>
+
+      <div className="hidden border-t border-line bg-surface xl:block">
+        <Container>
+          <nav className="flex h-12 items-center justify-center gap-8 2xl:gap-11" aria-label="Main navigation">
+            <Link href="/" className={navLinkClass}>Home</Link>
+            <Link href="/corporate-gifting" className={navLinkClass}>Corporate Gifts</Link>
+            <CollectionsDropdown />
+            <Link href="/diwali-2026" className={`${navLinkClass} whitespace-nowrap`}>Diwali 2026</Link>
+            <Link href="/gifting/employee-onboarding" className={`${navLinkClass} whitespace-nowrap`}>Welcome Kits</Link>
+            <Link href="/custom-gifts" className={navLinkClass}>Custom Gifts</Link>
+            <Link href="/about" className={navLinkClass}>About</Link>
+            <Link href="/contact" className={navLinkClass}>Contact</Link>
+          </nav>
+        </Container>
+      </div>
     </header>
   );
 }

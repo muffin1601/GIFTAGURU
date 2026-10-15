@@ -151,7 +151,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           quantity: 1,
         }}
       />
-      <Container className="py-6 pb-28 sm:py-10 lg:pb-16">
+      <Container className="product-detail-page py-8 pb-28 sm:py-12 lg:pb-20">
         <nav className="type-meta flex flex-wrap items-center gap-2" aria-label="Breadcrumb">
           <Link href="/" className="hover:text-navy-950">Home</Link>
           <span aria-hidden="true">/</span>
@@ -165,9 +165,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
           {/* Whitespace and hairlines separate the purchase sections -- the
               panel is deliberately not wrapped in one large card. */}
-          <section>
+          <section className="site-section">
             <p className="type-eyebrow">{product.categoryName ?? "Corporate Gifts"}</p>
-            <h1 className="type-h1 mt-4">{seo?.h1 ?? product.name}</h1>
+            <h1 className="type-h1 mt-4 font-bold">{seo?.h1 ?? product.name}</h1>
 
             {/* Ratings render only when real review data exists. */}
             {product.reviewCount > 0 && product.avgRating ? (
@@ -180,7 +180,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
             <p className="type-lead mt-5">{hasStructuredContent ? product.description : seo?.shortDescription ?? product.description}</p>
 
-            <div className="mt-8 flex flex-wrap items-baseline gap-x-3 gap-y-1 border-t border-line pt-8">
+            <div className="mt-8 flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-[30px] bg-sunken px-6 py-5">
               <span className="font-display text-3xl text-navy-950">
                 {formatPrice(product.basePrice)}
               </span>

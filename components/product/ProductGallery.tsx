@@ -18,7 +18,7 @@ export default function ProductGallery({
     // Previously fell back to /images/premium-gifts.png, which does not exist
     // and rendered as a broken image.
     return (
-      <div className="flex aspect-square items-center justify-center border border-line bg-sunken">
+      <div className="flex aspect-square items-center justify-center rounded-[30px] border border-line bg-sunken">
         <span className="type-meta">Image coming soon</span>
       </div>
     );
@@ -28,7 +28,7 @@ export default function ProductGallery({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="relative aspect-square overflow-hidden border border-line bg-surface">
+      <div className="relative aspect-square overflow-hidden rounded-[30px] border border-line bg-surface shadow-[0_10px_40px_-5px_rgba(10,26,48,0.1)]">
         <Image
           src={active.url}
           alt={active.alt ?? name}
@@ -51,7 +51,7 @@ export default function ProductGallery({
                 aria-label={`View image ${index + 1} of ${images.length}`}
                 aria-current={isActive}
                 className={cn(
-                  "relative aspect-square overflow-hidden border bg-surface transition-colors duration-200",
+                  "relative aspect-square overflow-hidden rounded-[15px] border bg-surface transition-colors duration-200",
                   isActive ? "border-navy-950" : "border-line hover:border-line-strong",
                 )}
               >

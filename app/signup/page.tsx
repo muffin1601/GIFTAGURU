@@ -19,7 +19,7 @@ export default async function SignupPage({
   const { next } = await searchParams;
 
   return (
-    <main className="bg-cream-200 py-16 sm:py-24">
+    <main className="auth-experience py-16 sm:py-24">
       <AuthForm
         title="Create account"
         subtitle="Create a business gifting account for faster checkout and quotes."

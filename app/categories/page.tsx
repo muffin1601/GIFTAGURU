@@ -24,8 +24,8 @@ export default async function CategoriesPage() {
         title="Explore our gifting collections"
         description="Every collection is curated for a specific business moment, from onboarding to leadership gifting."
       />
-      <section className="py-16 sm:py-20">
-        <Container className="grid gap-6 sm:grid-cols-2">
+      <section className="bg-canvas py-16 sm:py-20">
+        <Container className="catalogue-grid grid sm:grid-cols-2">
           {categories.map((category) => (
             <CategoryCard key={category.slug} category={category} />
           ))}

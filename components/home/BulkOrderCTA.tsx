@@ -11,7 +11,7 @@ const benefits = [
 
 export default function BulkOrderCTA() {
   return (
-    <section className="section bg-navy-950 text-cream-100">
+    <section className="site-section section bg-navy-950 text-cream-100">
       <Container className="grid gap-12 lg:grid-cols-[1.5fr_auto] lg:items-center lg:gap-20">
         <div>
           <h2 className="type-h2 text-cream-100">Planning gifts for your team or clients?</h2>

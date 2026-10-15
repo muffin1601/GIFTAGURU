@@ -46,7 +46,7 @@ export default async function ShopPage({
         title="Corporate Gifts Ready for Teams, Clients, and Events"
         description="Browse curated gifting sets with bulk order quantities, customization options, and quote-ready pricing."
       />
-      <Container className="py-12">
+      <Container className="py-14 sm:py-20">
         {/* Names the grid for assistive tech and, because ProductCard titles
             are h3, keeps the document from skipping h1 -> h3. */}
         <h2 className="sr-only">Products</h2>
@@ -66,7 +66,7 @@ export default async function ShopPage({
             ) : null}
           </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="catalogue-grid grid sm:grid-cols-2 lg:grid-cols-4">
             {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

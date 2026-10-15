@@ -42,7 +42,7 @@ export default function AuthForm({
   const withNext = (href: string) => (next ? `${href}?next=${encodeURIComponent(next)}` : href);
 
   return (
-    <div className="mx-auto max-w-md">
+    <div className="auth-card mx-auto max-w-md">
       <h1 className="type-h2">{title}</h1>
       <p className="type-body mt-3">{subtitle}</p>
 

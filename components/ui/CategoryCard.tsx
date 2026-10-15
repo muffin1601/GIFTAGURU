@@ -5,8 +5,8 @@ import type { Category } from "@/types";
 
 export default function CategoryCard({ category }: { category: Category }) {
   return (
-    <Link href={`/categories/${category.slug}`} className="group block">
-      <div className="relative aspect-[4/3] overflow-hidden border border-line bg-sunken">
+    <Link href={`/categories/${category.slug}`} className="group block rounded-[30px] bg-surface p-3 pb-7 shadow-[0_10px_40px_-5px_rgba(10,26,48,0.1)]">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-[18px] border border-line bg-sunken">
         <Image
           src={category.image}
           alt=""
@@ -16,9 +16,9 @@ export default function CategoryCard({ category }: { category: Category }) {
         />
       </div>
 
-      <div className="flex items-start justify-between gap-6 pt-5">
+      <div className="flex items-start justify-between gap-6 px-3 pt-6">
         <div>
-          <h3 className="font-display text-xl text-navy-950">{category.name}</h3>
+          <h3 className="font-display text-2xl font-semibold text-navy-950">{category.name}</h3>
           <p className="type-body mt-1.5 max-w-sm">{category.tagline}</p>
         </div>
         {/* The arrow shifts a few pixels on hover -- no scale, no shadow. */}

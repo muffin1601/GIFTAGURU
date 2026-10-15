@@ -57,7 +57,7 @@ export default function LandingHubView({
         ])}
       />
 
-      <section className="border-b border-line bg-sunken">
+      <section className="page-hero border-b border-line bg-sunken">
         <Container className="pt-6 sm:pt-8">
           <nav className="type-meta flex flex-wrap items-center gap-2" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-navy-950">Home</Link>
@@ -65,8 +65,8 @@ export default function LandingHubView({
             <span className="text-navy-950">{config.label}</span>
           </nav>
         </Container>
-        <Container className="grid gap-8 pb-10 pt-6 sm:pb-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(20rem,1.1fr)] lg:items-center lg:gap-12 lg:pb-0">
-          <div className="max-w-3xl lg:py-12">
+        <Container className="grid gap-10 pb-16 pt-8 sm:pb-20 lg:grid-cols-[minmax(0,0.9fr)_minmax(22rem,1.1fr)] lg:items-center lg:gap-16">
+          <div className="max-w-3xl">
             <span className="type-eyebrow">{config.label}</span>
             <h1 className="type-h1 mt-4">{title}</h1>
             {intro.map((paragraph) => (
@@ -76,14 +76,14 @@ export default function LandingHubView({
               Request a Custom Quote
             </Button>
           </div>
-          <div className="relative order-first aspect-[16/9] overflow-hidden rounded-[3px] border border-line bg-surface lg:order-none lg:aspect-auto lg:self-stretch">
+          <div className="hanna-arch-frame relative order-first aspect-[4/3] bg-surface lg:order-none">
             <Image
               src={heroImage(family)}
               alt={`${config.label} corporate gifting`}
               fill
               priority
               sizes="(min-width: 1024px) 50vw, 100vw"
-              className="object-contain px-4 sm:px-8"
+              className="object-cover object-[68%_center]"
             />
           </div>
         </Container>
@@ -102,7 +102,7 @@ export default function LandingHubView({
             </div>
             <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {visualGallery.map((image) => (
-                <figure key={image.src} className="overflow-hidden rounded-[3px] border border-line bg-surface">
+                <figure key={image.src} className="overflow-hidden rounded-[30px] border border-line bg-surface shadow-[0_10px_40px_-5px_rgba(10,26,48,0.1)]">
                   <div className="relative aspect-[4/3]">
                     <Image
                       src={image.src}
@@ -118,9 +118,9 @@ export default function LandingHubView({
           </section>
         ) : null}
 
-        <ul className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {pages.map((page) => (
-            <li key={page.slug} className="border-t border-line pt-6">
+            <li key={page.slug} className="rounded-[30px] border border-line bg-surface p-7 shadow-[0_10px_40px_-5px_rgba(10,26,48,0.08)]">
               <h2 className="font-display text-xl text-navy-950">
                 <Link href={`${config.basePath}/${page.slug}`} className="hover:text-gold-600">
                   {page.h1}

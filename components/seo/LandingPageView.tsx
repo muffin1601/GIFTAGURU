@@ -61,7 +61,7 @@ export default async function LandingPageView({
         ]}
       />
 
-      <section className="border-b border-line bg-sunken">
+      <section className="page-hero border-b border-line bg-sunken">
         <Container className="pt-6 sm:pt-8">
           <nav className="type-meta flex flex-wrap items-center gap-2" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-navy-950">Home</Link>
@@ -71,8 +71,8 @@ export default async function LandingPageView({
             <span className="text-navy-950">{content.h1}</span>
           </nav>
         </Container>
-        <Container className="grid gap-8 pb-10 pt-6 sm:pb-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(20rem,1.1fr)] lg:items-center lg:gap-12 lg:pb-0">
-          <div className="max-w-3xl lg:py-12">
+        <Container className="grid gap-10 pb-16 pt-8 sm:pb-20 lg:grid-cols-[minmax(0,0.9fr)_minmax(22rem,1.1fr)] lg:items-center lg:gap-16">
+          <div className="max-w-3xl">
             <span className="type-eyebrow">{config.label}</span>
             <h1 className="type-h1 mt-4">{content.h1}</h1>
             {content.intro.map((paragraph) => (
@@ -82,23 +82,23 @@ export default async function LandingPageView({
               Request a Custom Quote
             </Button>
           </div>
-          <div className="relative order-first aspect-[16/9] overflow-hidden rounded-[3px] border border-line bg-surface lg:order-none lg:aspect-auto lg:self-stretch">
+          <div className="hanna-arch-frame relative order-first aspect-[4/3] bg-surface lg:order-none">
             <Image
               src={heroImage(family)}
               alt={`${config.label} corporate gifting`}
               fill
               priority
               sizes="(min-width: 1024px) 50vw, 100vw"
-              className="object-contain px-4 sm:px-8"
+              className="object-cover object-[68%_center]"
             />
           </div>
         </Container>
       </section>
 
       <Container className="section">
-        <div className="max-w-3xl space-y-12">
+        <div className="max-w-4xl space-y-6">
           {content.sections.map((section) => (
-            <section key={section.heading}>
+            <section key={section.heading} className="editorial-panel">
               <h2 className="type-h2">{section.heading}</h2>
               {section.body?.map((paragraph) => (
                 <p key={paragraph} className="type-body mt-4">{paragraph}</p>
@@ -120,7 +120,7 @@ export default async function LandingPageView({
         {products.length > 0 ? (
           <section className="mt-16 border-t border-line pt-10">
             <h2 className="type-h2">Recommended gift sets</h2>
-            <div className="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="catalogue-grid mt-10 grid sm:grid-cols-2 lg:grid-cols-4">
               {products.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
@@ -128,7 +128,7 @@ export default async function LandingPageView({
           </section>
         ) : null}
 
-        <section className="mt-16 border-t border-line pt-10">
+        <section className="editorial-panel mt-16">
           <h2 className="type-h2">Frequently asked questions</h2>
           <dl className="mt-8 max-w-3xl space-y-8">
             {content.faqs.map((faq) => (
@@ -140,7 +140,7 @@ export default async function LandingPageView({
           </dl>
         </section>
 
-        <section className="mt-16 border-t border-line pt-10">
+        <section className="editorial-panel mt-8">
           <h2 className="type-h2">Continue exploring</h2>
           <ul className="mt-6 flex flex-wrap gap-x-8 gap-y-3">
             {content.relatedLinks.map((link) => (

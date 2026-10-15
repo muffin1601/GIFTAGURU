@@ -22,17 +22,17 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="section">
+    <section className="site-section section">
       <Container className="flex flex-col gap-14 sm:gap-20">
         <SectionHeading eyebrow="How It Works" title="From selection to delivery, in four steps" />
         {/* The numeral is the graphic. No icons, no circles, no boxes. */}
-        <ol className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+        <ol className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {steps.map((step, index) => (
-            <li key={step.title} className="border-t border-line pt-6">
-              <span className="font-display text-3xl text-gold-500">
+            <li key={step.title} className="rounded-[30px] border border-line bg-surface p-7 shadow-[0_10px_40px_-5px_rgba(10,26,48,0.08)]">
+              <span className="font-display text-4xl font-bold text-gold-500">
                 {String(index + 1).padStart(2, "0")}
               </span>
-              <h3 className="mt-4 font-display text-lg text-navy-950">{step.title}</h3>
+              <h3 className="mt-4 font-display text-xl font-semibold text-navy-950">{step.title}</h3>
               <p className="type-body mt-2">{step.description}</p>
             </li>
           ))}

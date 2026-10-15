@@ -76,7 +76,7 @@ export default async function CategoryPage({
           faqPageSchema(seo?.faqs ?? []),
         ]}
       />
-      <section className="border-b border-line">
+      <section className="page-hero border-b border-line bg-sunken">
         <Container className="pt-6 sm:pt-8">
           <nav className="type-meta flex flex-wrap items-center gap-2" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-navy-950">Home</Link>
@@ -86,7 +86,7 @@ export default async function CategoryPage({
             <span className="text-navy-950">{category.name}</span>
           </nav>
         </Container>
-        <Container className="grid items-center gap-10 pb-14 pt-6 sm:pb-16 lg:grid-cols-[1fr_auto] lg:gap-16">
+        <Container className="grid items-center gap-12 pb-16 pt-8 sm:pb-20 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           <div className="max-w-2xl">
             <span className="type-eyebrow">{category.name}</span>
             <h1 className="type-h1 mt-4">{seo?.h1 ?? category.tagline}</h1>
@@ -108,12 +108,12 @@ export default async function CategoryPage({
 
           {/* A small accent image rather than a full-bleed banner -- the
               product grid below is the real content on this page. */}
-          <div className="relative hidden aspect-square w-40 shrink-0 overflow-hidden border border-line bg-sunken lg:block xl:w-48">
+          <div className="hanna-arch-frame relative order-first aspect-[4/3] w-full shrink-0 bg-surface lg:order-none lg:block">
             <Image
               src={category.image}
               alt=""
               fill
-              sizes="192px"
+              sizes="(min-width: 1024px) 50vw, 100vw"
               className="object-cover"
               priority
             />
@@ -124,7 +124,7 @@ export default async function CategoryPage({
       <section className="section">
         <Container>
           {products.length > 0 ? (
-            <div className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="catalogue-grid grid sm:grid-cols-2 lg:grid-cols-4">
               {products.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
@@ -135,7 +135,7 @@ export default async function CategoryPage({
 
           {seo ? (
             <>
-              <section className="mt-16 border-t border-line pt-10">
+              <section className="editorial-panel mt-16">
                 <h2 className="type-h2">How to choose from this collection</h2>
                 <ul className="mt-6 max-w-3xl space-y-2">
                   {seo.buyingPoints.map((point) => (
@@ -147,7 +147,7 @@ export default async function CategoryPage({
                 </ul>
               </section>
 
-              <section className="mt-16 border-t border-line pt-10">
+              <section className="editorial-panel mt-8">
                 <h2 className="type-h2">Frequently asked questions</h2>
                 <dl className="mt-8 max-w-3xl space-y-8">
                   {seo.faqs.map((faq) => (
@@ -159,7 +159,7 @@ export default async function CategoryPage({
                 </dl>
               </section>
 
-              <section className="mt-16 border-t border-line pt-10">
+              <section className="editorial-panel mt-8">
                 <h2 className="type-h2">Continue exploring</h2>
                 <ul className="mt-6 flex flex-wrap gap-x-8 gap-y-3">
                   {seo.relatedLinks.map((link) => (

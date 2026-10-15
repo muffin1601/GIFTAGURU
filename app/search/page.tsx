@@ -40,13 +40,13 @@ export default async function SearchPage({
         <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">Search</p>
         <h1 className="mt-3 font-display text-4xl text-navy-950 sm:text-5xl">Find the right corporate gift</h1>
       </div>
-      <form action="/search" className="mt-8 flex flex-col gap-3 rounded-2xl bg-white p-3 ring-1 ring-navy-950/10 sm:flex-row">
+      <form action="/search" className="page-card mt-8 flex flex-col gap-3 p-3 sm:flex-row">
         <input
           type="search"
           name="q"
           defaultValue={params.q}
           placeholder="Search products, categories, keywords..."
-          className="min-h-12 flex-1 rounded-full bg-cream-100 px-5 text-sm outline-none focus:ring-2 focus:ring-navy-900"
+          className="min-h-12 flex-1 rounded-full bg-cream-100 px-5 text-sm"
         />
         <button className="btn btn-primary">
           Search
@@ -61,7 +61,7 @@ export default async function SearchPage({
             ))}
           </div>
         ) : (
-          <div className="rounded-2xl bg-white p-10 text-center ring-1 ring-navy-950/5">
+          <div className="page-card p-10 text-center">
             <h2 className="font-display text-2xl text-navy-950">No matching gifts found</h2>
             <p className="mt-2 text-ink-700">Try a broader keyword or request a custom gift box.</p>
           </div>

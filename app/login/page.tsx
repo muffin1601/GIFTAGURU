@@ -44,7 +44,7 @@ export default async function LoginPage({
   const { next, confirmed, authError } = await searchParams;
 
   return (
-    <main className="bg-cream-200 py-16 sm:py-24">
+    <main className="auth-experience py-16 sm:py-24">
       <AuthForm
         title="Log in"
         subtitle="Access your Gifta Guru account, addresses, orders, and wishlist."

@@ -21,8 +21,8 @@ export default function CorporateGiftingPage() {
         description="Gifta Guru helps HR, procurement, admin and marketing teams plan branded corporate gifts, employee welcome kits and bulk gifting programmes across India."
       />
       <CorporateSolutions />
-      <section className="section border-t border-line">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+      <section className="site-section section border-t border-line bg-canvas">
+        <div className="editorial-panel mx-auto max-w-4xl">
           <h2 className="type-h2">Corporate gifting kits for every business moment</h2>
           <p className="type-body mt-4">
             A useful corporate gift does more than carry a logo. It should suit the reason it is being sent, the person receiving it and the way the order needs to be delivered. A compact corporate gift kit can make a new employee feel expected on their first day; a premium corporate gift set can recognise a long-standing client without feeling promotional; and a practical branded set can help a large event or employee campaign feel consistent across every recipient.
@@ -56,13 +56,13 @@ export default function CorporateGiftingPage() {
           </p>
         </div>
       </section>
-      <section className="section border-t border-line">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+      <section className="site-section section border-t border-line bg-sunken">
+        <div className="editorial-panel mx-auto max-w-5xl">
           <h2 className="type-h2">Explore corporate gifting by requirement</h2>
           <p className="type-body mt-4 max-w-3xl">
             Start with the business moment you are planning, then shortlist gift sets and request a quote with your quantity, branding and delivery requirements.
           </p>
-          <ul className="mt-8 grid gap-x-10 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {[
               ["Employee onboarding and welcome kits", "/gifting/employee-onboarding"],
               ["Employee appreciation and recognition gifts", "/gifting/employee-appreciation"],
@@ -75,7 +75,7 @@ export default function CorporateGiftingPage() {
               ["Corporate gifting guide", "/blog/corporate-gifting-guide"],
             ].map(([label, href]) => (
               <li key={href}>
-                <Link href={href} className="link-underline type-body text-navy-950">{label}</Link>
+                <Link href={href} className="flex h-full items-center justify-between rounded-[30px] border border-line px-5 py-3 text-sm font-semibold text-navy-950 transition-colors hover:border-navy-950 hover:bg-navy-950 hover:text-white"><span>{label}</span><span aria-hidden="true">→</span></Link>
               </li>
             ))}
           </ul>

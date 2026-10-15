@@ -27,14 +27,14 @@ export default function ProductCard({ product }: { product: Product }) {
   const label = categoryLabel[product.category] ?? "Corporate Gifts";
 
   return (
-    <article className="group flex flex-col">
+    <article className="product-card group flex flex-col rounded-[30px] bg-surface p-3 pb-6 shadow-[0_10px_40px_-5px_rgba(10,26,48,0.1)]">
       {/* The image is the primary target. It duplicates the title link below,
           so it is kept out of the tab order rather than announced twice. */}
       <Link
         href={`/products/${product.slug}`}
         aria-hidden="true"
         tabIndex={-1}
-        className="relative block aspect-square overflow-hidden border border-line bg-surface"
+        className="relative block aspect-square overflow-hidden rounded-[18px] border border-line bg-sunken"
       >
         {product.image && (
           <Image
@@ -47,11 +47,11 @@ export default function ProductCard({ product }: { product: Product }) {
         )}
       </Link>
 
-      <div className="flex flex-1 flex-col gap-1.5 pt-4">
+      <div className="flex flex-1 flex-col gap-1.5 px-2 pt-5">
         <span className="type-eyebrow">{label}</span>
         {product.productCode ? <span className="type-meta">Product code: {product.productCode}</span> : null}
 
-        <h3 className="font-display text-[1.0625rem] leading-snug text-navy-950">
+        <h3 className="font-display text-xl font-semibold leading-snug text-navy-950">
           <Link href={`/products/${product.slug}`} className="link-underline">
             {product.name}
           </Link>
@@ -70,7 +70,7 @@ export default function ProductCard({ product }: { product: Product }) {
             addItem(product);
             setAdded(true);
           }}
-          className="mt-3 self-start border-b border-navy-950/25 pb-0.5 text-xs font-semibold uppercase tracking-[0.08em] text-navy-950 transition-colors duration-200 hover:border-gold-600 hover:text-gold-600"
+          className="mt-4 self-start rounded-[30px] border border-navy-950/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-navy-950 transition-colors duration-200 hover:border-navy-950 hover:bg-navy-950 hover:text-white"
         >
           {added ? "Added to cart" : "Add to cart"}
         </button>

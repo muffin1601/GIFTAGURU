@@ -11,8 +11,8 @@ export default function StatCard({
     <div
       className={
         tone === "dark"
-          ? "border border-navy-950 bg-navy-950 p-5 text-cream-100"
-          : "border border-line bg-surface p-5"
+          ? "admin-stat-card border border-navy-950 bg-navy-950 p-5 text-cream-100"
+          : "admin-stat-card border border-line bg-surface p-5"
       }
     >
       <p

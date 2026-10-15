@@ -22,7 +22,7 @@ export default async function AccountOrderDetailPage({ params }: { params: Promi
   return (
     <Container className="py-16">
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
-        <section className="rounded-lg bg-white p-6 ring-1 ring-navy-950/5">
+        <section className="page-card p-6">
           <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">Order tracking</p>
           <h1 className="mt-2 font-display text-4xl text-navy-950">{order.orderNumber}</h1>
           <div className="mt-6 space-y-3">
@@ -32,7 +32,7 @@ export default async function AccountOrderDetailPage({ params }: { params: Promi
             ))}
           </div>
         </section>
-        <aside className="rounded-lg bg-white p-6 ring-1 ring-navy-950/5">
+        <aside className="page-card p-6">
           <h2 className="font-display text-2xl text-navy-950">Delivery</h2>
           <p className="mt-4 text-sm">Order status: {order.status}</p>
           <p className="text-sm">Delivery: {order.deliveryStatus}</p>
@@ -62,7 +62,7 @@ export default async function AccountOrderDetailPage({ params }: { params: Promi
 
 function Timeline({ title, detail }: { title: string; detail: string }) {
   return (
-    <div className="rounded-lg border border-navy-950/10 p-4 text-sm">
+    <div className="hanna-soft border border-navy-950/10 bg-sunken p-4 text-sm">
       <p className="font-semibold capitalize text-navy-950">{title}</p>
       <p className="mt-1 text-ink-600">{detail}</p>
     </div>

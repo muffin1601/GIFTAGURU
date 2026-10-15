@@ -22,12 +22,12 @@
      canvas  = the warm off-white page ground
      surface = white panels sitting on the canvas
      sunken  = subtly deeper band used to separate sections without a border */
-  --color-canvas: #fbf9f5;
+  --color-canvas: #f7f7f3;
   --color-surface: #ffffff;
-  --color-sunken: #f4f0e8;
-  --color-cream-100: #fbf9f5;
-  --color-cream-200: #f4f0e8;
-  --color-cream-300: #e8e1d3;
+  --color-sunken: #eeefea;
+  --color-cream-100: #f7f7f3;
+  --color-cream-200: #eeefea;
+  --color-cream-300: #dedfd8;
 
   /* --- Text -------------------------------------------------------------- */
   --color-ink-900: #16181b;
@@ -47,6 +47,13 @@
   --dur-fast: 150ms;
   --dur-base: 220ms;
   --dur-slow: 300ms;
+
+  /* Hanna geometry, transcribed from the reference template. */
+  --radius-hanna-arch: 80px 80px 5px 5px;
+  --radius-hanna-card: 30px;
+  --radius-hanna-image: 18px;
+  --radius-hanna-soft: 15px;
+  --radius-hanna-pill: 30px;
 }
 
 @theme inline {
@@ -72,8 +79,9 @@
   --color-ink-500: var(--color-ink-500);
   --color-line: var(--color-line);
   --color-line-strong: var(--color-line-strong);
-  --font-display: var(--font-fraunces);
-  --font-sans: var(--font-manrope);
+  --font-display: var(--font-bodoni-moda);
+  --font-sans: var(--font-inter);
+  --font-script: var(--font-dancing-script);
 }
 
 html {
@@ -86,14 +94,6 @@ body {
   color: var(--color-ink-900);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   font-synthesis-weight: none;
-}
-
-/* Homepage-only geometry: every actionable control and image surface carries
-   the requested tight 3px radius. Full-bleed section bands stay square so
-   they continue to read as page structure rather than floating cards. */
-.homepage .btn,
-.homepage [class*="overflow-hidden"] {
-  border-radius: 3px;
 }
 
 /* Homepage premium system -------------------------------------------------
@@ -110,7 +110,7 @@ body {
 }
 
 .homepage-premium .section.bg-sunken {
-  background-color: #f4f0e8;
+  background-color: #eeefea;
 }
 
 .homepage-premium .section.bg-surface {
@@ -128,7 +128,11 @@ body {
 }
 
 .homepage-premium .type-eyebrow {
-  letter-spacing: 0.16em;
+  font-family: var(--font-script), cursive;
+  font-size: clamp(0.875rem, 0.8261rem + 0.2174vw, 1rem);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: capitalize;
 }
 
 .homepage-premium .section [class*="overflow-hidden"] {
@@ -144,6 +148,277 @@ body {
   min-width: 0;
 }
 
+.homepage-premium .btn {
+  border-radius: var(--radius-hanna-pill);
+}
+
+.hanna-arch {
+  overflow: hidden;
+  border-radius: var(--radius-hanna-arch);
+}
+
+.hanna-arch-frame {
+  overflow: hidden;
+  border: 10px double var(--color-gold-400);
+  border-radius: var(--radius-hanna-arch);
+}
+
+.hanna-card {
+  border-radius: var(--radius-hanna-card);
+  box-shadow: 0 10px 40px -5px rgb(10 26 48 / 0.12);
+}
+
+.hanna-image {
+  overflow: hidden;
+  border-radius: var(--radius-hanna-image);
+}
+
+.hanna-soft {
+  border-radius: var(--radius-hanna-soft);
+}
+
+.hanna-pill {
+  border-radius: var(--radius-hanna-pill);
+}
+
+/* Section geometry follows Hanna's own page rules: arched editorial imagery,
+   30px content cards, 18px inset media, and pill CTAs. The selectors remain
+   homepage-scoped so catalogue and account UI keep their existing system. */
+.homepage-premium > section:nth-child(9) a.group > div:first-child,
+.homepage-premium > section:nth-child(10) [class*="aspect-[3/4]"],
+.homepage-premium > section:nth-child(11) [class*="aspect-[4/5]"] {
+  overflow: hidden;
+  border: 10px double var(--color-gold-400);
+  border-radius: var(--radius-hanna-arch);
+}
+
+.homepage-premium > section:nth-child(12) a.group,
+.homepage-premium > section:nth-child(13) ol > li,
+.homepage-premium > section:nth-child(14) figure,
+.homepage-premium > section:nth-child(14) ul > li,
+.homepage-premium > section:nth-child(15) article {
+  border-radius: var(--radius-hanna-card);
+}
+
+.homepage-premium > section:nth-child(11) ol {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  border: 0;
+}
+
+.homepage-premium > section:nth-child(11) ol > li {
+  display: block;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-hanna-card);
+  background: var(--color-canvas);
+  padding: 1.5rem;
+  box-shadow: 0 5px 30px -10px rgb(10 26 48 / 0.15);
+}
+
+.homepage-premium > section:nth-child(11) ol > li > * + * {
+  margin-top: 0.75rem;
+}
+
+.homepage-premium > section:nth-child(12) a.group {
+  box-shadow: 0 10px 40px -5px rgb(10 26 48 / 0.12);
+}
+
+.homepage-premium > section:nth-child(13) ol {
+  gap: 1rem;
+  border: 0;
+}
+
+.homepage-premium > section:nth-child(13) ol > li {
+  border: 1px solid var(--color-line);
+  background: var(--color-surface);
+  padding: 1.75rem;
+  box-shadow: 0 10px 40px -5px rgb(10 26 48 / 0.08);
+}
+
+.homepage-premium > section:nth-child(14) figure,
+.homepage-premium > section:nth-child(14) ul > li {
+  border: 1px solid var(--color-line);
+  background: var(--color-canvas);
+  padding: 2rem;
+  box-shadow: 0 10px 40px -5px rgb(10 26 48 / 0.08);
+}
+
+.homepage-premium > section:nth-child(15) article {
+  background: var(--color-surface);
+  padding: 0.75rem 0.75rem 1.75rem;
+  box-shadow: 0 10px 40px -5px rgb(10 26 48 / 0.1);
+}
+
+.homepage-premium > section:nth-child(15) article [class*="aspect-[4/3]"] {
+  border-radius: var(--radius-hanna-image);
+}
+
+header a[href="/bulk-enquiry"] {
+  border-radius: var(--radius-hanna-pill);
+}
+
+.page-hero .type-eyebrow,
+.site-section .type-eyebrow,
+.buyer-guide .type-eyebrow {
+  font-family: var(--font-script), cursive;
+  font-size: clamp(0.875rem, 0.8261rem + 0.2174vw, 1rem);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: capitalize;
+}
+
+.page-hero .type-h1 {
+  font-size: clamp(2.75rem, 2.1386rem + 2.7174vw, 4.3125rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.catalogue-grid {
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+.hanna-form {
+  border-radius: var(--radius-hanna-card);
+  box-shadow: 0 10px 40px -5px rgb(10 26 48 / 0.1);
+}
+
+.hanna-form .field-input,
+.product-purchase .field-input {
+  border-radius: var(--radius-hanna-pill);
+}
+
+.editorial-panel {
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-hanna-card);
+  background: var(--color-surface);
+  padding: clamp(1.5rem, 3vw, 3rem);
+  box-shadow: 0 10px 40px -5px rgb(10 26 48 / 0.08);
+}
+
+/* Shared interior-page surfaces. These keep utility screens, customer
+   account pages and transactional flows in the same Hanna visual language
+   as the storefront without changing their information architecture. */
+.page-card,
+.auth-card {
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-hanna-card);
+  background: var(--color-surface);
+  box-shadow: 0 10px 40px -5px rgb(10 26 48 / 0.1);
+}
+
+.auth-experience {
+  min-height: min(48rem, calc(100vh - 10rem));
+  background: var(--color-cream-200);
+}
+
+.auth-card {
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+}
+
+.account-experience {
+  min-height: 60vh;
+  background: var(--color-canvas);
+}
+
+.checkout-form > section,
+.checkout-summary,
+.cart-summary {
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-hanna-card);
+  background: var(--color-surface);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  box-shadow: 0 10px 40px -10px rgb(10 26 48 / 0.1);
+}
+
+/* Admin is intentionally denser than the storefront, but uses the same
+   warm canvas, Bodoni headings, gold accents, soft cards and pill controls. */
+.admin-experience {
+  background: var(--color-cream-200);
+}
+
+.admin-sidebar {
+  background: var(--color-navy-950);
+  color: var(--color-cream-100);
+}
+
+.admin-nav-link,
+.admin-nav-action {
+  color: var(--color-ink-700);
+}
+
+.admin-nav-label {
+  color: var(--color-ink-500);
+}
+
+.admin-sidebar .admin-brand,
+.admin-sidebar .admin-nav-link,
+.admin-sidebar .admin-nav-action {
+  color: rgb(247 247 243 / 78%);
+}
+
+.admin-sidebar .admin-nav-label {
+  color: rgb(230 205 124 / 72%);
+}
+
+.admin-sidebar .admin-nav-link {
+  border-radius: var(--radius-hanna-pill);
+  border: 1px solid transparent;
+}
+
+.admin-nav-link[aria-current="page"] {
+  background: var(--color-sunken);
+  color: var(--color-navy-950);
+}
+
+.admin-sidebar .admin-nav-link:hover,
+.admin-sidebar .admin-nav-link[aria-current="page"] {
+  border-color: rgb(230 205 124 / 26%);
+  background: rgb(255 255 255 / 8%);
+  color: var(--color-surface);
+}
+
+.admin-content {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 96rem;
+}
+
+.admin-experience .panel,
+.admin-experience table {
+  background: var(--color-surface);
+}
+
+.admin-stat-card {
+  border-radius: var(--radius-hanna-card);
+  box-shadow: 0 10px 30px -12px rgb(10 26 48 / 0.16);
+}
+
+.admin-experience table {
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-hanna-soft);
+}
+
+.admin-experience thead {
+  background: var(--color-sunken);
+}
+
+.admin-experience tbody tr {
+  transition: background-color var(--dur-base) var(--ease-ui);
+}
+
+.admin-experience tbody tr:hover {
+  background: rgb(238 239 234 / 55%);
+}
+
+@media (max-width: 639px) {
+  .homepage-premium > section:nth-child(11) ol {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Display type is set tighter and optically lighter than the UI sans. */
 .font-display {
   letter-spacing: -0.015em;
@@ -154,6 +429,35 @@ body {
   outline: 2px solid var(--color-navy-900);
   outline-offset: 2px;
   border-radius: 2px;
+}
+
+/* Form controls use a soft brand-colour focus treatment instead of the
+   browser/navy outline, which can read as a heavy black border. */
+:where(input, select, textarea):focus,
+:where(input, select, textarea):focus-visible {
+  outline: none;
+}
+
+:where(input, select, textarea):focus-visible {
+  box-shadow: 0 0 0 3px rgb(169 130 28 / 18%);
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--color-gold-500) !important;
+}
+
+input[type="file"]::file-selector-button {
+  margin-right: 0.75rem;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-hanna-pill);
+  background: var(--color-surface);
+  padding: 0.5rem 0.875rem;
+  color: var(--color-navy-950);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 /* Respect the OS setting. Motion is decoration here, never information. */
@@ -182,7 +486,7 @@ body {
 
   .type-h1 {
     font-family: var(--font-display), Georgia, serif;
-    font-weight: 400;
+    font-weight: 700;
     font-size: clamp(2.125rem, 1.4rem + 3vw, 3.75rem);
     line-height: 1.08;
     letter-spacing: -0.02em;
@@ -191,7 +495,7 @@ body {
 
   .type-h2 {
     font-family: var(--font-display), Georgia, serif;
-    font-weight: 400;
+    font-weight: 700;
     font-size: clamp(1.75rem, 1.25rem + 2vw, 2.75rem);
     line-height: 1.15;
     letter-spacing: -0.015em;
@@ -200,7 +504,7 @@ body {
 
   .type-h3 {
     font-family: var(--font-display), Georgia, serif;
-    font-weight: 400;
+    font-weight: 600;
     font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.5rem);
     line-height: 1.25;
     color: var(--color-navy-950);
@@ -253,7 +557,7 @@ body {
       border-color var(--dur-base) var(--ease-ui),
       color var(--dur-base) var(--ease-ui);
     cursor: pointer;
-    border-radius: 3px;
+    border-radius: var(--radius-hanna-pill);
   }
 
   .btn:disabled,
@@ -325,7 +629,7 @@ body {
     color: var(--color-ink-900);
     background-color: var(--color-surface);
     border: 1px solid var(--color-line);
-    border-radius: 3px;
+    border-radius: var(--radius-hanna-pill);
     transition:
       border-color var(--dur-base) var(--ease-ui),
       background-color var(--dur-base) var(--ease-ui);
@@ -337,7 +641,11 @@ body {
     border-color: var(--color-line-strong);
   }
   .field-input:focus {
-    border-color: var(--color-navy-900);
+    border-color: var(--color-gold-500);
+  }
+
+  textarea.field-input {
+    border-radius: var(--radius-hanna-image);
   }
   .field-input:disabled {
     background-color: var(--color-sunken);
@@ -363,7 +671,8 @@ body {
   .panel {
     background-color: var(--color-surface);
     border: 1px solid var(--color-line);
-    border-radius: 3px;
+    border-radius: var(--radius-hanna-card);
+    box-shadow: 0 10px 40px -10px rgb(10 26 48 / 0.1);
   }
 
   .rule {

@@ -178,7 +178,7 @@ export default function CartPageClient({ signedIn = false }: { signedIn?: boolea
           </div>
         </section>
 
-        <aside className="h-fit lg:sticky lg:top-32" aria-label="Order summary">
+        <aside className="cart-summary h-fit lg:sticky lg:top-44" aria-label="Order summary">
           <h2 className="type-eyebrow">Order Summary</h2>
 
           {requiresSalesQuote ? (

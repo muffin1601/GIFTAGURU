@@ -9,16 +9,16 @@ export default async function Testimonials() {
   if (testimonials.length === 0) return null;
 
   return (
-    <section className="section border-t border-line">
+    <section className="site-section section border-t border-line bg-surface">
       <Container className="flex flex-col gap-14 sm:gap-20">
         <SectionHeading
           eyebrow="Trusted by Businesses"
           title="What corporate teams say about Gifta Guru"
         />
-        <div className="grid gap-x-12 gap-y-12 sm:grid-cols-2">
+        <div className="grid gap-5 sm:grid-cols-2">
           {testimonials.map((testimonial) => (
-            <figure key={testimonial.id} className="border-t border-line pt-7">
-              <blockquote className="font-display text-xl leading-relaxed text-navy-950">
+            <figure key={testimonial.id} className="rounded-[30px] border border-line bg-canvas p-8 shadow-[0_10px_40px_-5px_rgba(10,26,48,0.08)]">
+              <blockquote className="font-display text-xl font-medium leading-relaxed text-navy-950">
                 &ldquo;{testimonial.quote}&rdquo;
               </blockquote>
               <figcaption className="mt-6">

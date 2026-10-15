@@ -69,8 +69,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-canvas lg:grid lg:grid-cols-[16rem_1fr]">
-      <aside className="hidden border-r border-line bg-surface lg:block">
+    <div className="admin-experience min-h-screen lg:grid lg:grid-cols-[17rem_1fr]">
+      <aside className="admin-sidebar hidden border-r border-navy-800 lg:block">
         <AdminNavigation pathname={pathname} />
       </aside>
       <div className="min-w-0">
@@ -92,7 +92,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             <AdminNavigation pathname={pathname} onNavigate={() => setOpen(false)} />
           </div>
         ) : null}
-        <main className="px-4 py-8 sm:px-6 lg:px-10 lg:py-12">{children}</main>
+        <main className="admin-content px-4 py-8 sm:px-6 lg:px-10 lg:py-12">{children}</main>
       </div>
     </div>
   );
@@ -101,12 +101,12 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 function AdminNavigation({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {
   return (
     <nav className="flex h-full flex-col gap-8 p-6" aria-label="Admin navigation">
-      <Link href="/admin" onClick={onNavigate} className="font-display text-xl text-navy-950">
+      <Link href="/admin" onClick={onNavigate} className="admin-brand font-display text-xl">
         Gifta Guru
       </Link>
       {sections.map((section) => (
         <div key={section.title}>
-          <p className="text-[0.625rem] font-semibold uppercase tracking-[0.16em] text-ink-500">
+          <p className="admin-nav-label text-[0.625rem] font-semibold uppercase tracking-[0.16em]">
             {section.title}
           </p>
           <div className="mt-2.5 flex flex-col">
@@ -119,10 +119,10 @@ function AdminNavigation({ pathname, onNavigate }: { pathname: string; onNavigat
                   href={href}
                   onClick={onNavigate}
                   aria-current={active ? "page" : undefined}
-                  className={`-mx-2 flex items-center gap-3 border-l-2 px-4 py-2 text-sm transition-colors duration-200 ${
+                  className={`admin-nav-link -mx-2 flex items-center gap-3 px-4 py-2 text-sm transition-colors duration-200 ${
                     active
-                      ? "border-gold-500 font-medium text-navy-950"
-                      : "border-transparent text-ink-700 hover:text-navy-950"
+                      ? "font-medium"
+                      : ""
                   }`}
                 >
                   <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
@@ -133,11 +133,11 @@ function AdminNavigation({ pathname, onNavigate }: { pathname: string; onNavigat
           </div>
         </div>
       ))}
-      <div className="mt-auto border-t border-line pt-5">
+      <div className="mt-auto border-t border-white/15 pt-5">
         <Link
           href="/"
           onClick={onNavigate}
-          className="-mx-2 flex items-center gap-3 px-4 py-2 text-sm text-ink-700 transition-colors duration-200 hover:text-navy-950"
+          className="admin-nav-action -mx-2 flex items-center gap-3 px-4 py-2 text-sm transition-colors duration-200 hover:text-white"
         >
           <Store className="h-4 w-4 shrink-0" aria-hidden="true" />
           View storefront
@@ -145,7 +145,7 @@ function AdminNavigation({ pathname, onNavigate }: { pathname: string; onNavigat
         <form action={logoutAction} className="mt-1">
           <button
             type="submit"
-            className="-mx-2 flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-ink-700 transition-colors duration-200 hover:text-navy-950"
+            className="admin-nav-action -mx-2 flex w-full items-center gap-3 px-4 py-2 text-left text-sm transition-colors duration-200 hover:text-white"
           >
             <LogOut className="h-4 w-4 shrink-0" aria-hidden="true" />
             Log out

@@ -94,13 +94,13 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="product-purchase flex flex-col gap-8 rounded-[30px] border border-line bg-surface p-6 shadow-[0_10px_40px_-5px_rgba(10,26,48,0.08)] sm:p-8">
       {/* Quantity ---------------------------------------------------------- */}
       <div>
         <label className="field-label" htmlFor="quantity">
           Quantity
         </label>
-        <div className="mt-2.5 inline-flex h-12 items-center border border-line bg-surface">
+        <div className="mt-2.5 inline-flex h-12 items-center rounded-[30px] border border-line bg-surface">
           <button
             type="button"
             aria-label="Decrease quantity"

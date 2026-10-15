@@ -331,7 +331,7 @@ export default function CheckoutClient({
     <Container className="py-12 sm:py-16">
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
       <div className="grid gap-12 lg:grid-cols-[1fr_22rem] lg:gap-16">
-        <form onSubmit={submitCheckout} className="flex flex-col gap-10">
+        <form onSubmit={submitCheckout} className="checkout-form flex flex-col gap-6">
           <div>
             <span className="type-eyebrow">Checkout</span>
             <h1 className="type-h1 mt-4">Secure corporate checkout</h1>
@@ -452,7 +452,7 @@ export default function CheckoutClient({
           </button>
         </form>
 
-        <aside className="h-fit lg:sticky lg:top-32">
+        <aside className="checkout-summary h-fit lg:sticky lg:top-44">
           <h2 className="type-eyebrow">Review</h2>
           {requiresSalesQuote ? (
             <div className="mt-5 border-y border-line py-5">

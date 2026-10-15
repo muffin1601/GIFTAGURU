@@ -87,14 +87,14 @@ export default function MobileNav({ links }: { links: NavLink[] }) {
   }, [open]);
 
   return (
-    <div className="md:hidden">
+    <div className="xl:hidden">
       <button
         ref={triggerRef}
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Open menu"
         aria-expanded={open}
-        className="inline-flex items-center justify-center rounded-full p-2 text-navy-950 hover:bg-navy-950/5"
+        className="inline-flex items-center justify-center rounded-[3px] p-2 text-navy-950 hover:bg-navy-950/5"
       >
         <Menu className="h-6 w-6" aria-hidden="true" />
       </button>
@@ -124,7 +124,7 @@ export default function MobileNav({ links }: { links: NavLink[] }) {
                   type="button"
                   onClick={close}
                   aria-label="Close menu"
-                  className="inline-flex items-center justify-center rounded-full p-2 text-navy-950 hover:bg-navy-950/5"
+                  className="inline-flex items-center justify-center rounded-[3px] p-2 text-navy-950 hover:bg-navy-950/5"
                 >
                   <X className="h-6 w-6" aria-hidden="true" strokeWidth={1.5} />
                 </button>
@@ -135,7 +135,7 @@ export default function MobileNav({ links }: { links: NavLink[] }) {
                     key={link.href}
                     href={link.href}
                     onClick={close}
-                    className="rounded-lg px-3 py-3 text-base font-medium text-navy-950 hover:bg-navy-950/5"
+                    className="rounded-[3px] px-3 py-3 text-base font-medium text-navy-950 hover:bg-navy-950/5"
                   >
                     {link.label}
                   </Link>

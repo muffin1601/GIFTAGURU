@@ -125,7 +125,7 @@ export default function LeadForm({ type, source, compact = false, defaults = {},
   // rather than a small line of green text under a still-filled form.
   if (status === "success") {
     return (
-      <div className={compact ? "" : "panel p-8 sm:p-10"}>
+      <div className={compact ? "" : "panel hanna-form p-8 sm:p-10"}>
         <Check className="h-6 w-6 text-gold-600" strokeWidth={1.25} aria-hidden="true" />
         <h3 className="type-h3 mt-4">Enquiry received</h3>
         <p className="type-body mt-2 max-w-md" role="status">
@@ -153,7 +153,7 @@ export default function LeadForm({ type, source, compact = false, defaults = {},
     <form
       onSubmit={submit}
       noValidate
-      className={`grid gap-x-6 gap-y-5 sm:grid-cols-2 ${compact ? "" : "panel p-6 sm:p-8"}`}
+      className={`grid gap-x-6 gap-y-5 sm:grid-cols-2 ${compact ? "" : "panel hanna-form p-6 sm:p-8"}`}
     >
       {/* Honeypot: hidden from people, tempting to bots. */}
       <input type="hidden" name="website" tabIndex={-1} autoComplete="off" className="hidden" />

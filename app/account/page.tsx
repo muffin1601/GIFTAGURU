@@ -23,7 +23,7 @@ export default async function AccountPage() {
   if (!isSupabaseConfigured()) {
     return (
       <Container className="py-16">
-        <div className="rounded-2xl bg-white p-8 ring-1 ring-navy-950/5">
+        <div className="page-card p-8">
           <h1 className="font-display text-3xl text-navy-950">Account setup pending</h1>
           <p className="mt-3 text-ink-700">Add Supabase environment variables from `.env.example` to enable secure customer accounts.</p>
           <Button href="/login" className="mt-6">Go to Login</Button>
@@ -58,7 +58,7 @@ export default async function AccountPage() {
       {admin ? (
         <Link
           href="/admin"
-          className="mt-8 flex items-center justify-between gap-4 border border-navy-950 bg-navy-950 p-5 text-cream-100 transition-colors duration-200 hover:bg-navy-800"
+          className="mt-8 flex items-center justify-between gap-4 rounded-[30px] border border-navy-950 bg-navy-950 p-5 text-cream-100 transition-colors duration-200 hover:bg-navy-800"
         >
           <span className="flex items-center gap-3">
             <ShieldCheck className="h-5 w-5 text-gold-400" aria-hidden="true" strokeWidth={1.5} />

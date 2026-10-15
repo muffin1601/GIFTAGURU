@@ -189,7 +189,7 @@ function AuthCallback() {
   if (error) {
     const copy = FAILURE_COPY[error.kind];
     return (
-      <Container className="max-w-lg py-24 sm:py-32">
+      <Container className="auth-card my-16 max-w-lg sm:my-24">
         <span className="type-eyebrow">{copy.eyebrow}</span>
         <h1 className="type-h1 mt-4">{copy.heading}</h1>
         <p className="type-lead mt-5">{copy.body}</p>
@@ -210,7 +210,7 @@ function AuthCallback() {
   }
 
   return (
-    <Container className="max-w-lg py-24 text-center sm:py-32">
+    <Container className="auth-card my-16 max-w-lg text-center sm:my-24">
       <p className="type-body">Confirming your account&hellip;</p>
     </Container>
   );

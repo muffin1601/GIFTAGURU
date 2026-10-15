@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Fraunces, Manrope } from "next/font/google";
+import { Bodoni_Moda, Dancing_Script, Inter } from "next/font/google";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { CartProvider } from "@/components/cart/CartProvider";
@@ -15,16 +15,22 @@ import JsonLd from "@/components/seo/JsonLd";
 import AuthHashErrorWatcher from "@/components/auth/AuthHashErrorWatcher";
 import "./globals.css";
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
-
-const manrope = Manrope({
-  variable: "--font-manrope",
+const bodoniModa = Bodoni_Moda({
+  variable: "--font-bodoni-moda",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+});
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const dancingScript = Dancing_Script({
+  variable: "--font-dancing-script",
+  subsets: ["latin"],
+  weight: ["500", "600"],
 });
 
 // Deliberately NOT using Next's title `template` option: every page in this
@@ -66,7 +72,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${fraunces.variable} ${manrope.variable}`}
+      className={`${bodoniModa.variable} ${inter.variable} ${dancingScript.variable}`}
     >
       <body className="flex min-h-screen flex-col antialiased">
         <JsonLd data={[organizationSchema(), websiteSchema()]} />
