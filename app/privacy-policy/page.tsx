@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import PageHeader from "@/components/ui/PageHeader";
-import Container from "@/components/ui/Container";
+import LegalDocument from "@/components/content/LegalDocument";
 import { pageMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = pageMetadata({
@@ -11,10 +10,7 @@ export const metadata: Metadata = pageMetadata({
 
 export default function PrivacyPolicyPage() {
   return (
-    <>
-      <PageHeader eyebrow="Legal" title="Privacy Policy" />
-      <section className="py-16 sm:py-20">
-        <Container className="flex max-w-3xl flex-col gap-4 text-ink-700">
+    <LegalDocument title="Privacy Policy" description="How Gifta Guru handles information shared through enquiries, quote requests and orders.">
           <p>
             Gifta Guru respects the privacy of every business and individual we work with. This
             page outlines, at a high level, how we handle information shared with us through
@@ -29,8 +25,6 @@ export default function PrivacyPolicyPage() {
             This is placeholder content for the initial frontend build. A complete privacy policy
             will be added once data handling and order-processing systems are finalized.
           </p>
-        </Container>
-      </section>
-    </>
+    </LegalDocument>
   );
 }

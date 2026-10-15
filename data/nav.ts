@@ -7,6 +7,7 @@ export const mainNav: NavLink[] = [
   { label: "Categories", href: "/categories" },
   { label: "Custom Gifts", href: "/custom-gifts" },
   { label: "Bulk Orders", href: "/bulk-orders" },
+  { label: "Gifting Guides", href: "/blog" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];

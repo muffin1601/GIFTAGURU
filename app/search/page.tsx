@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Container from "@/components/ui/Container";
 import ProductCard from "@/components/ui/ProductCard";
+import PageHeader from "@/components/ui/PageHeader";
+import Button from "@/components/ui/Button";
 import { searchProducts } from "@/lib/data/products";
 import { pageMetadata } from "@/lib/seo/metadata";
 
@@ -35,38 +37,31 @@ export default async function SearchPage({
   });
 
   return (
-    <Container className="py-12 sm:py-16">
-      <div className="max-w-3xl">
-        <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">Search</p>
-        <h1 className="mt-3 font-display text-4xl text-navy-950 sm:text-5xl">Find the right corporate gift</h1>
-      </div>
-      <form action="/search" className="page-card mt-8 flex flex-col gap-3 p-3 sm:flex-row">
-        <input
-          type="search"
-          name="q"
-          defaultValue={params.q}
-          placeholder="Search products, categories, keywords..."
-          className="min-h-12 flex-1 rounded-full bg-cream-100 px-5 text-sm"
-        />
-        <button className="btn btn-primary">
-          Search
-        </button>
-      </form>
+    <>
+      <PageHeader
+        eyebrow="Search the catalogue"
+        title="Find the right corporate gift"
+        description="Search by product, collection, recipient or gifting occasion, then compare the options that match your brief."
+        breadcrumbs={[{ label: "Home", href: "/" }, { label: "Search" }]}
+        image="/BANNERS/PREMIUM.png"
+      />
+      <section className="section bg-canvas">
+        <Container>
+          <form action="/search" className="page-card mx-auto flex max-w-4xl flex-col gap-3 p-3 sm:flex-row sm:p-4">
+            <label htmlFor="catalogue-search" className="sr-only">Search products, categories and keywords</label>
+            <input id="catalogue-search" type="search" name="q" defaultValue={params.q} placeholder="Search products, categories, keywords..." className="min-h-12 flex-1 rounded-full bg-cream-100 px-5 text-sm outline-none" />
+            <button className="btn btn-primary">Search catalogue</button>
+          </form>
 
-      <div className="mt-10">
-        {products.length > 0 ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+          <div className="mt-12">
+            {products.length > 0 ? (
+              <><div className="flex items-end justify-between gap-6 border-b border-line pb-6"><div><p className="type-eyebrow">Search results</p><h2 className="type-h2 mt-2">{params.q ? `Gifts matching “${params.q}”` : "Explore corporate gifts"}</h2></div><p className="type-meta">{products.length} result{products.length === 1 ? "" : "s"}</p></div><div className="catalogue-grid mt-8 grid sm:grid-cols-2 lg:grid-cols-4">{products.map((product) => <ProductCard key={product.id} product={product} />)}</div></>
+            ) : (
+              <div className="page-card mx-auto max-w-3xl p-10 text-center sm:p-14"><p className="font-script text-lg text-gold-700">No exact match</p><h2 className="type-h2 mt-3">Let us help build the right gift box</h2><p className="type-body mx-auto mt-4 max-w-xl">Try a broader keyword, browse the complete catalogue, or share your recipient and budget requirements for a curated recommendation.</p><div className="mt-7 flex flex-wrap justify-center gap-3"><Button href="/shop">Browse all gifts</Button><Button href="/bulk-enquiry" variant="secondary">Request a quote</Button></div></div>
+            )}
           </div>
-        ) : (
-          <div className="page-card p-10 text-center">
-            <h2 className="font-display text-2xl text-navy-950">No matching gifts found</h2>
-            <p className="mt-2 text-ink-700">Try a broader keyword or request a custom gift box.</p>
-          </div>
-        )}
-      </div>
-    </Container>
+        </Container>
+      </section>
+    </>
   );
 }

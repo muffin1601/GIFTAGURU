@@ -4,7 +4,7 @@ import FAQ from "@/components/home/FAQ";
 import JsonLd from "@/components/seo/JsonLd";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { faqPageSchema } from "@/lib/seo/schema";
-import { faqs } from "@/data/faqs";
+import { getFaqs } from "@/lib/data/content";
 
 export const dynamic = "force-dynamic";
 
@@ -21,14 +21,16 @@ export const metadata: Metadata = pageMetadata({
   path: "",
 });
 
-export default function Home() {
+export default async function Home() {
+  const faqs = await getFaqs();
+
   return (
     <>
       {/* Mirrors the FAQ section rendered at the bottom of this page. */}
       <JsonLd data={faqPageSchema(faqs.map(({ question, answer }) => ({ question, answer })))} />
       <div className="homepage">
         <CorporateHomepage />
-        <FAQ />
+        <FAQ items={faqs} />
       </div>
     </>
   );

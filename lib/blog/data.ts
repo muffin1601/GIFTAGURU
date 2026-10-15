@@ -9,6 +9,17 @@ import type { BlogPost, BlogFaq, BlogLink, BlogSection } from "./types";
 const DEFAULT_IMAGE = "/BANNERS/PREMIUM.png";
 const DEFAULT_DATE = new Date("2026-01-15T00:00:00.000Z");
 
+const GUIDE_IMAGES: Record<string, { src: string; alt: string }> = {
+  "corporate-gifting-guide": { src: "/BANNERS/PREMIUM.png", alt: "Premium corporate gift sets curated by Gifta Guru" },
+  "employee-welcome-kit-guide": { src: "/BANNERS/JOINING.png", alt: "Employee welcome kits with branded workplace essentials" },
+  "client-gifting-guide": { src: "/Gifta Guru/Set 12/1 (1).png", alt: "Premium client appreciation corporate gift set" },
+  "corporate-gifting-budget-guide": { src: "/Gifta Guru/Set 18/1 (1).png", alt: "Curated corporate gift set for employee programmes" },
+  "eco-friendly-corporate-gifting": { src: "/BANNERS/ECO.png", alt: "Eco-friendly corporate gift collection" },
+  "diwali-corporate-gifting-guide": { src: "/Diwali kits/Set 8/Primary_1.webp", alt: "Corporate Diwali gift box for employees and clients" },
+  "conference-giveaway-guide": { src: "/catalogue-2026-images/page-03-img-06_720x541.png", alt: "Corporate event gifts and conference giveaways" },
+  "logo-branding-on-corporate-gifts": { src: "/Gifta Guru/Set 16/1 (1).png", alt: "Custom branded corporate stationery gift set" },
+};
+
 /** Existing long-form guides are the initial editorial library. They are
  * exposed only at /blog; /guides permanently redirects, avoiding duplicate
  * content while the database-backed manager becomes the ongoing source. */
@@ -26,8 +37,8 @@ const guidePosts: BlogPost[] = guidePages.map((guide, index) => ({
     guide.slug.includes("eco") ? "Sustainable Gifting" :
     guide.slug.includes("conference") || guide.slug.includes("branding") ? "Promotional Merchandise" :
     guide.slug.includes("diwali") ? "Festive Gifting" : "Corporate Gifting",
-  featuredImageUrl: DEFAULT_IMAGE,
-  featuredImageAlt: "Curated corporate gifting collection by Gifta Guru",
+  featuredImageUrl: GUIDE_IMAGES[guide.slug]?.src ?? DEFAULT_IMAGE,
+  featuredImageAlt: GUIDE_IMAGES[guide.slug]?.alt ?? "Curated corporate gifting collection by Gifta Guru",
   authorName: "Gifta Guru Team",
   seoTitle: guide.seoTitle,
   metaDescription: guide.metaDescription,
@@ -42,8 +53,8 @@ const techDiwaliPost: BlogPost = {
   title: "Corporate Tech Gifting Kits for Diwali",
   excerpt: "A practical guide to branded corporate gadgets, technology gifts and Diwali tech gifting kits for employee and client programmes.",
   category: "Tech Gifts",
-  featuredImageUrl: DEFAULT_IMAGE,
-  featuredImageAlt: "Corporate Diwali gifting collection by Gifta Guru",
+  featuredImageUrl: "/Diwali kits/Set 9/Primary.webp",
+  featuredImageAlt: "Corporate technology gifting kit for Diwali",
   authorName: "Gifta Guru Team",
   seoTitle: "Corporate Tech Gifting Kits for Diwali",
   metaDescription: "Plan corporate technology gifts, branded electronics gifts and Diwali tech gifting kits for employees and clients.",

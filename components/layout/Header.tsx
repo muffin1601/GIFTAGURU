@@ -30,6 +30,7 @@ const iconLinkClass =
 
 const quickLinks = [
   { label: "Shop", href: "/shop" },
+  { label: "Gifting Guides", href: "/blog" },
   { label: "Track Order", href: "/track-order" },
   { label: "Bulk Enquiry", href: "/bulk-enquiry" },
   { label: "Contact", href: "/contact" },
@@ -120,6 +121,7 @@ export default function Header() {
             <Link href="/diwali-2026" className={`${navLinkClass} whitespace-nowrap`}>Diwali 2026</Link>
             <Link href="/gifting/employee-onboarding" className={`${navLinkClass} whitespace-nowrap`}>Welcome Kits</Link>
             <Link href="/custom-gifts" className={navLinkClass}>Custom Gifts</Link>
+            <Link href="/blog" className={navLinkClass}>Gifting Guides</Link>
             <Link href="/about" className={navLinkClass}>About</Link>
             <Link href="/contact" className={navLinkClass}>Contact</Link>
           </nav>

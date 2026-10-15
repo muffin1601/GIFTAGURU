@@ -195,8 +195,7 @@ body {
 .homepage-premium > section:nth-child(12) a.group,
 .homepage-premium > section:nth-child(13) ol > li,
 .homepage-premium > section:nth-child(14) figure,
-.homepage-premium > section:nth-child(14) ul > li,
-.homepage-premium > section:nth-child(15) article {
+.homepage-premium > section:nth-child(14) ul > li {
   border-radius: var(--radius-hanna-card);
 }
 
@@ -242,16 +241,6 @@ body {
   background: var(--color-canvas);
   padding: 2rem;
   box-shadow: 0 10px 40px -5px rgb(10 26 48 / 0.08);
-}
-
-.homepage-premium > section:nth-child(15) article {
-  background: var(--color-surface);
-  padding: 0.75rem 0.75rem 1.75rem;
-  box-shadow: 0 10px 40px -5px rgb(10 26 48 / 0.1);
-}
-
-.homepage-premium > section:nth-child(15) article [class*="aspect-[4/3]"] {
-  border-radius: var(--radius-hanna-image);
 }
 
 header a[href="/bulk-enquiry"] {

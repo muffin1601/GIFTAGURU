@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import PageHeader from "@/components/ui/PageHeader";
-import Container from "@/components/ui/Container";
+import LegalDocument from "@/components/content/LegalDocument";
 import { pageMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = pageMetadata({
@@ -11,10 +10,7 @@ export const metadata: Metadata = pageMetadata({
 
 export default function TermsAndConditionsPage() {
   return (
-    <>
-      <PageHeader eyebrow="Legal" title="Terms and Conditions" />
-      <section className="py-16 sm:py-20">
-        <Container className="flex max-w-3xl flex-col gap-4 text-ink-700">
+    <LegalDocument title="Terms and Conditions" description="The terms that apply to website use, gifting enquiries, quotations and confirmed orders.">
           <p>
             These terms govern the use of the Gifta Guru website and the placement of gifting
             inquiries, quote requests, and bulk orders through our team.
@@ -28,8 +24,6 @@ export default function TermsAndConditionsPage() {
             This is placeholder content for the initial frontend build. Complete terms will be
             published once ordering and payment systems are finalized.
           </p>
-        </Container>
-      </section>
-    </>
+    </LegalDocument>
   );
 }
