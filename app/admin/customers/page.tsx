@@ -1,12 +1,38 @@
 import Link from "next/link";
+import { isSupabaseAdminConfigured } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { formatPrice } from "@/lib/utils";
 
+async function getCustomerEmails() {
+  const emailsById = new Map<string, string>();
+  if (!isSupabaseAdminConfigured()) return emailsById;
+
+  const supabase = createAdminClient();
+  const perPage = 200;
+
+  for (let page = 1; ; page += 1) {
+    const { data, error } = await supabase.auth.admin.listUsers({ page, perPage });
+    if (error) throw error;
+
+    for (const user of data.users) {
+      if (user.email) emailsById.set(user.id, user.email);
+    }
+
+    if (data.users.length < perPage) break;
+  }
+
+  return emailsById;
+}
+
 export default async function AdminCustomersPage() {
-  const customers = await prisma.profile.findMany({
-    orderBy: { createdAt: "desc" },
-    include: { orders: { select: { total: true, createdAt: true } }, addresses: true },
-  });
+  const [customers, emailsById] = await Promise.all([
+    prisma.profile.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { orders: { select: { total: true, createdAt: true } }, addresses: true },
+    }),
+    getCustomerEmails(),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -20,6 +46,7 @@ export default async function AdminCustomersPage() {
             <thead className="bg-sunken text-xs uppercase tracking-wide text-ink-600">
               <tr>
                 <th className="px-4 py-3">Customer</th>
+                <th className="px-4 py-3">Email</th>
                 <th className="px-4 py-3">Role</th>
                 <th className="px-4 py-3">Phone</th>
                 <th className="px-4 py-3">Orders</th>
@@ -35,6 +62,15 @@ export default async function AdminCustomersPage() {
                     <td className="px-4 py-3">
                       <Link href={`/admin/customers/${customer.id}`} className="font-semibold text-navy-950">{customer.fullName ?? customer.companyName ?? customer.id}</Link>
                       <p className="text-ink-500">{customer.companyName}</p>
+                    </td>
+                    <td className="px-4 py-3">
+                      {emailsById.get(customer.id) ? (
+                        <a className="text-ink-700 hover:text-navy-950 hover:underline" href={`mailto:${emailsById.get(customer.id)}`}>
+                          {emailsById.get(customer.id)}
+                        </a>
+                      ) : (
+                        "N/A"
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       {customer.role === "customer" ? (

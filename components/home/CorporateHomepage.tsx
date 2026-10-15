@@ -8,7 +8,6 @@ import HomeProductCard from "@/components/home/HomeProductCard";
 import { getPublishedBlogPosts } from "@/lib/blog/data";
 import { getFeaturedCollectionsAsCategories } from "@/lib/data/collections";
 import { getFeaturedProducts, getProductsBySlugs } from "@/lib/data/products";
-import { getTestimonials } from "@/lib/data/content";
 import { expandProductSlugs } from "@/lib/seo/content/products";
 
 const occasions = [
@@ -39,10 +38,19 @@ const reasons = [
 ];
 
 const gallerySlugs = [
-  "diwali-signature-hamper", "luxury-planner-gift-box", "blue-notebook-welcome-set",
-  "black-executive-corporate-set", "copper-celebration-hamper", "white-premium-corporate-gift-set",
+  "diwali-signature-hamper",
+  "luxury-planner-gift-box",
+  "blue-notebook-welcome-set",
+  "black-executive-corporate-set",
+  "copper-celebration-hamper",
+  "white-premium-corporate-gift-set",
+  "executive-onboarding-essentials-set",
+  "client-appreciation-desk-set",
+  "refined-folio-pen-gift-set",
+  "luxury-clutch-executive-set",
+  "sage-green-sustainable-gift-set",
+  "brown-luxury-stationery-set",
 ];
-const diwaliSlugs = ["diwali-signature-hamper", "diwali-celebration-hamper", "diwali-grand-hamper"];
 
 function ArrowLink({ href, children, light = false }: { href: string; children: React.ReactNode; light?: boolean }) {
   return <Link href={href} className={`group inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] ${light ? "text-cream-100" : "text-navy-950"}`}><span className="link-underline">{children}</span><ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" strokeWidth={1.5} aria-hidden="true" /></Link>;
@@ -53,10 +61,10 @@ function SectionIntro({ eyebrow, title, copy, light = false }: { eyebrow: string
 }
 
 export default async function CorporateHomepage() {
-  const [collections, products, diwaliProducts, galleryProducts, posts, testimonials] = await Promise.all([
+  const [collections, products, galleryProducts, posts] = await Promise.all([
     getFeaturedCollectionsAsCategories(), getFeaturedProducts(4),
-    getProductsBySlugs(expandProductSlugs(diwaliSlugs)), getProductsBySlugs(expandProductSlugs(gallerySlugs)),
-    getPublishedBlogPosts(), getTestimonials(),
+    getProductsBySlugs(expandProductSlugs(gallerySlugs)),
+    getPublishedBlogPosts(),
   ]);
   const resources = posts.slice(0, 3);
 
@@ -67,27 +75,133 @@ export default async function CorporateHomepage() {
 
     <section id="business-moments" className="section bg-canvas"><Container><div className="mx-auto text-center"><SectionIntro eyebrow="Gifts for every business moment" title="For the welcome, the win and every milestone." copy="From first days to lasting partnerships, explore corporate gifting designed for meaningful connections." /></div><div className="mt-11 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{occasions.map((item, index) => <Link key={item.title} href={item.href} className="hanna-arch-frame group flex min-h-[25rem] flex-col bg-surface p-5"><div className="flex items-start justify-between"><div><p className="type-eyebrow">0{index + 1}</p><h3 className="mt-2 font-display text-2xl font-semibold text-navy-950">{item.title}</h3></div><ArrowRight className="mt-1 h-5 w-5 shrink-0 transition-transform duration-200 group-hover:translate-x-1" strokeWidth={1.5} aria-hidden="true" /></div><p className="mt-2 text-xs uppercase tracking-[0.12em] text-ink-500">{item.eyebrow}</p><div className="hanna-soft relative mt-5 min-h-0 flex-1 bg-[#eeefec]"><Image src={item.image} alt={item.alt} fill sizes="(min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw" className="object-contain p-4 transition-opacity duration-200 group-hover:opacity-85" /></div></Link>)}</div></Container></section>
 
-    <section className="section border-y border-line bg-surface"><Container className="grid gap-12 lg:grid-cols-[0.58fr_0.42fr] lg:items-center lg:gap-20"><div className="grid grid-cols-12 items-end gap-4"><div className="hanna-arch-frame relative col-span-8 aspect-[4/5] bg-sunken"><Image src="/Gifta Guru/Set 21/1 (1).png" alt="Black executive corporate gift set" fill sizes="(min-width: 1024px) 35vw, 65vw" className="object-contain p-5" /></div><div className="hanna-arch-frame relative col-span-5 -ml-4 mb-8 aspect-[3/4] bg-cream-200"><Image src="/Hampers/set 3/1 (1).webp" alt="Premium corporate gift hamper" fill sizes="(min-width: 1024px) 20vw, 40vw" className="object-contain p-2" /></div><p className="col-span-7 col-start-6 border-t border-line pt-4 text-xs uppercase leading-5 tracking-[0.14em] text-ink-600">Curated objects. Considered details. A presentation people remember.</p></div><div><SectionIntro eyebrow="About Gifta Guru" title="More than gifts. We create meaningful connections." copy="GiftaGuru helps businesses turn everyday moments into memorable experiences through thoughtfully curated, customised and premium corporate gifting." /><p className="mt-5 text-sm leading-7 text-ink-600">From employee welcome kits to client hampers and festive programmes, we bring product selection, branding and delivery into one clear process.</p><div className="mt-8"><ArrowLink href="/about">Discover our story</ArrowLink></div></div></Container></section>
+    <section className="border-y border-line bg-surface">
+      <Container className="py-10 lg:py-14">
+        <div className="hanna-card overflow-hidden border border-line bg-navy-950 lg:grid lg:grid-cols-[0.92fr_1.08fr]">
+          <div className="relative min-h-[24rem] overflow-hidden bg-[#e5e2d8] sm:min-h-[30rem] lg:min-h-[32rem]">
+            <Image
+              src="/Hampers/set 1/1 (1).webp"
+              alt="Curated corporate hamper with drinkware, snacks and cookies"
+              fill
+              sizes="(min-width: 1024px) 45vw, 100vw"
+              className="object-contain p-7 sm:p-10"
+            />
+            <div className="absolute bottom-5 left-5 max-w-52 border border-navy-950/10 bg-surface/95 px-4 py-3 backdrop-blur-sm sm:bottom-7 sm:left-7">
+              <p className="text-[0.62rem] font-semibold uppercase tracking-[0.15em] text-gold-700">The Gifta Guru edit</p>
+              <p className="mt-1 font-display text-lg leading-snug text-navy-950">Useful gifts, beautifully considered.</p>
+            </div>
+          </div>
+
+          <div className="flex flex-col justify-center p-7 sm:p-10 lg:p-12 xl:p-16">
+            <SectionIntro
+              eyebrow="About Gifta Guru"
+              title="More than gifts. We create meaningful connections."
+              copy="We help businesses turn everyday moments into memorable experiences through thoughtful, customised corporate gifting."
+              light
+            />
+            <p className="mt-5 max-w-xl text-sm leading-7 text-cream-100/70">
+              From employee welcome kits to client hampers and festive programmes, we bring product selection, branding and delivery into one clear process.
+            </p>
+            <ul className="mt-8 grid grid-cols-3 border-y border-cream-100/15 py-5 text-center">
+              {["Curated", "Customised", "Delivered"].map((item, index) => (
+                <li key={item} className="border-r border-cream-100/15 px-2 last:border-r-0">
+                  <span className="block font-display text-2xl text-gold-300">0{index + 1}</span>
+                  <span className="mt-1 block text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-cream-100/75">{item}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-8"><ArrowLink href="/about" light>Discover our story</ArrowLink></div>
+          </div>
+        </div>
+      </Container>
+    </section>
 
     <section className="section bg-cream-200"><Container><div className="flex flex-col justify-between gap-7 md:flex-row md:items-end"><SectionIntro eyebrow="Signature corporate collections" title="Crafting meaning into every collection." /><ArrowLink href="/categories">View all collections</ArrowLink></div><div className="mt-11 grid gap-5 md:grid-cols-2">{collections.slice(0, 6).map((collection, index) => <Link key={collection.slug} href={`/categories/${collection.slug}`} className="hanna-card group block bg-surface p-3 pb-6"><div className="hanna-image relative aspect-[16/10] bg-[#eeefec]"><Image src={collection.image} alt={`${collection.name} corporate gifting collection`} fill sizes="(min-width: 768px) 50vw, 100vw" className="object-contain p-5 transition-opacity duration-200 group-hover:opacity-85" /></div><div className="mt-4 flex items-start justify-between gap-5 px-2"><div><p className="type-eyebrow">0{index + 1} / Collection</p><h3 className="mt-2 font-display text-2xl font-semibold text-navy-950">{collection.name}</h3><p className="type-body mt-2 max-w-xl">{collection.description}</p></div><ArrowRight className="mt-2 h-5 w-5 shrink-0 transition-transform duration-200 group-hover:translate-x-1" strokeWidth={1.5} aria-hidden="true" /></div></Link>)}</div></Container></section>
 
-    <section className="section bg-canvas"><Container><div className="flex flex-col justify-between gap-7 md:flex-row md:items-end"><SectionIntro eyebrow="Featured products" title="Curated gifts worth remembering." copy="Real products from the Gifta Guru catalogue, ready for business gifting and customisation." /><ArrowLink href="/shop">Browse all gifts</ArrowLink></div>{products.length ? <div className="mt-12 grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">{products.map((product) => <HomeProductCard key={product.id} product={product} />)}</div> : <p className="mt-10 border-y border-line py-8 text-ink-600">Our featured collection is being updated. Explore the full catalogue in the meantime.</p>}</Container></section>
+    <section className="section bg-canvas">
+      <Container>
+        <div className="flex flex-col justify-between gap-7 border-b border-line pb-8 md:flex-row md:items-end">
+          <SectionIntro
+            eyebrow="Featured products"
+            title="Curated gifts worth remembering."
+            copy="A focused selection from our catalogue, ready for business gifting and customisation."
+          />
+          <ArrowLink href="/shop">Browse all gifts</ArrowLink>
+        </div>
+        {products.length ? (
+          <div className="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {products.map((product) => <HomeProductCard key={product.id} product={product} />)}
+          </div>
+        ) : (
+          <p className="border-b border-line py-8 text-ink-600">Our featured collection is being updated. Explore the full catalogue in the meantime.</p>
+        )}
+      </Container>
+    </section>
 
     <section className="section border-y border-line bg-surface"><Container className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-20"><div><SectionIntro eyebrow="Custom branding" title="Make every gift unmistakably yours." copy="From logo printing and engraving to premium packaging and personalised messages, every detail is designed around your brand." /><ul className="mt-8 border-y border-line py-2">{capabilities.map((item) => <li key={item} className="flex items-center justify-between border-b border-line py-4 text-sm text-ink-700 last:border-0"><span>{item}</span><Check className="h-4 w-4 text-gold-600" strokeWidth={1.5} aria-hidden="true" /></li>)}</ul><div className="mt-8"><Button href="/custom-gifts">Explore Custom Gifting</Button></div></div><div className="grid grid-cols-12 grid-rows-12 gap-4 lg:h-[40rem]"><div className="hanna-card relative col-span-8 row-span-8 min-h-[24rem] overflow-hidden bg-cream-200"><Image src="/BANNERS/PREMIUM.png" alt="Custom-branded corporate gift collection" fill sizes="(min-width: 1024px) 35vw, 70vw" className="object-cover object-[72%_center]" /></div><div className="hanna-arch-frame relative col-span-5 col-start-8 row-span-7 row-start-2 min-h-[18rem] bg-sunken"><Image src="/Gifta Guru/Set 16/1 (1).png" alt="Wood-finish branded stationery gift set" fill sizes="(min-width: 1024px) 22vw, 40vw" className="object-contain p-3" /></div><div className="hanna-card relative col-span-6 col-start-3 row-span-5 row-start-8 min-h-[16rem] overflow-hidden border-[10px] border-surface bg-sunken"><Image src="/Gifta Guru/Set 3/1 (1).png" alt="Premium customisable corporate gift set" fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-contain p-3" /></div></div></Container></section>
 
     <section className="relative min-h-[29rem] overflow-hidden bg-navy-950"><Image src="/BANNERS/LUXURY.png" alt="Premium executive gifts for bulk corporate programmes" fill sizes="100vw" className="object-cover object-[70%_center] opacity-75" /><div className="absolute inset-0 bg-navy-950/65" /><Container className="relative flex min-h-[29rem] items-center justify-center py-16 text-center"><div className="max-w-2xl"><SectionIntro eyebrow="Bulk corporate gifting" title="Your brand deserves more than ordinary gifts." copy="Thoughtfully selected. Beautifully branded. Delivered with care." light /><div className="mt-8"><Button href="/bulk-enquiry" className="!border-cream-100 !bg-cream-100 !text-navy-950">Plan Your Corporate Gifting</Button></div></div></Container></section>
 
-    <section className="section bg-navy-950 text-cream-100"><Container><div className="flex flex-col justify-between gap-7 md:flex-row md:items-end"><SectionIntro eyebrow="Corporate Diwali collection" title="Make every celebration memorable." copy="Festive hampers for employees and clients, with branding, bulk quantities and delivery planning." light /><ArrowLink href="/diwali-2026" light>Explore Diwali gifts</ArrowLink></div><div className="mt-12 grid gap-5 md:grid-cols-3">{diwaliProducts.slice(0, 3).map((product, index) => <Link key={product.id} href={`/products/${product.slug}`} className={`group block ${index === 1 ? "md:mt-14" : ""}`}><div className="relative aspect-[4/5] overflow-hidden border border-cream-100/15 bg-cream-100/5"><Image src={product.image ?? "/BANNERS/PREMIUM.png"} alt={product.name} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-contain p-5 transition-opacity duration-200 group-hover:opacity-85" /></div><div className="mt-5 flex items-start justify-between gap-4"><div><p className="text-[0.65rem] uppercase tracking-[0.14em] text-gold-300">Festive collection</p><h3 className="mt-2 font-display text-2xl text-cream-100">{product.name}</h3></div><ArrowRight className="mt-2 h-5 w-5 shrink-0 transition-transform duration-200 group-hover:translate-x-1" strokeWidth={1.5} aria-hidden="true" /></div></Link>)}</div></Container></section>
-
-    <section className="section border-y border-line bg-canvas"><Container className="grid gap-12 lg:grid-cols-[0.46fr_0.54fr] lg:items-center lg:gap-20"><div className="order-2 lg:order-1"><SectionIntro eyebrow="Employee welcome kits" title="First days deserve a great welcome." copy="Thoughtfully assembled onboarding kits that introduce your culture and make new employees feel valued." /><ul className="mt-8 grid grid-cols-2 border-y border-line py-4 text-sm text-ink-700 sm:grid-cols-3">{["Diaries", "Pens", "Bottles", "Tech accessories", "Totes and bags", "Custom packaging"].map((item) => <li key={item} className="py-2">{item}</li>)}</ul><div className="mt-8"><Button href="/gifting/employee-onboarding">Explore Welcome Kits</Button></div></div><div className="order-1 grid grid-cols-5 items-start gap-4 lg:order-2"><div className="relative col-span-3 aspect-[3/4] bg-cream-200"><Image src="/BANNERS/JOINING.png" alt="Employee onboarding gift collection" fill sizes="(min-width: 1024px) 32vw, 60vw" className="object-cover object-[70%_center]" /></div><div className="relative col-span-2 mt-16 aspect-[3/4] bg-sunken"><Image src="/Gifta Guru/Set 1/1 (1).png" alt="Notebook and pen welcome gift set" fill sizes="(min-width: 1024px) 20vw, 40vw" className="object-contain p-3" /></div></div></Container></section>
-
     <section className="section bg-surface"><Container className="grid gap-12 lg:grid-cols-[0.36fr_0.64fr] lg:gap-20"><div><SectionIntro eyebrow="Why choose Gifta Guru" title="Gifting made simple. Impressions made lasting." /><div className="relative mt-10 aspect-[4/5] overflow-hidden bg-sunken"><Image src="/Gifta Guru/Set 20/1 (1).png" alt="Premium brown corporate stationery set" fill sizes="(min-width: 1024px) 30vw, 100vw" className="object-contain p-5" /></div></div><ol className="border-t border-line">{reasons.map(([title, copy], index) => <li key={title} className="grid gap-3 border-b border-line py-7 sm:grid-cols-[4rem_0.8fr_1.2fr] sm:items-start"><span className="font-display text-3xl text-gold-600">0{index + 1}</span><h3 className="font-display text-2xl text-navy-950">{title}</h3><p className="type-body">{copy}</p></li>)}</ol></Container></section>
 
-    {galleryProducts.length ? <section className="section border-y border-line bg-cream-200"><Container><div className="flex flex-col justify-between gap-7 md:flex-row md:items-end"><SectionIntro eyebrow="A closer look" title="The art of thoughtful gifting." copy="A closer view of real Gifta Guru products, packaging and gift-set presentations." /><ArrowLink href="/shop">Explore the catalogue</ArrowLink></div><div className="mt-12 grid grid-cols-2 gap-3 md:grid-cols-4 md:grid-rows-2">{galleryProducts.slice(0, 6).map((product, index) => <Link key={product.id} href={`/products/${product.slug}`} className={`group relative min-h-[15rem] overflow-hidden bg-surface ${index === 0 ? "col-span-2 row-span-2 md:min-h-[38rem]" : index === 3 ? "col-span-2" : ""}`}><Image src={product.image ?? "/BANNERS/PREMIUM.png"} alt={product.name} fill sizes={index === 0 ? "(min-width: 768px) 50vw, 100vw" : "(min-width: 768px) 25vw, 50vw"} className="object-contain p-4 transition-opacity duration-200 group-hover:opacity-85" /><span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy-950/75 to-transparent px-5 pb-4 pt-12 text-sm font-medium text-cream-100 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">{product.name}</span></Link>)}</div></Container></section> : null}
+    {galleryProducts.length ? (
+      <section className="section border-y border-line bg-cream-200">
+        <Container>
+          <div className="grid gap-7 border-b border-navy-950 pb-8 md:grid-cols-[1fr_auto] md:items-end">
+            <SectionIntro
+              eyebrow="A closer look"
+              title="The art of thoughtful gifting."
+              copy="Explore useful objects, refined packaging and memorable gift-set presentations selected from the Gifta Guru catalogue."
+            />
+            <div className="flex items-center gap-5">
+              <span className="hidden text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-ink-500 sm:block">
+                {Math.min(galleryProducts.length, 8)} curated pieces
+              </span>
+              <ArrowLink href="/shop">Explore the catalogue</ArrowLink>
+            </div>
+          </div>
+
+          <div className="mt-8 grid auto-rows-[12rem] grid-cols-2 gap-3 sm:auto-rows-[14rem] md:grid-cols-12 md:gap-4">
+            {galleryProducts.slice(0, 8).map((product, index) => {
+              const layout = index === 0
+                ? "col-span-2 row-span-2 md:col-span-6"
+                : index === 3
+                  ? "col-span-2 md:col-span-6"
+                  : "col-span-1 md:col-span-3";
+
+              return (
+                <Link
+                  key={product.id}
+                  href={`/products/${product.slug}`}
+                  className={`hanna-soft group relative overflow-hidden border border-line bg-surface ${layout}`}
+                >
+                  <Image
+                    src={product.image ?? "/BANNERS/PREMIUM.png"}
+                    alt={product.name}
+                    fill
+                    sizes={index === 0 ? "(min-width: 768px) 50vw, 100vw" : "(min-width: 768px) 25vw, 50vw"}
+                    className="object-contain p-5 transition-transform duration-300 ease-out group-hover:-translate-y-1"
+                  />
+                  <span className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full border border-line-strong bg-surface/90 font-display text-sm text-navy-950 backdrop-blur-sm">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy-950 via-navy-950/85 to-transparent px-4 pb-4 pt-14 text-cream-100 sm:px-5 sm:pb-5">
+                    <span className="block text-[0.58rem] font-semibold uppercase tracking-[0.14em] text-gold-300">
+                      {product.category.replaceAll("-", " ")}
+                    </span>
+                    <span className={`mt-1 block font-display leading-tight ${index === 0 ? "text-xl sm:text-2xl" : "text-sm sm:text-base"}`}>
+                      {product.name}
+                    </span>
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </Container>
+      </section>
+    ) : null}
 
     <section className="section bg-canvas"><Container><SectionIntro eyebrow="How corporate gifting works" title="From your idea to their unboxing." /><ol className="mt-12 grid border-y border-line md:grid-cols-4">{[["01", "Share Your Requirement", "Tell us the occasion, audience, quantity, budget and delivery plan."], ["02", "Select Your Gifts", "Review curated options chosen around your brief."], ["03", "Customise Your Branding", "Approve the branding, packaging and personal touches."], ["04", "We Prepare and Deliver", "We coordinate production, checking, packing and dispatch."]].map(([number, title, copy]) => <li key={number} className="border-b border-line py-8 md:border-b-0 md:border-r md:px-7 md:first:pl-0 md:last:border-r-0"><span className="font-display text-5xl text-gold-600">{number}</span><h3 className="mt-7 font-display text-2xl text-navy-950">{title}</h3><p className="type-body mt-3">{copy}</p></li>)}</ol><div className="mt-9"><Button href="/bulk-enquiry">Start Your Gifting Project</Button></div></Container></section>
-
-    <section className="section border-y border-line bg-surface"><Container>{testimonials.length ? <><SectionIntro eyebrow="Client experience" title="Trusted words from the teams we serve." /><div className="mt-12 grid gap-10 md:grid-cols-2">{testimonials.slice(0, 4).map((testimonial) => <figure key={testimonial.id} className="border-t border-navy-950 pt-7"><blockquote className="font-display text-2xl leading-relaxed text-navy-950">&ldquo;{testimonial.quote}&rdquo;</blockquote><figcaption className="mt-6 text-sm text-ink-700">{testimonial.name}{testimonial.role || testimonial.company ? `, ${[testimonial.role, testimonial.company].filter(Boolean).join(" · ")}` : ""}</figcaption></figure>)}</div></> : <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-end"><SectionIntro eyebrow="The Gifta Guru experience" title="Clear guidance at every stage." copy="We have not added unverified reviews or logos. Instead, our process is designed around the practical things corporate teams need most." /><ul className="grid border-t border-line sm:grid-cols-2">{["A curated shortlist shaped around your brief", "Clear conversations about quantity and timelines", "Branding choices suited to the product", "Support for multi-location gifting"].map((item) => <li key={item} className="flex gap-3 border-b border-line py-5 pr-6 text-sm leading-6 text-ink-700"><Check className="mt-1 h-4 w-4 shrink-0 text-gold-600" aria-hidden="true" />{item}</li>)}</ul></div>}</Container></section>
 
     {resources.length ? <section className="section bg-canvas"><Container><div className="flex flex-col justify-between gap-7 md:flex-row md:items-end"><SectionIntro eyebrow="Corporate gifting guides" title="Insights for thoughtful corporate gifting." /><ArrowLink href="/blog">Visit the blog</ArrowLink></div><div className="mt-12 grid gap-8 md:grid-cols-3">{resources.map((post, index) => <article key={post.slug} className={index === 1 ? "md:mt-14" : ""}><Link href={`/blog/${post.slug}`} className="group block"><div className="relative aspect-[4/3] overflow-hidden bg-cream-200"><Image src={post.featuredImageUrl ?? "/BANNERS/PREMIUM.png"} alt={post.featuredImageAlt ?? "Corporate gifting guide by Gifta Guru"} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover object-[70%_center] transition-opacity duration-200 group-hover:opacity-85" /></div><p className="type-eyebrow mt-5">{post.category}</p><h3 className="mt-3 font-display text-3xl leading-tight text-navy-950">{post.title}</h3><p className="type-body mt-3 line-clamp-3">{post.excerpt}</p><span className="mt-5 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-navy-950">Read article <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" /></span></Link></article>)}</div></Container></section> : null}
 

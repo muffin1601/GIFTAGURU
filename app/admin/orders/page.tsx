@@ -3,6 +3,7 @@ import { OrderStatus, PaymentStatus, type Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/utils";
 import PrintOrderDocuments from "@/components/admin/PrintOrderDocuments";
+import DeleteOrderButton from "@/components/admin/DeleteOrderButton";
 
 const orderStatuses: OrderStatus[] = ["pending", "confirmed", "processing", "ready_to_ship", "shipped", "out_for_delivery", "delivered", "cancelled", "refunded"];
 const paymentStatuses: PaymentStatus[] = ["pending", "paid", "failed", "refunded"];
@@ -100,21 +101,24 @@ export default async function AdminOrdersPage({
                     <td className="px-4 py-3">{order.deliveryStatus}</td>
                     <td className="px-4 py-3">{order.createdAt.toLocaleDateString("en-IN")}</td>
                     <td className="px-4 py-3">
-                      <PrintOrderDocuments
-                        variant="slip-button"
-                        orderNumber={order.orderNumber}
-                        placedAt={order.createdAt.toLocaleString("en-IN")}
-                        customerEmail={order.email}
-                        customerPhone={order.phone}
-                        total={formatPrice(Number(order.total))}
-                        items={order.items.map((item) => ({ name: item.productName, variant: item.variantName, sku: item.productCode, quantity: item.quantity }))}
-                        shippingAddress={address ?? {}}
-                        shipments={order.shipments.map((shipment) => ({
-                          label: shipment.label,
-                          address: shipment.address as { name?: string; company?: string; phone?: string; line1?: string; line2?: string; landmark?: string; city?: string; state?: string; postalCode?: string; country?: string },
-                          items: shipment.items.map((item) => ({ name: item.productName, quantity: item.quantity })),
-                        }))}
-                      />
+                      <div className="flex flex-col items-start gap-2">
+                        <PrintOrderDocuments
+                          variant="slip-button"
+                          orderNumber={order.orderNumber}
+                          placedAt={order.createdAt.toLocaleString("en-IN")}
+                          customerEmail={order.email}
+                          customerPhone={order.phone}
+                          total={formatPrice(Number(order.total))}
+                          items={order.items.map((item) => ({ name: item.productName, variant: item.variantName, sku: item.productCode, quantity: item.quantity }))}
+                          shippingAddress={address ?? {}}
+                          shipments={order.shipments.map((shipment) => ({
+                            label: shipment.label,
+                            address: shipment.address as { name?: string; company?: string; phone?: string; line1?: string; line2?: string; landmark?: string; city?: string; state?: string; postalCode?: string; country?: string },
+                            items: shipment.items.map((item) => ({ name: item.productName, quantity: item.quantity })),
+                          }))}
+                        />
+                        <DeleteOrderButton orderId={order.id} orderNumber={order.orderNumber} compact />
+                      </div>
                     </td>
                   </tr>
                 );

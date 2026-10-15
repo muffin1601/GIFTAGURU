@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import ActionForm, { AdminInput, AdminSelect, AdminTextarea } from "@/components/admin/ActionForm";
 import PrintOrderDocuments from "@/components/admin/PrintOrderDocuments";
+import DeleteOrderButton from "@/components/admin/DeleteOrderButton";
 import { updateDeliveryAction, updateOrderStatusAction } from "@/lib/actions/admin";
 import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/utils";
@@ -260,6 +261,20 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
               <Row label="Shipping" value={formatPrice(Number(order.shippingTotal))} />
               <Row label="GST" value={formatPrice(Number(order.taxTotal))} />
               <Row label="Final total" value={formatPrice(Number(order.total))} strong />
+            </div>
+          </section>
+
+          <section className="panel border-red-200 p-5">
+            <h2 className="font-display text-xl text-navy-950">Delete order</h2>
+            <p className="mt-2 text-sm leading-6 text-ink-600">
+              Permanently remove this order and all associated records.
+            </p>
+            <div className="mt-4">
+              <DeleteOrderButton
+                orderId={order.id}
+                orderNumber={order.orderNumber}
+                redirectAfterDelete
+              />
             </div>
           </section>
         </aside>

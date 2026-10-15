@@ -7,9 +7,9 @@ import { formatPrice } from "@/lib/utils";
 /** Editorial product card backed by the live product record. */
 export default function HomeProductCard({ product }: { product: Product }) {
   return (
-    <article className="hanna-card bg-surface p-3 pb-6">
+    <article className="hanna-card border border-line bg-surface p-3 pb-6">
       <Link href={`/products/${product.slug}`} className="group block">
-        <div className="hanna-image relative aspect-square border border-line bg-surface">
+        <div className="hanna-image relative aspect-square border border-line bg-[#eeefec]">
           <Image src={product.image ?? "/BANNERS/PREMIUM.png"} alt={product.name} fill sizes="(min-width: 1024px) 24vw, (min-width: 640px) 45vw, 100vw" className="object-contain p-5 transition-opacity duration-200 group-hover:opacity-85" />
         </div>
         <p className="type-meta mt-4 capitalize">{product.category.replaceAll("-", " ")} · MOQ {product.minQuantity}</p>

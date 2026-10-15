@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth/admin";
 import { logAdminAction } from "@/lib/audit";
@@ -39,6 +40,60 @@ const deliverySchema = z.object({
   deliveredAt: z.string().optional(),
   deliveryNotes: z.string().trim().max(1000).optional(),
 });
+
+const deleteOrderSchema = z.object({
+  orderId: z.string().uuid(),
+  redirectToOrders: z.enum(["true"]).optional(),
+});
+
+export async function deleteOrderAction(
+  _state: { error?: string; success?: string },
+  formData: FormData,
+): Promise<{ error?: string; success?: string }> {
+  const admin = await requireAdmin();
+  const parsed = deleteOrderSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: "Invalid order." };
+
+  const order = await prisma.$transaction(async (tx) => {
+    const existing = await tx.order.findUnique({
+      where: { id: parsed.data.orderId },
+      select: {
+        id: true,
+        orderNumber: true,
+        email: true,
+        total: true,
+        status: true,
+        paymentStatus: true,
+        createdAt: true,
+        discountUsage: { select: { discountId: true } },
+      },
+    });
+    if (!existing) return null;
+
+    await tx.order.delete({ where: { id: existing.id } });
+    for (const { discountId } of existing.discountUsage) {
+      await tx.discount.updateMany({
+        where: { id: discountId, usedCount: { gt: 0 } },
+        data: { usedCount: { decrement: 1 } },
+      });
+    }
+
+    return existing;
+  });
+
+  if (!order) return { error: "Order not found." };
+
+  await logAdminAction(admin, {
+    action: "order.deleted",
+    entityType: "order",
+    entityId: order.id,
+    before: order,
+  });
+
+  revalidatePath("/admin/orders");
+  if (parsed.data.redirectToOrders) redirect("/admin/orders");
+  return { success: `Order ${order.orderNumber} deleted.` };
+}
 
 export async function updateOrderStatusAction(_state: { error?: string; success?: string }, formData: FormData) {
   const admin = await requireAdmin();
