@@ -12,7 +12,7 @@ import { expandProductSlugs } from "@/lib/seo/content/products";
 import type { BlogPost } from "@/lib/blog/types";
 
 const occasions = [
-  { title: "Employee Welcome Kits", eyebrow: "New beginnings", href: "/gifting/employee-onboarding", image: "/BANNERS/JOINING.png", alt: "Employee welcome kits with diaries and drinkware", className: "sm:col-span-2 lg:col-span-7" },
+  { title: "Employee Welcome Kits", eyebrow: "New beginnings", href: "/gifting/employee-onboarding", image: "/images/editorial/employee-welcome-workspace.webp", alt: "Notebooks, pen and coffee arranged on a modern workspace", className: "sm:col-span-2 lg:col-span-7" },
   { title: "Corporate Diwali Gifts", eyebrow: "Festive gifting", href: "/diwali-2026", image: "/Diwali kits/Set 8/Primary_1.webp", alt: "Corporate Diwali gift box", className: "lg:col-span-5" },
   { title: "Client Appreciation", eyebrow: "Relationship gifting", href: "/gifting/client-appreciation", image: "/Gifta Guru/Set 12/1 (1).png", alt: "Premium client appreciation gift set", className: "lg:col-span-4" },
   { title: "Employee Rewards", eyebrow: "Celebrate people", href: "/gifting/employee-appreciation", image: "/Gifta Guru/Set 18/1 (1).png", alt: "Employee reward gift set", className: "lg:col-span-4" },
@@ -210,9 +210,9 @@ export default async function CorporateHomepage() {
       </Container>
     </section>
 
-    <section className="section border-y border-line bg-surface"><Container className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-20"><div><SectionIntro eyebrow="Custom branding" title="Make every gift unmistakably yours." copy="From logo printing and engraving to premium packaging and personalised messages, every detail is designed around your brand." /><ul className="mt-8 border-y border-line py-2">{capabilities.map((item) => <li key={item} className="flex items-center justify-between border-b border-line py-4 text-sm text-ink-700 last:border-0"><span>{item}</span><Check className="h-4 w-4 text-gold-600" strokeWidth={1.5} aria-hidden="true" /></li>)}</ul><div className="mt-8"><Button href="/custom-gifts">Explore Custom Gifting</Button></div></div><div className="grid grid-cols-12 grid-rows-12 gap-4 lg:h-[40rem]"><div className="hanna-card relative col-span-8 row-span-8 min-h-[24rem] overflow-hidden bg-cream-200"><Image src="/BANNERS/PREMIUM.png" alt="Custom-branded corporate gift collection" fill sizes="(min-width: 1024px) 35vw, 70vw" className="object-cover object-[72%_center]" /></div><div className="hanna-arch-frame relative col-span-5 col-start-8 row-span-7 row-start-2 min-h-[18rem] bg-sunken"><Image src="/Gifta Guru/Set 16/1 (1).png" alt="Wood-finish branded stationery gift set" fill sizes="(min-width: 1024px) 22vw, 40vw" className="object-contain p-3" /></div><div className="hanna-card relative col-span-6 col-start-3 row-span-5 row-start-8 min-h-[16rem] overflow-hidden border-[10px] border-surface bg-sunken"><Image src="/Gifta Guru/Set 3/1 (1).png" alt="Premium customisable corporate gift set" fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-contain p-3" /></div></div></Container></section>
+    <section className="section border-y border-line bg-surface"><Container className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-20"><div><SectionIntro eyebrow="Custom branding" title="Make every gift unmistakably yours." copy="From logo printing and engraving to premium packaging and personalised messages, every detail is designed around your brand." /><ul className="mt-8 border-y border-line py-2">{capabilities.map((item) => <li key={item} className="flex items-center justify-between border-b border-line py-4 text-sm text-ink-700 last:border-0"><span>{item}</span><Check className="h-4 w-4 text-gold-600" strokeWidth={1.5} aria-hidden="true" /></li>)}</ul><div className="mt-8"><Button href="/custom-gifts">Explore Custom Gifting</Button></div></div><div className="grid grid-cols-12 grid-rows-12 gap-4 lg:h-[40rem]"><div className="hanna-card relative col-span-8 row-span-8 min-h-[24rem] overflow-hidden bg-cream-200"><Image src="/images/editorial/custom-gift-preparation.webp" alt="Hands carefully finishing a deep green gift box" fill sizes="(min-width: 1024px) 35vw, 70vw" className="object-cover object-center" /></div><div className="hanna-arch-frame relative col-span-5 col-start-8 row-span-7 row-start-2 min-h-[18rem] bg-sunken"><Image src="/Gifta Guru/Set 16/1 (1).png" alt="Wood-finish branded stationery gift set" fill sizes="(min-width: 1024px) 22vw, 40vw" className="object-contain p-3" /></div><div className="hanna-card relative col-span-6 col-start-3 row-span-5 row-start-8 min-h-[16rem] overflow-hidden border-[10px] border-surface bg-sunken"><Image src="/Gifta Guru/Set 3/1 (1).png" alt="Premium customisable corporate gift set" fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-contain p-3" /></div></div></Container></section>
 
-    <section className="relative min-h-[29rem] overflow-hidden bg-navy-950"><Image src="/BANNERS/LUXURY.png" alt="Premium executive gifts for bulk corporate programmes" fill sizes="100vw" className="object-cover object-[70%_center] opacity-75" /><div className="absolute inset-0 bg-navy-950/65" /><Container className="relative flex min-h-[29rem] items-center justify-center py-16 text-center"><div className="max-w-2xl"><SectionIntro eyebrow="Bulk corporate gifting" title="Your brand deserves more than ordinary gifts." copy="Thoughtfully selected. Beautifully branded. Delivered with care." light /><div className="mt-8"><Button href="/bulk-enquiry" className="!border-cream-100 !bg-cream-100 !text-navy-950">Plan Your Corporate Gifting</Button></div></div></Container></section>
+    <section className="relative min-h-[29rem] overflow-hidden bg-navy-950"><Image src="/images/editorial/luxury-gift-packaging.webp" alt="Luxury green gift box finished with gold and ivory ribbon" fill sizes="100vw" className="object-cover object-center opacity-75" /><div className="absolute inset-0 bg-navy-950/65" /><Container className="relative flex min-h-[29rem] items-center justify-center py-16 text-center"><div className="max-w-2xl"><SectionIntro eyebrow="Bulk corporate gifting" title="Your brand deserves more than ordinary gifts." copy="Thoughtfully selected. Beautifully branded. Delivered with care." light /><div className="mt-8"><Button href="/bulk-enquiry" className="!border-cream-100 !bg-cream-100 !text-navy-950">Plan Your Corporate Gifting</Button></div></div></Container></section>
 
     <section className="section bg-surface"><Container className="grid gap-12 lg:grid-cols-[0.36fr_0.64fr] lg:gap-20"><div><SectionIntro eyebrow="Why choose Gifta Guru" title="Gifting made simple. Impressions made lasting." /><div className="relative mt-10 aspect-[4/5] overflow-hidden bg-sunken"><Image src="/Gifta Guru/Set 20/1 (1).png" alt="Premium brown corporate stationery set" fill sizes="(min-width: 1024px) 30vw, 100vw" className="object-contain p-5" /></div></div><ol className="border-t border-line">{reasons.map(([title, copy], index) => <li key={title} className="grid gap-3 border-b border-line py-7 sm:grid-cols-[4rem_0.8fr_1.2fr] sm:items-start"><span className="font-display text-3xl text-gold-600">0{index + 1}</span><h3 className="font-display text-2xl text-navy-950">{title}</h3><p className="type-body">{copy}</p></li>)}</ol></Container></section>
 
@@ -247,13 +247,17 @@ export default async function CorporateHomepage() {
                   href={`/products/${product.slug}`}
                   className={`hanna-soft group relative overflow-hidden border border-line bg-surface ${layout}`}
                 >
-                  <Image
-                    src={product.image ?? "/BANNERS/PREMIUM.png"}
-                    alt={product.name}
-                    fill
-                    sizes={index === 0 ? "(min-width: 768px) 50vw, 100vw" : "(min-width: 768px) 25vw, 50vw"}
-                    className="object-contain p-5 transition-transform duration-300 ease-out group-hover:-translate-y-1"
-                  />
+                  {product.image ? (
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      sizes={index === 0 ? "(min-width: 768px) 50vw, 100vw" : "(min-width: 768px) 25vw, 50vw"}
+                      className="object-contain p-5 transition-transform duration-300 ease-out group-hover:-translate-y-1"
+                    />
+                  ) : (
+                    <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold uppercase tracking-[0.12em] text-ink-500">Image coming soon</span>
+                  )}
                   <span className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full border border-line-strong bg-surface/90 font-display text-sm text-navy-950 backdrop-blur-sm">
                     {String(index + 1).padStart(2, "0")}
                   </span>

@@ -43,7 +43,7 @@ export default async function SearchPage({
         title="Find the right corporate gift"
         description="Search by product, collection, recipient or gifting occasion, then compare the options that match your brief."
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Search" }]}
-        image="/BANNERS/PREMIUM.png"
+        image="/images/editorial/premium-corporate-gifting.webp"
       />
       <section className="section bg-canvas">
         <Container>

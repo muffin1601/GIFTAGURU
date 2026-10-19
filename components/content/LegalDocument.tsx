@@ -6,7 +6,7 @@ import PageHeader from "@/components/ui/PageHeader";
 export default function LegalDocument({ title, description, children }: { title: string; description: string; children: ReactNode }) {
   return (
     <>
-      <PageHeader eyebrow="Legal information" title={title} description={description} breadcrumbs={[{ label: "Home", href: "/" }, { label: title }]} image="/BANNERS/LUXURY.png" />
+      <PageHeader eyebrow="Legal information" title={title} description={description} breadcrumbs={[{ label: "Home", href: "/" }, { label: title }]} image="/images/editorial/business-gifting-workspace.webp" />
       <section className="section bg-canvas">
         <Container className="grid gap-8 lg:grid-cols-[18rem_1fr] lg:items-start">
           <aside className="hanna-card bg-navy-950 p-7 text-cream-100 lg:sticky lg:top-40">

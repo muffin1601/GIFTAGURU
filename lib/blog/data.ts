@@ -6,15 +6,15 @@ import { prisma } from "@/lib/prisma";
 import { guidePages } from "@/lib/seo/content/guides";
 import type { BlogPost, BlogFaq, BlogLink, BlogSection } from "./types";
 
-const DEFAULT_IMAGE = "/BANNERS/PREMIUM.png";
+const DEFAULT_IMAGE = "/images/editorial/premium-corporate-gifting.webp";
 const DEFAULT_DATE = new Date("2026-01-15T00:00:00.000Z");
 
 const GUIDE_IMAGES: Record<string, { src: string; alt: string }> = {
-  "corporate-gifting-guide": { src: "/BANNERS/PREMIUM.png", alt: "Premium corporate gift sets curated by Gifta Guru" },
-  "employee-welcome-kit-guide": { src: "/BANNERS/JOINING.png", alt: "Employee welcome kits with branded workplace essentials" },
+  "corporate-gifting-guide": { src: "/images/editorial/premium-corporate-gifting.webp", alt: "Blue and sage gift boxes wrapped with white ribbon" },
+  "employee-welcome-kit-guide": { src: "/images/editorial/employee-welcome-workspace.webp", alt: "Notebooks, pen and coffee arranged on a modern workspace" },
   "client-gifting-guide": { src: "/Gifta Guru/Set 12/1 (1).png", alt: "Premium client appreciation corporate gift set" },
   "corporate-gifting-budget-guide": { src: "/Gifta Guru/Set 18/1 (1).png", alt: "Curated corporate gift set for employee programmes" },
-  "eco-friendly-corporate-gifting": { src: "/BANNERS/ECO.png", alt: "Eco-friendly corporate gift collection" },
+  "eco-friendly-corporate-gifting": { src: "/images/editorial/custom-gift-preparation.webp", alt: "Hands carefully finishing a reusable green gift box" },
   "diwali-corporate-gifting-guide": { src: "/Diwali kits/Set 8/Primary_1.webp", alt: "Corporate Diwali gift box for employees and clients" },
   "conference-giveaway-guide": { src: "/catalogue-2026-images/page-03-img-06_720x541.png", alt: "Corporate event gifts and conference giveaways" },
   "logo-branding-on-corporate-gifts": { src: "/Gifta Guru/Set 16/1 (1).png", alt: "Custom branded corporate stationery gift set" },

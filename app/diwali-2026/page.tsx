@@ -126,8 +126,9 @@ export default async function Diwali2026Page() {
               src={content.heroImage.src}
               alt={content.heroImage.alt}
               fill
-              // The LCP element on this page: eager, high priority, no lazy.
-              priority
+              // The LCP element on this page is preloaded; below-fold images
+              // retain Next's default lazy-loading behaviour.
+              preload
               sizes="(min-width: 1024px) 45vw, 100vw"
               className="object-cover"
             />

@@ -10,7 +10,11 @@ export default function HomeProductCard({ product }: { product: Product }) {
     <article className="hanna-card border border-line bg-surface p-3 pb-6">
       <Link href={`/products/${product.slug}`} className="group block">
         <div className="hanna-image relative aspect-square border border-line bg-[#eeefec]">
-          <Image src={product.image ?? "/BANNERS/PREMIUM.png"} alt={product.name} fill sizes="(min-width: 1024px) 24vw, (min-width: 640px) 45vw, 100vw" className="object-contain p-5 transition-opacity duration-200 group-hover:opacity-85" />
+          {product.image ? (
+            <Image src={product.image} alt={product.name} fill sizes="(min-width: 1024px) 24vw, (min-width: 640px) 45vw, 100vw" className="object-contain p-5 transition-opacity duration-200 group-hover:opacity-85" />
+          ) : (
+            <span className="absolute inset-0 flex items-center justify-center px-5 text-center text-xs font-semibold uppercase tracking-[0.12em] text-ink-500">Image coming soon</span>
+          )}
         </div>
         <p className="type-meta mt-4 capitalize">{product.category.replaceAll("-", " ")} · MOQ {product.minQuantity}</p>
         <h3 className="mt-2 font-display text-xl text-navy-950">{product.name}</h3>

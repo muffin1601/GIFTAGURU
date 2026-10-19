@@ -108,12 +108,10 @@ export const diwali2026: SeasonalHubContent = {
   heroLead:
     "Curated Diwali gift kits and gift sets for employees, clients and partners, selected from our existing Gift Set catalogue for company-wide gifting.",
   heroImage: {
-    // An existing brand banner. No new asset is created for this page: the
-    // luxury banner is the closest match to festive gifting already shipped.
-    src: "/BANNERS/LUXURY.png",
-    alt: "Premium Diwali gift sets from Gifta Guru arranged in festive presentation packaging",
-    width: 1600,
-    height: 900,
+    src: "/images/editorial/festive-corporate-gifting.webp",
+    alt: "Gold festive gift with ornaments arranged on white marble",
+    width: 2000,
+    height: 1312,
   },
   primaryCta: { label: "Explore Diwali Gift Sets", href: "/gift-sets" },
   secondaryCta: { label: "Request a Corporate Diwali Quote", href: "/bulk-enquiry" },

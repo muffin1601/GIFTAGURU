@@ -15,6 +15,14 @@ interface CollectionRow {
   is_featured: boolean;
 }
 
+const editorialImageByCollectionSlug = new Map(
+  fallbackFeaturedCollections.map((collection) => [collection.slug, collection.image]),
+);
+
+function getEditorialCollectionImage(slug: string, fallback: string): string {
+  return editorialImageByCollectionSlug.get(slug) ?? fallback;
+}
+
 export async function getCollections(): Promise<StorefrontCollection[]> {
   if (isDatabaseConfigured()) {
     try {
@@ -86,7 +94,7 @@ export async function getFeaturedCollectionsAsCategories(): Promise<Category[]> 
     name: c.name,
     tagline: c.tagline ?? c.name,
     description: c.description ?? "",
-    image: c.imageUrl!,
+    image: getEditorialCollectionImage(c.slug, c.imageUrl!),
     ctaLabel: `Explore ${c.name}`,
   }));
 }
@@ -101,7 +109,10 @@ export async function getCollectionBySlug(slug: string): Promise<Category | unde
       name: collection.name,
       tagline: collection.tagline ?? collection.name,
       description: collection.description ?? "",
-      image: collection.imageUrl ?? "/SBanners/SBanners/PREMIUM.png",
+      image: getEditorialCollectionImage(
+        collection.slug,
+        collection.imageUrl ?? "/images/editorial/premium-corporate-gifting.webp",
+      ),
       ctaLabel: `Explore ${collection.name}`,
     };
   }
@@ -128,7 +139,10 @@ export async function getCollectionBySlug(slug: string): Promise<Category | unde
     name: row.name,
     tagline: row.tagline ?? row.name,
     description: row.description ?? "",
-    image: row.image_url ?? "/SBanners/SBanners/PREMIUM.png",
+    image: getEditorialCollectionImage(
+      row.slug,
+      row.image_url ?? "/images/editorial/premium-corporate-gifting.webp",
+    ),
     ctaLabel: `Explore ${row.name}`,
   };
 }

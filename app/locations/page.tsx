@@ -31,7 +31,7 @@ export default function LocationsPage() {
         description="Plan branded gifts, bulk programmes and multi-location dispatch with one gifting partner. Our listed business office is in New Delhi."
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Locations" }]}
         actions={<><Button href="/bulk-enquiry">Plan a multi-location order</Button><Button href="/contact" variant="secondary">Talk to our team</Button></>}
-        image="/BANNERS/LUXURY.png"
+        image="/images/editorial/luxury-gift-packaging.webp"
       />
 
       <section className="section bg-canvas">

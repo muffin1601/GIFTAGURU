@@ -13,8 +13,8 @@ const slides = [
     title: "Corporate gifting solutions for businesses across India.",
     description:
       "Plan branded gifts, employee welcome kits and bulk gifting programmes for teams, clients and business events.",
-    image: "/BANNERS/JOINING.png",
-    alt: "Joining gift collection by Gifta Guru",
+    image: "/images/editorial/employee-welcome-workspace.webp",
+    alt: "Notebooks, pen and coffee arranged on a modern workspace",
     href: "/categories/joining-gifts",
   },
   {
@@ -23,8 +23,8 @@ const slides = [
     title: "Sustainable gifting that still feels premium.",
     description:
       "Eco-conscious gift sets for teams and clients who value useful products and responsible materials.",
-    image: "/BANNERS/ECO.png",
-    alt: "Eco-friendly corporate gift collection by Gifta Guru",
+    image: "/images/editorial/custom-gift-preparation.webp",
+    alt: "Hands carefully finishing a reusable green gift box",
     href: "/categories/eco-gifts",
   },
   {
@@ -33,8 +33,8 @@ const slides = [
     title: "Corporate gifts that unbox culture, not clutter.",
     description:
       "Premium gift sets for appreciation, events, client relationships and bulk campaigns across India.",
-    image: "/BANNERS/PREMIUM.png",
-    alt: "Premium corporate gift sets from Gifta Guru",
+    image: "/images/editorial/premium-corporate-gifting.webp",
+    alt: "Blue and sage gift boxes wrapped with white ribbon",
     href: "/categories/premium-gifts",
   },
   {
@@ -43,8 +43,8 @@ const slides = [
     title: "Executive gifts for high-value business moments.",
     description:
       "Refined luxury sets for leadership, festive gifting and important clients where presentation matters.",
-    image: "/BANNERS/LUXURY.png",
-    alt: "Luxury corporate gift collection by Gifta Guru",
+    image: "/images/editorial/luxury-gift-packaging.webp",
+    alt: "Luxury green gift box finished with gold and ivory ribbon",
     href: "/categories/luxury-gifts",
   },
 ];
@@ -96,7 +96,7 @@ export default function Hero() {
                 alt={index === activeIndex ? slide.alt : ""}
                 fill
                 sizes="100vw"
-                priority={index === 0}
+                preload={index === 0}
                 aria-hidden={index !== activeIndex}
                 className="object-cover"
               />

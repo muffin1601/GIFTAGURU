@@ -5,10 +5,19 @@ import Container from "@/components/ui/Container";
 
 function headerImage(eyebrow: string | undefined, title: string) {
   const context = `${eyebrow ?? ""} ${title}`.toLowerCase();
-  if (context.includes("eco") || context.includes("sustainable")) return "/BANNERS/ECO.png";
-  if (context.includes("joining") || context.includes("welcome") || context.includes("onboarding")) return "/BANNERS/JOINING.png";
-  if (context.includes("luxury") || context.includes("leadership") || context.includes("client")) return "/BANNERS/LUXURY.png";
-  return "/BANNERS/PREMIUM.png";
+  if (context.includes("eco") || context.includes("sustainable")) return "/images/editorial/custom-gift-preparation.webp";
+  if (context.includes("joining") || context.includes("welcome") || context.includes("onboarding")) return "/images/editorial/employee-welcome-workspace.webp";
+  if (context.includes("luxury") || context.includes("leadership") || context.includes("client")) return "/images/editorial/luxury-gift-packaging.webp";
+  return "/images/editorial/premium-corporate-gifting.webp";
+}
+
+function headerImageAlt(image: string) {
+  if (image.includes("employee-welcome-workspace")) return "Notebooks, pen and coffee arranged on a modern workspace";
+  if (image.includes("custom-gift-preparation")) return "Hands carefully finishing a deep green gift box";
+  if (image.includes("luxury-gift-packaging")) return "Luxury green gift box finished with gold and ivory ribbon";
+  if (image.includes("business-gifting-workspace")) return "Tan notebook, silver pen and coffee on a minimal desk";
+  if (image.includes("Diwali kits")) return "Corporate Diwali hamper arranged in a presentation box";
+  return "Blue and sage gift boxes wrapped with white ribbon";
 }
 
 export default function PageHeader({
@@ -51,7 +60,7 @@ export default function PageHeader({
         </div>
         <div className="relative order-first mx-auto w-full max-w-[36rem] lg:order-none">
           <div className="hanna-arch-frame relative aspect-[4/3] bg-surface">
-            <Image src={image} alt="GiftaGuru corporate gifting collection" fill priority sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover object-[68%_center]" />
+            <Image src={image} alt={headerImageAlt(image)} fill preload sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover object-center" />
           </div>
           <div className="absolute -bottom-5 -left-3 flex h-24 w-24 items-center justify-center rounded-full border border-gold-400 bg-navy-950 px-3 text-center font-script text-base leading-tight text-cream-100 shadow-[0_10px_40px_-5px_rgba(10,26,48,0.25)] sm:h-28 sm:w-28">
             Curated for business

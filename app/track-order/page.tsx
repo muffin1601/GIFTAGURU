@@ -21,7 +21,7 @@ export default function TrackOrderPage() {
         title="Track your corporate gift order"
         description="Use your order reference and checkout email to view the latest payment, fulfilment and delivery information."
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Track order" }]}
-        image="/BANNERS/PREMIUM.png"
+        image="/images/editorial/business-gifting-workspace.webp"
       />
       <section className="section bg-canvas">
         <Container className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">

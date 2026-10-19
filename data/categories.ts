@@ -6,7 +6,7 @@ export const categories: Category[] = [
     name: "Eco Gifts",
     tagline: "Gifts That Care. For People & Planet.",
     description: "Sustainable gift sets crafted from natural materials, for teams who value responsible choices.",
-    image: "/SBanners/SBanners/ECO.png",
+    image: "/images/editorial/category-eco-friendly-gifts.webp",
     ctaLabel: "Explore Eco Gifts",
   },
   {
@@ -14,7 +14,7 @@ export const categories: Category[] = [
     name: "Joining Gifts",
     tagline: "Welcome to New Beginnings.",
     description: "Thoughtfully curated onboarding kits that make a new hire's first day feel like a celebration.",
-    image: "/SBanners/SBanners/JOINING.png",
+    image: "/images/editorial/category-joining-gifts.webp",
     ctaLabel: "Explore Joining Kits",
   },
   {
@@ -22,7 +22,7 @@ export const categories: Category[] = [
     name: "Luxury Gifts",
     tagline: "Luxury Gifts. Timeless Impressions.",
     description: "Exquisite gift sets for leadership moments and clients who expect nothing but the finest.",
-    image: "/SBanners/SBanners/LUXURY.png",
+    image: "/images/editorial/category-luxury-gifts.webp",
     ctaLabel: "Explore Luxury Gifts",
   },
   {
@@ -30,7 +30,7 @@ export const categories: Category[] = [
     name: "Premium Gifts",
     tagline: "Thoughtful Gifts. Stronger Relationships.",
     description: "Premium gift kits for every corporate occasion, designed to leave a lasting impression.",
-    image: "/SBanners/SBanners/PREMIUM.png",
+    image: "/images/editorial/category-premium-gifts.webp",
     ctaLabel: "Explore Collection",
   },
 ];

@@ -29,8 +29,8 @@ export default function CustomGifting({
       <Container className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
         <div className="relative order-last aspect-[4/3] overflow-hidden border border-line bg-sunken lg:order-first">
           <Image
-            src="/SBanners/SBanners/LUXURY.png"
-            alt="Custom branded corporate gift boxes"
+            src="/images/editorial/custom-gift-preparation.webp"
+            alt="Hands carefully finishing a deep green gift box"
             fill
             sizes="(min-width: 1024px) 50vw, 100vw"
             className="object-cover"

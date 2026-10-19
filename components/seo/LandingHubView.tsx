@@ -8,12 +8,12 @@ import type { LandingFamily, LandingPageContent, LandingSection } from "@/lib/se
 import { landingFamilies } from "@/lib/seo/content/types";
 
 function heroImage(family: LandingFamily) {
-  const images: Record<LandingFamily, string> = {
-    industries: "/BANNERS/LUXURY.png",
-    gifting: "/BANNERS/JOINING.png",
-    occasions: "/BANNERS/LUXURY.png",
-    "gift-sets": "/BANNERS/PREMIUM.png",
-    guides: "/BANNERS/ECO.png",
+  const images: Record<LandingFamily, { src: string; alt: string }> = {
+    industries: { src: "/images/editorial/business-gifting-workspace.webp", alt: "Tan notebook, silver pen and coffee on a minimal desk" },
+    gifting: { src: "/images/editorial/employee-welcome-workspace.webp", alt: "Notebooks, pen and coffee arranged on a modern workspace" },
+    occasions: { src: "/images/editorial/luxury-gift-packaging.webp", alt: "Luxury green gift box finished with gold and ivory ribbon" },
+    "gift-sets": { src: "/images/editorial/premium-corporate-gifting.webp", alt: "Blue and sage gift boxes wrapped with white ribbon" },
+    guides: { src: "/images/editorial/custom-gift-preparation.webp", alt: "Hands carefully finishing a deep green gift box" },
   };
 
   return images[family];
@@ -47,6 +47,7 @@ export default function LandingHubView({
   visualGallery?: { src: string; alt: string }[];
 }) {
   const config = landingFamilies[family];
+  const hero = heroImage(family);
 
   return (
     <>
@@ -78,12 +79,12 @@ export default function LandingHubView({
           </div>
           <div className="hanna-arch-frame relative order-first aspect-[4/3] bg-surface lg:order-none">
             <Image
-              src={heroImage(family)}
-              alt={`${config.label} corporate gifting`}
+              src={hero.src}
+              alt={hero.alt}
               fill
-              priority
+              preload
               sizes="(min-width: 1024px) 50vw, 100vw"
-              className="object-cover object-[68%_center]"
+              className="object-cover object-center"
             />
           </div>
         </Container>

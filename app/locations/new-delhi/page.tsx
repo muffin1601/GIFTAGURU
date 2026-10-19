@@ -32,7 +32,7 @@ export default function NewDelhiLocationPage() {
         description="Plan branded gifts, employee welcome kits, client gifting and bulk orders with our New Delhi team, including delivery requirements for programmes across India."
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Locations", href: "/locations" }, { label: "New Delhi" }]}
         actions={<Button href="/bulk-enquiry">Request a custom quote</Button>}
-        image="/BANNERS/PREMIUM.png"
+        image="/images/editorial/premium-corporate-gifting.webp"
       />
 
       <section className="section bg-canvas">
