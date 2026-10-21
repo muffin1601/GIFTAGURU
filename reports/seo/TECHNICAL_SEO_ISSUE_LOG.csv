@@ -1,0 +1,11 @@
+Severity,Issue,Affected URLs,Exact fix,Test status
+Critical,Two sitemap product aliases redirected to 404,Production sitemap and internal links,Normalize known aliases to canonical product slugs in data results and sitemap,Implemented; deploy and live-recrawl pending
+High,Internal links targeted /guides redirects,"Homepage, navigation, content modules",Link directly to /blog and fail validation on redirecting internal hrefs,Implemented and locally validated
+High,Near-identical NCR service pages indexed,Seven /locations/* pages,Noindex and remove from sitemap until uniquely supported,Implemented; deployment pending
+High,Duplicate /bulk-orders URL,/bulk-orders,Permanent redirect to /bulk-enquiry and update internal links,Implemented
+High,Sitemap freshness implicit,/sitemap.xml,One-hour revalidation,Implemented
+Medium,Empty collections eligible for sitemap,DB collections,Require at least one active mapped product,Implemented in sitemap query
+Medium,Invalid/out-of-range pagination returned soft-empty 200,/shop?page=*,Self-canonical valid pages and 404 invalid/out-of-range pages,Implemented
+Medium,Lead conversions absent from GA4,Lead and bulk enquiry forms,"Emit generate_lead after confirmed server success, without PII",Implemented and unit-tested
+Medium,Public pages forced dynamic by root cart/auth read,All storefront routes,Isolate personalization and staging-test commerce,Open; high-risk architecture change deferred
+Low,Dedicated social share card absent,Default OG/Twitter,Create approved 1200x630 brand asset,Open

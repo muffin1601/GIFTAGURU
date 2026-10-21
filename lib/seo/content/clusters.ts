@@ -19,17 +19,17 @@ export const productClusterLinks: Record<ProductCluster, LandingLink[]> = {
   "onboarding-welcome-kits": [
     { label: "Browse all employee welcome kits", href: "/categories/joining-gifts" },
     { label: "How to build an onboarding gifting programme", href: "/gifting/employee-onboarding" },
-    { label: "What belongs in a welcome kit", href: "/guides/employee-welcome-kit-guide" },
+    { label: "What belongs in a welcome kit", href: "/blog/employee-welcome-kit-guide" },
   ],
   "pens-desk-accessories": [
     { label: "Corporate gift sets for teams and events", href: "/categories/premium-gifts" },
     { label: "Conference and delegate gifting", href: "/gifting/events-conferences" },
-    { label: "Comparing logo branding methods", href: "/guides/logo-branding-on-corporate-gifts" },
+    { label: "Comparing logo branding methods", href: "/blog/logo-branding-on-corporate-gifts" },
   ],
   "client-relationship-gifting": [
     { label: "Corporate gifts for clients", href: "/gifting/client-appreciation" },
     { label: "Premium corporate gift sets", href: "/categories/premium-gifts" },
-    { label: "Client gifting timing and etiquette", href: "/guides/client-gifting-guide" },
+    { label: "Client gifting timing and etiquette", href: "/blog/client-gifting-guide" },
   ],
   "luxury-executive": [
     { label: "Explore luxury corporate gifts", href: "/categories/luxury-gifts" },
@@ -43,7 +43,7 @@ export const productClusterLinks: Record<ProductCluster, LandingLink[]> = {
   ],
   "eco-sustainable": [
     { label: "Browse eco friendly corporate gifts", href: "/categories/eco-gifts" },
-    { label: "Making corporate gifting genuinely sustainable", href: "/guides/eco-friendly-corporate-gifting" },
+    { label: "Making corporate gifting genuinely sustainable", href: "/blog/eco-friendly-corporate-gifting" },
     { label: "Sustainable event merchandise", href: "/gifting/events-conferences" },
   ],
   "planners-folios": [

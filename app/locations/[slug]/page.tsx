@@ -19,7 +19,12 @@ export const dynamicParams = false;
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const area = serviceAreaBySlug((await params).slug);
   if (!area) return pageMetadata({ title: "Location not found | Gifta Guru", description: "This service area is not available.", path: "/locations", index: false });
-  return pageMetadata({ title: `Corporate Diwali Gifts in ${area.name} | Gifta Guru`, description: `Corporate Diwali gifts, Diwali corporate gift kits and corporate gifting support for employee and client programmes in ${area.name}.`, path: `/locations/${area.slug}` });
+  // These service-area pages intentionally remain available to visitors, but
+  // the copy and offering are not yet distinct enough to justify seven
+  // separately indexed city pages. Keep them out of the index until each area
+  // has evidence-backed local content; the verified New Delhi office page
+  // remains indexable at /locations/new-delhi.
+  return pageMetadata({ title: `Corporate Diwali Gifts in ${area.name} | Gifta Guru`, description: `Corporate Diwali gifts, Diwali corporate gift kits and corporate gifting support for employee and client programmes in ${area.name}.`, path: `/locations/${area.slug}`, index: false });
 }
 
 export default async function ServiceAreaPage({ params }: { params: Promise<{ slug: string }> }) {

@@ -77,6 +77,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   if (!product) notFound();
 
   const minimumQuantity = Math.max(product.minOrderQuantity, settings.minOrderQuantity);
+  const inStock = product.variants.some((variant) => variant.quantityAvailable >= minimumQuantity);
   // Historic tiers below the storefront minimum are not purchasable and must
   // not reintroduce a 1–4 quantity range into the pricing table.
   const visiblePriceTiers = product.priceTiers.filter((tier) => tier.minQuantity >= minimumQuantity);
@@ -91,7 +92,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     minQuantity: minimumQuantity,
     featured: true,
     image: product.images[0]?.url,
-    inStock: product.variants.some((variant) => variant.inStock),
+    inStock,
     priceTiers: product.priceTiers,
   };
   const [related, isWishlisted] = await Promise.all([
@@ -99,7 +100,6 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     isProductWishlisted(product.id),
   ]);
 
-  const inStock = product.variants.some((variant) => variant.inStock);
   const seo = getProductSeoContent(product.slug);
   const clusterLinks = seo ? productClusterLinks[seo.cluster] : [];
   const hasStructuredContent = Boolean(

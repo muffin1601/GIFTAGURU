@@ -114,7 +114,7 @@ export default async function Diwali2026Page() {
 
             <p className="type-meta mt-5">
               Company list?{" "}
-              <Link href="/bulk-orders" className="link-underline text-navy-950">
+              <Link href="/bulk-enquiry" className="link-underline text-navy-950">
                 Bulk Diwali orders
               </Link>{" "}
               are quoted on quantity and personalisation.

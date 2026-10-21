@@ -239,7 +239,7 @@ export const collectionSeoContent: CollectionSeoContent[] = [
     ],
     relatedLinks: [
       { label: "sustainable Diwali gift sets", href: "/diwali-2026" },
-      { label: "sustainable gifting for ESG programmes", href: "/guides/eco-friendly-corporate-gifting" },
+      { label: "sustainable gifting for ESG programmes", href: "/blog/eco-friendly-corporate-gifting" },
       { label: "bulk eco gifting for events", href: "/gifting/events-conferences" },
       { label: "request a quote", href: "/bulk-enquiry" },
     ],

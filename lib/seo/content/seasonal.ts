@@ -9,7 +9,7 @@ import type { LandingFaq, LandingLink, LandingSection } from "./types";
  *   /occasions/diwali-corporate-gifts   evergreen, never names a year, owns
  *                                       "Diwali corporate gifts", accumulates
  *                                       authority across seasons.
- *   /guides/diwali-corporate-gifting-guide  informational, owns
+ *   /blog/diwali-corporate-gifting-guide  informational, owns
  *                                       "luxury diwali gift ideas office".
  *   /diwali-2026                        THIS page. A seasonal hub that owns
  *                                       "Diwali gifts 2026" -- a query people
@@ -282,7 +282,7 @@ export const diwali2026: SeasonalHubContent = {
     {
       title: "Customers",
       body: "Loyalty and relationship gifting at scale, using the same coordinated sets with your branding applied.",
-      link: { label: "Read the client gifting guide", href: "/guides/client-gifting-guide" },
+      link: { label: "Read the client gifting guide", href: "/blog/client-gifting-guide" },
     },
     {
       title: "Business partners",
@@ -403,7 +403,7 @@ export const diwali2026: SeasonalHubContent = {
   // over-optimisation to a reviewer as much as to a crawler.
   relatedLinks: [
     { label: "Diwali corporate gifts", href: "/occasions/diwali-corporate-gifts" },
-    { label: "How to plan Diwali corporate gifting", href: "/guides/diwali-corporate-gifting-guide" },
+    { label: "How to plan Diwali corporate gifting", href: "/blog/diwali-corporate-gifting-guide" },
     { label: "Festive corporate gifting across the season", href: "/occasions/festive-corporate-gifting" },
     { label: "New year corporate gifts", href: "/occasions/new-year-corporate-gifts" },
     { label: "Shop premium gift hampers", href: "/categories/premium-gifts" },

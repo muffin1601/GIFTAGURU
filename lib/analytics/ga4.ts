@@ -48,6 +48,16 @@ export function trackBeginCheckout(input: { value: number; items: Ga4Item[]; cou
   });
 }
 
+/** Records a confirmed B2B enquiry without sending contact details or other PII. */
+export function trackGenerateLead(input: { formType: string; source: string }) {
+  return send("generate_lead", {
+    currency: "INR",
+    value: 0,
+    form_type: input.formType,
+    lead_source: input.source,
+  });
+}
+
 const PURCHASE_STORAGE_PREFIX = "giftaguru:ga4-purchase:";
 
 export function trackPurchase(input: { transactionId: string; value: number; tax: number; shipping: number; items: Ga4Item[]; coupon?: string }) {

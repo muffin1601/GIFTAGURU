@@ -7,7 +7,13 @@ import { guidePages } from "@/lib/seo/content/guides";
 import type { BlogPost, BlogFaq, BlogLink, BlogSection } from "./types";
 
 const DEFAULT_IMAGE = "/images/editorial/premium-corporate-gifting.webp";
-const DEFAULT_DATE = new Date("2026-01-15T00:00:00.000Z");
+// Repository history is the evidence for the bundled editorial dates. The
+// guides were first published on 5 September and substantively revised on
+// 8 September; the standalone tech-gifting article was added on 18 September.
+// Do not replace these with deployment time or a generic freshness date.
+const GUIDE_PUBLISHED_AT = new Date("2026-09-05T10:09:32.000Z");
+const GUIDE_UPDATED_AT = new Date("2026-09-08T08:05:28.000Z");
+const TECH_POST_PUBLISHED_AT = new Date("2026-09-18T11:27:30.000Z");
 
 const GUIDE_IMAGES: Record<string, { src: string; alt: string }> = {
   "corporate-gifting-guide": { src: "/images/editorial/premium-corporate-gifting.webp", alt: "Blue and sage gift boxes wrapped with white ribbon" },
@@ -44,8 +50,8 @@ const guidePosts: BlogPost[] = guidePages.map((guide, index) => ({
   metaDescription: guide.metaDescription,
   focusKeyword: guide.primaryKeyword,
   isFeatured: index < 3,
-  publishedAt: DEFAULT_DATE,
-  updatedAt: DEFAULT_DATE,
+  publishedAt: GUIDE_PUBLISHED_AT,
+  updatedAt: GUIDE_UPDATED_AT,
 }));
 
 const techDiwaliPost: BlogPost = {
@@ -60,8 +66,8 @@ const techDiwaliPost: BlogPost = {
   metaDescription: "Plan corporate technology gifts, branded electronics gifts and Diwali tech gifting kits for employees and clients.",
   focusKeyword: "corporate tech gifting kits diwali",
   isFeatured: true,
-  publishedAt: DEFAULT_DATE,
-  updatedAt: DEFAULT_DATE,
+  publishedAt: TECH_POST_PUBLISHED_AT,
+  updatedAt: TECH_POST_PUBLISHED_AT,
   sections: [
     { heading: "Choose corporate technology gifts by recipient", body: ["Branded corporate gadgets work best when the recipient group and use case are clear. A Diwali tech gift for employees should be useful across a broad team; a Diwali tech gift for clients should be considered for the relationship and appropriate for the recipient’s policy."] },
     { heading: "Build a corporate tech gifting kit", bullets: ["Start with one useful technology gift rather than adding filler", "Keep branding restrained so the item remains useful after Diwali", "Use a consistent kit for employee lists and a premium tier for selected clients", "Confirm the recipient list and delivery split before finalising the kit"] },

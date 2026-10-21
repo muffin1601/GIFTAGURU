@@ -5,12 +5,9 @@ import FAQ from "@/components/home/FAQ";
 import { pageMetadata } from "@/lib/seo/metadata";
 import BusinessBuyerGuide from "@/components/content/BusinessBuyerGuide";
 
-// This file's default export and metadata are re-exported verbatim at
-// /bulk-enquiry (see app/bulk-enquiry/page.tsx) -- same component, same
-// content, two URLs. Rather than duplicate content across both, the
-// canonical always points at /bulk-enquiry, which is the URL actually linked
-// from navigation and CTAs sitewide; /bulk-orders remains reachable (nothing
-// that links to it breaks) but tells Google the content lives at the other URL.
+// This implementation is re-exported by /bulk-enquiry. next.config redirects
+// /bulk-orders permanently before this route can render, leaving one public
+// URL for the content while preserving old bookmarks and campaign links.
 export const metadata: Metadata = pageMetadata({
   title: "Bulk Orders | Gifta Guru",
   description: "Request a quote for bulk corporate gifting orders, delivered pan-India.",

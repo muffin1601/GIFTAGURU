@@ -29,5 +29,19 @@ export function isDatabaseConfigured(): boolean {
 }
 
 export function siteUrl(): string {
-  return process.env.SITE_URL ?? "http://localhost:3000";
+  const configured = process.env.SITE_URL ??
+    (process.env.NODE_ENV === "production" ? "https://www.giftaguru.com" : "http://localhost:3000");
+
+  let parsed: URL;
+  try {
+    parsed = new URL(configured);
+  } catch {
+    throw new Error("SITE_URL must be an absolute URL.");
+  }
+
+  if (parsed.protocol !== "https:" && parsed.hostname !== "localhost") {
+    throw new Error("SITE_URL must use HTTPS outside local development.");
+  }
+
+  return parsed.origin;
 }

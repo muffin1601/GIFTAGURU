@@ -129,7 +129,7 @@ const families = [
   ["Use-case landing pages", "/gifting", useCasePages, "commercial investigation (occasion-led)", "middle"],
   ["Occasion / seasonal pages", "/occasions", occasionPages, "seasonal commercial", "middle"],
   ["Multi-piece gift set pages", "/gift-sets", giftSetPages, "transactional (specification-led)", "middle-to-bottom"],
-  ["Guides", "/guides", guidePages, "informational", "top"],
+  ["Guides", "/blog", guidePages, "informational", "top"],
 ];
 
 for (const [title, base, pages, intent, stage] of families) {
@@ -160,7 +160,7 @@ for (const [title, base, pages, intent, stage] of families) {
     w(`- **Internal links:** ${p.relatedLinks.map((l) => `[${l.label}](${l.href})`).join(", ")}`);
     w("- **Schema:** BreadcrumbList, FAQPage");
     w("- **CTA:** Request a Custom Quote");
-    w(`- **Priority:** ${base === "/guides" ? 3 : 2}`);
+    w(`- **Priority:** ${base === "/blog" ? 3 : 2}`);
     w();
   }
 }
@@ -177,16 +177,16 @@ w("well before the occasion, and a page published during the peak has missed it.
 w();
 w("| Month | Focus | Page | Supporting guide | Products to feature |");
 w("| --- | --- | --- | --- | --- |");
-w("| January | New-year planners, Q1 kickoff | /occasions/new-year-corporate-gifts | /guides/corporate-gifting-guide | Grey planner set, luxury planner box |");
-w("| February | Appreciation cycle, annual reviews | /gifting/employee-appreciation | /guides/corporate-gifting-budget-guide | Journal & pen, grey planner |");
-w("| March | Financial year end, budget planning | /gifting/bulk-corporate-gifting | /guides/corporate-gifting-budget-guide | Minimal notebook, compact welcome kit |");
-w("| April | New financial year onboarding, Earth Day | /gifting/employee-onboarding | /guides/eco-friendly-corporate-gifting | Compact welcome kit, sage green set |");
-w("| May | Campus/graduate intake prep | /guides/employee-welcome-kit-guide | /gift-sets/3-piece-corporate-gift-sets | Compact welcome kit, blue notebook |");
-w("| June | Mid-year conferences, environment campaigns | /gifting/events-conferences | /guides/conference-giveaway-guide | Minimal notebook, green eco notebook |");
-w("| July | Dealer and channel planning | /gifting/dealer-channel-partner | /guides/logo-branding-on-corporate-gifts | Complete stationery, black & gold |");
-w("| **August** | **Diwali planning starts** | /occasions/diwali-corporate-gifts | /guides/diwali-corporate-gifting-guide | Burgundy set, black & gold, white premium |");
-w("| **September** | **Festive ordering window** | /occasions/festive-corporate-gifting | /guides/client-gifting-guide | Burgundy, luxury planner, complete stationery |");
-w("| October | Festive fulfilment, late orders | /occasions/diwali-corporate-gifts | /guides/diwali-corporate-gifting-guide | In-stock premium sets |");
+w("| January | New-year planners, Q1 kickoff | /occasions/new-year-corporate-gifts | /blog/corporate-gifting-guide | Grey planner set, luxury planner box |");
+w("| February | Appreciation cycle, annual reviews | /gifting/employee-appreciation | /blog/corporate-gifting-budget-guide | Journal & pen, grey planner |");
+w("| March | Financial year end, budget planning | /gifting/bulk-corporate-gifting | /blog/corporate-gifting-budget-guide | Minimal notebook, compact welcome kit |");
+w("| April | New financial year onboarding, Earth Day | /gifting/employee-onboarding | /blog/eco-friendly-corporate-gifting | Compact welcome kit, sage green set |");
+w("| May | Campus/graduate intake prep | /blog/employee-welcome-kit-guide | /gift-sets/3-piece-corporate-gift-sets | Compact welcome kit, blue notebook |");
+w("| June | Mid-year conferences, environment campaigns | /gifting/events-conferences | /blog/conference-giveaway-guide | Minimal notebook, green eco notebook |");
+w("| July | Dealer and channel planning | /gifting/dealer-channel-partner | /blog/logo-branding-on-corporate-gifts | Complete stationery, black & gold |");
+w("| **August** | **Diwali planning starts** | /occasions/diwali-corporate-gifts | /blog/diwali-corporate-gifting-guide | Burgundy set, black & gold, white premium |");
+w("| **September** | **Festive ordering window** | /occasions/festive-corporate-gifting | /blog/client-gifting-guide | Burgundy, luxury planner, complete stationery |");
+w("| October | Festive fulfilment, late orders | /occasions/diwali-corporate-gifts | /blog/diwali-corporate-gifting-guide | In-stock premium sets |");
 w("| **November** | **New-year gifting ordering** | /occasions/new-year-corporate-gifts | /gifting/executive-leadership | Luxury planner box, grey planner |");
 w("| December | Year-end thanks, wedding season | /occasions/wedding-season-corporate-gifting | /gifting/client-appreciation | Burgundy, white premium, complete stationery |");
 w();

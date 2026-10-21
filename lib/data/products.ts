@@ -9,6 +9,16 @@ import {
 import type { Product } from "@/types";
 import type { StorefrontProductDetail } from "@/types/storefront";
 import { asFaqs, asFeatures, asSpecifications, asStringItems } from "@/lib/product-content";
+import { getProductSeoContent } from "@/lib/seo/content/products";
+
+function canonicalProductSlug(slug: string): string {
+  return getProductSeoContent(slug)?.slug ?? slug;
+}
+
+function knownProductSlugs(slug: string): string[] {
+  const seo = getProductSeoContent(slug);
+  return seo ? [seo.slug, ...(seo.slugAliases ?? [])] : [slug];
+}
 
 const emptyProductContent = {
   longDescription: null,
@@ -138,7 +148,7 @@ function mapListRow(row: ProductListRow): Product {
 
   return {
     id: row.id,
-    slug: row.slug,
+    slug: canonicalProductSlug(row.slug),
     name: row.name,
     category: category?.slug ?? "corporate-gifts",
     description: row.description ?? "",
@@ -204,7 +214,7 @@ async function getPrismaProducts(args: {
 function mapPrismaListProduct(product: PrismaListProduct): Product {
   return {
     id: product.id,
-    slug: product.slug,
+    slug: canonicalProductSlug(product.slug),
     name: product.name,
     category: product.category?.slug ?? "corporate-gifts",
     description: product.description ?? "",
@@ -494,9 +504,11 @@ export async function countProducts(filters: Pick<ProductFilters, "categorySlug"
 }
 
 export async function getProductBySlug(slug: string): Promise<StorefrontProductDetail | null> {
+  const candidateSlugs = knownProductSlugs(slug);
+
   if (isDatabaseConfigured()) {
-    const product = await prisma.product.findUnique({
-      where: { slug },
+    const product = await prisma.product.findFirst({
+      where: { slug: { in: candidateSlugs } },
       include: {
         category: { select: { slug: true, name: true } },
         images: { orderBy: { sortOrder: "asc" } },
@@ -516,7 +528,7 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
 
     return {
       id: product.id,
-      slug: product.slug,
+      slug: canonicalProductSlug(product.slug),
       name: product.name,
       description: product.description,
       longDescription: product.longDescription,
@@ -571,12 +583,12 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
   }
 
   if (!isSupabaseConfigured()) {
-    const fallback = fallbackProducts.find((p) => p.slug === slug);
+    const fallback = fallbackProducts.find((p) => candidateSlugs.includes(p.slug));
     if (!fallback) return null;
 
     return {
       id: fallback.id,
-      slug: fallback.slug,
+      slug: canonicalProductSlug(fallback.slug),
       name: fallback.name,
       description: fallback.description,
       ...emptyProductContent,
@@ -627,17 +639,17 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
        product_collection_mappings(collections(slug, name)),
        product_price_tiers(min_quantity, unit_price)`,
     )
-    .eq("slug", slug)
+    .in("slug", candidateSlugs)
     .eq("status", "active")
     .maybeSingle();
 
   if (error || !data) {
-    const fallback = fallbackProducts.find((p) => p.slug === slug);
+    const fallback = fallbackProducts.find((p) => candidateSlugs.includes(p.slug));
     if (!fallback) return null;
 
     return {
       id: fallback.id,
-      slug: fallback.slug,
+      slug: canonicalProductSlug(fallback.slug),
       name: fallback.name,
       description: fallback.description,
       ...emptyProductContent,
@@ -697,7 +709,7 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
 
   return {
     id: row.id,
-    slug: row.slug,
+    slug: canonicalProductSlug(row.slug),
     name: row.name,
     description: row.description,
     longDescription: row.long_description,

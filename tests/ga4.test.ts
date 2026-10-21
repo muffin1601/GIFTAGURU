@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { trackAddToCart, trackBeginCheckout, trackPurchase, trackViewItem } from "@/lib/analytics/ga4";
+import { trackAddToCart, trackBeginCheckout, trackGenerateLead, trackPurchase, trackViewItem } from "@/lib/analytics/ga4";
 
 type Event = { name: string; payload: Record<string, unknown> };
 
@@ -58,4 +58,20 @@ test("tracking queues safely when GA4 is temporarily unavailable", () => {
   Object.assign(globalThis, { window: {} });
   assert.equal(trackAddToCart(item), true);
   assert.deepEqual(window.dataLayer, [["event", "add_to_cart", { currency: "INR", value: 1245, items: [item] }]]);
+});
+
+test("generate_lead records non-PII form context", () => {
+  const events: Event[] = [];
+  installGa4(events);
+
+  assert.equal(trackGenerateLead({ formType: "bulk_order", source: "Product page" }), true);
+  assert.deepEqual(events, [{
+    name: "generate_lead",
+    payload: {
+      currency: "INR",
+      value: 0,
+      form_type: "bulk_order",
+      lead_source: "Product page",
+    },
+  }]);
 });

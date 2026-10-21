@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import Container from "@/components/ui/Container";
 import PageHeader from "@/components/ui/PageHeader";
 import ProductCard from "@/components/ui/ProductCard";
@@ -9,13 +10,36 @@ import BusinessBuyerGuide from "@/components/content/BusinessBuyerGuide";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = pageMetadata({
-  title: "Shop Corporate Gifts | Gifta Guru",
-  description: "Browse premium corporate gifts, joining kits, eco-friendly hampers, and bulk gifting solutions.",
-  path: "/shop",
-});
-
 const PAGE_SIZE = 24;
+
+function parsePage(value: string | undefined): number | null {
+  if (value === undefined) return 1;
+  if (!/^\d+$/.test(value)) return null;
+  const page = Number(value);
+  return Number.isSafeInteger(page) && page > 0 ? page : null;
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}): Promise<Metadata> {
+  const currentPage = parsePage((await searchParams).page);
+  if (currentPage === null) {
+    return pageMetadata({
+      title: "Shop Corporate Gifts | Gifta Guru",
+      description: "Browse premium corporate gifts, joining kits, eco-friendly hampers, and bulk gifting solutions.",
+      path: "/shop",
+      index: false,
+    });
+  }
+
+  return pageMetadata({
+    title: currentPage === 1 ? "Shop Corporate Gifts | Gifta Guru" : `Shop Corporate Gifts - Page ${currentPage} | Gifta Guru`,
+    description: "Browse premium corporate gifts, joining kits, eco-friendly hampers, and bulk gifting solutions.",
+    path: currentPage === 1 ? "/shop" : `/shop?page=${currentPage}`,
+  });
+}
 
 export default async function ShopPage({
   searchParams,
@@ -27,8 +51,8 @@ export default async function ShopPage({
   // The listing used to take a flat `limit: 24` with no offset and no page
   // controls, so the 25th product added to the catalogue would simply have
   // been unreachable from the storefront.
-  const requestedPage = Number.parseInt(page ?? "1", 10);
-  const currentPage = Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+  const currentPage = parsePage(page);
+  if (currentPage === null) notFound();
 
   const [products, total] = await Promise.all([
     searchProducts({ limit: PAGE_SIZE, offset: (currentPage - 1) * PAGE_SIZE }),
@@ -36,6 +60,7 @@ export default async function ShopPage({
   ]);
 
   const totalPages = total === null ? 1 : Math.max(1, Math.ceil(total / PAGE_SIZE));
+  if (currentPage > totalPages) notFound();
   const hasPrevious = currentPage > 1;
   const hasNext = currentPage < totalPages;
 

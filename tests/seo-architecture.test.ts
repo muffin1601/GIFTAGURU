@@ -30,7 +30,7 @@ const landingPages = [
   ...useCasePages.map((p) => ({ path: `/gifting/${p.slug}`, ...p })),
   ...occasionPages.map((p) => ({ path: `/occasions/${p.slug}`, ...p })),
   ...giftSetPages.map((p) => ({ path: `/gift-sets/${p.slug}`, ...p })),
-  ...guidePages.map((p) => ({ path: `/guides/${p.slug}`, ...p })),
+  ...guidePages.map((p) => ({ path: `/blog/${p.slug}`, ...p })),
 ];
 
 // Seasonal hubs (/diwali-2026) sit at the site root rather than under a

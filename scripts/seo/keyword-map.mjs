@@ -62,7 +62,7 @@ const landingFamilies = [
   ["gifting", "/gifting", useCasePages, "use-case-landing"],
   ["occasions", "/occasions", occasionPages, "seasonal-landing"],
   ["gift-sets", "/gift-sets", giftSetPages, "collection-landing"],
-  ["guides", "/guides", guidePages, "guide"],
+  ["guides", "/blog", guidePages, "guide"],
 ];
 for (const [, base, pages, pageType] of landingFamilies) {
   for (const p of pages) {
@@ -70,6 +70,17 @@ for (const [, base, pages, pageType] of landingFamilies) {
     for (const s of p.secondaryKeywords) declare(s, `${base}/${p.slug}`, pageType, "secondary");
   }
 }
+
+// The dedicated commercial solutions page owns solution/programme/supplier
+// intent. The homepage remains the owner for the broad brand-category head
+// terms, while informational planning queries belong to the blog.
+declare("corporate gifting solutions", "/corporate-gifting", "commercial-landing", "primary");
+for (const keyword of [
+  "corporate gifting solution",
+  "corporate gifting programs",
+  "corporate gifting services",
+  "corporate gift supplier",
+]) declare(keyword, "/corporate-gifting", "commercial-landing", "secondary");
 
 /* ------------------------------------------------------------------ *
  * 2. Rule inputs.
@@ -371,7 +382,7 @@ function classify(row) {
     return {
       ...base,
       role: "supporting",
-      targetUrl: "/guides/corporate-gifting-guide",
+      targetUrl: "/blog/corporate-gifting-guide",
       pageType: "guide",
       contentType: "buying guide",
       cluster: "guides",
@@ -403,6 +414,22 @@ function classify(row) {
   }
 
   // -- Rule 12: broad head terms belong to the homepage.
+  if (/corporate gifting solutions?|corporate gifting programs?|corporate gifting services?|corporate gift suppliers?/.test(k)) {
+    return {
+      ...base,
+      role: "supporting",
+      targetUrl: "/corporate-gifting",
+      pageType: "commercial-landing",
+      contentType: "landing page copy",
+      cluster: "corporate-gifting",
+      cannibalizationRisk: "low",
+      status: "targeted",
+      reason: "Commercial solution/programme intent is served by the dedicated corporate-gifting page.",
+      priority: 2,
+      funnelStage: "middle",
+    };
+  }
+
   if (/corporate gift|corporate gifting|personalized|custom|branded|logo|promotional|merchandise|india/.test(k)) {
     return {
       ...base,

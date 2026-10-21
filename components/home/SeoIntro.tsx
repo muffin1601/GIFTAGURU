@@ -123,12 +123,12 @@ export default function SeoIntro() {
             <h3 className="font-display text-lg text-navy-950">Plan your gifting</h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <Link href="/guides/corporate-gifting-guide" className="link-underline type-body">
+                <Link href="/blog/corporate-gifting-guide" className="link-underline type-body">
                   The corporate gifting guide
                 </Link>
               </li>
               <li>
-                <Link href="/guides/corporate-gifting-budget-guide" className="link-underline type-body">
+                <Link href="/blog/corporate-gifting-budget-guide" className="link-underline type-body">
                   Budgeting gifts at scale
                 </Link>
               </li>

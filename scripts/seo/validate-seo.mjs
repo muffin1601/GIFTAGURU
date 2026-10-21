@@ -48,7 +48,7 @@ const landingFamilies = [
   ["/gifting", useCasePages],
   ["/occasions", occasionPages],
   ["/gift-sets", giftSetPages],
-  ["/guides", guidePages],
+  ["/blog", guidePages],
 ];
 
 /** { path, title, description, h1, primaryKeyword, source } */
@@ -309,6 +309,19 @@ const linkSources = [
 for (const link of linkSources) {
   if (!linkResolves(link.href)) {
     add(ERROR, "broken-internal-link", `${link.from} -> ${link.href} ("${link.label}")`);
+  }
+
+  const redirectingSource = legacySeoRedirects.find((redirect) => {
+    if (!redirect.source.includes(":")) return redirect.source === link.href;
+    const prefix = redirect.source.slice(0, redirect.source.indexOf(":"));
+    return link.href.startsWith(prefix);
+  });
+  if (redirectingSource) {
+    add(
+      ERROR,
+      "internal-link-to-redirect",
+      `${link.from} -> ${link.href} should link directly to ${redirectingSource.destination}`,
+    );
   }
 }
 

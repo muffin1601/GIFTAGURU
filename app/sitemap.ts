@@ -6,7 +6,13 @@ import { categories as fallbackCategories } from "@/data/categories";
 import { allLandingHubPaths, allLandingPages } from "@/lib/seo/content";
 import { seasonalHubs } from "@/lib/seo/content/seasonal";
 import { getPublishedBlogPosts } from "@/lib/blog/data";
-import { ncrServiceAreas } from "@/lib/seo/locations";
+import { getProductSeoContent } from "@/lib/seo/content/products";
+
+export const revalidate = 3600;
+
+function absoluteUrl(url: string, base: string) {
+  return new URL(url, `${base}/`).toString();
+}
 
 /**
  * Database-driven. The previous version listed URLs from data/products.ts
@@ -31,15 +37,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/corporate-gifting",
     "/categories",
     "/custom-gifts",
-    // /bulk-orders intentionally excluded -- it renders the identical page as
-    // /bulk-enquiry (see app/bulk-orders/page.tsx) and canonicalizes there.
+    // /bulk-orders permanently redirects to this canonical enquiry route.
     "/bulk-enquiry",
     "/about",
     "/contact",
     "/blog",
     "/locations",
     "/locations/new-delhi",
-    ...ncrServiceAreas.map((area) => `/locations/${area.slug}`),
     "/privacy-policy",
     "/terms-and-conditions",
   ];
@@ -96,14 +100,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: post.updatedAt,
         changeFrequency: "monthly" as const,
         priority: 0.5,
-        images: [`${base}${post.featuredImageUrl}`],
+        images: [absoluteUrl(post.featuredImageUrl, base)],
       })),
     ];
   }
 
   const [collections, products, posts] = await Promise.all([
     prisma.collection.findMany({
-      where: { isPublished: true },
+      where: {
+        isPublished: true,
+        products: { some: { product: { status: "active" } } },
+      },
       select: { slug: true, updatedAt: true },
     }),
     prisma.product.findMany({
@@ -124,7 +131,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     })),
     ...products.map((product) => ({
-      url: `${base}/products/${product.slug}`,
+      url: `${base}/products/${getProductSeoContent(product.slug)?.slug ?? product.slug}`,
       lastModified: product.updatedAt,
       changeFrequency: "weekly" as const,
       priority: 0.6,
@@ -134,7 +141,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: post.updatedAt,
       changeFrequency: "monthly" as const,
       priority: 0.5,
-      images: [`${base}${post.featuredImageUrl}`],
+      images: [absoluteUrl(post.featuredImageUrl, base)],
     })),
   ];
 }

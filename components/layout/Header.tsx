@@ -14,7 +14,7 @@ const mobileLinks = [
   { label: "Diwali 2026", href: "/diwali-2026" },
   { label: "Corporate Gifting", href: "/corporate-gifting" },
   { label: "Custom Branding", href: "/custom-gifts" },
-  { label: "Bulk Orders", href: "/bulk-orders" },
+  { label: "Bulk Orders", href: "/bulk-enquiry" },
   { label: "Corporate Gifting Blog", href: "/blog" },
   { label: "Locations", href: "/locations" },
   { label: "Request a Quote", href: "/bulk-enquiry" },

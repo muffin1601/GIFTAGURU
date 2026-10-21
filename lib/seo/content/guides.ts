@@ -22,7 +22,7 @@ export const guidePages: LandingPageContent[] = [
       "workplace gifting ideas",
       "modern corporate gifting ideas India",
       "thoughtful corporate gifting",
-      "corporate gifting solutions",
+      "corporate gifting planning guide",
       "year round employee gifting program",
     ],
     seoTitle: "Corporate Gifting Guide - Ideas for Employees & Clients",
@@ -103,7 +103,7 @@ export const guidePages: LandingPageContent[] = [
     relatedLinks: [
       { label: "employee onboarding gifts", href: "/gifting/employee-onboarding" },
       { label: "corporate gifts for clients", href: "/gifting/client-appreciation" },
-      { label: "how much to spend on corporate gifts", href: "/guides/corporate-gifting-budget-guide" },
+      { label: "how much to spend on corporate gifts", href: "/blog/corporate-gifting-budget-guide" },
     ],
   },
   {
@@ -366,7 +366,7 @@ export const guidePages: LandingPageContent[] = [
     relatedLinks: [
       { label: "ordering corporate gifts in volume", href: "/gifting/bulk-corporate-gifting" },
       { label: "request a bulk quote", href: "/bulk-enquiry" },
-      { label: "the corporate gifting guide", href: "/guides/corporate-gifting-guide" },
+      { label: "the corporate gifting guide", href: "/blog/corporate-gifting-guide" },
     ],
   },
   {
@@ -452,7 +452,7 @@ export const guidePages: LandingPageContent[] = [
     relatedLinks: [
       { label: "eco friendly corporate gifts", href: "/categories/eco-gifts" },
       { label: "sustainable event merchandise", href: "/gifting/events-conferences" },
-      { label: "the corporate gifting guide", href: "/guides/corporate-gifting-guide" },
+      { label: "the corporate gifting guide", href: "/blog/corporate-gifting-guide" },
     ],
   },
   {
@@ -538,7 +538,7 @@ export const guidePages: LandingPageContent[] = [
       { label: "Diwali gift kits and gift sets", href: "/diwali-2026" },
       { label: "Diwali corporate gifts", href: "/occasions/diwali-corporate-gifts" },
       { label: "gifting through the festive quarter", href: "/occasions/festive-corporate-gifting" },
-      { label: "client gifting guide", href: "/guides/client-gifting-guide" },
+      { label: "client gifting guide", href: "/blog/client-gifting-guide" },
     ],
   },
   {
@@ -624,7 +624,7 @@ export const guidePages: LandingPageContent[] = [
     relatedLinks: [
       { label: "conference and event gifting", href: "/gifting/events-conferences" },
       { label: "planning a large gifting order", href: "/gifting/bulk-corporate-gifting" },
-      { label: "eco friendly corporate gifting guide", href: "/guides/eco-friendly-corporate-gifting" },
+      { label: "eco friendly corporate gifting guide", href: "/blog/eco-friendly-corporate-gifting" },
     ],
   },
   {
@@ -711,7 +711,7 @@ export const guidePages: LandingPageContent[] = [
     relatedLinks: [
       { label: "custom branding and personalization", href: "/custom-gifts" },
       { label: "gifting at scale", href: "/gifting/bulk-corporate-gifting" },
-      { label: "the corporate gifting guide", href: "/guides/corporate-gifting-guide" },
+      { label: "the corporate gifting guide", href: "/blog/corporate-gifting-guide" },
     ],
   },
 ];
