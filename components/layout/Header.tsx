@@ -6,11 +6,13 @@ import MobileNav from "@/components/layout/MobileNav";
 import CartLink from "@/components/cart/CartLink";
 import CollectionsDropdown from "@/components/layout/CollectionsDropdown";
 import { STORE_CONTACT } from "@/lib/config/store";
+import { newYearCampaign } from "@/lib/campaign/new-year";
 
 const mobileLinks = [
   { label: "Home", href: "/" },
   { label: "Shop", href: "/shop" },
   { label: "Collections", href: "/categories" },
+  ...(newYearCampaign.active ? [{ label: "New Year 2027", href: newYearCampaign.path }] : []),
   { label: "Corporate Gifting", href: "/corporate-gifting" },
   { label: "Custom Branding", href: "/custom-gifts" },
   { label: "Bulk Orders", href: "/bulk-enquiry" },
@@ -29,6 +31,7 @@ const iconLinkClass =
 
 const quickLinks = [
   { label: "Shop", href: "/shop" },
+  ...(newYearCampaign.active ? [{ label: "New Year 2027", href: newYearCampaign.path }] : []),
   { label: "Gifting Guides", href: "/blog" },
   { label: "Track Order", href: "/track-order" },
   { label: "Bulk Enquiry", href: "/bulk-enquiry" },
@@ -113,10 +116,11 @@ export default function Header() {
 
       <div className="hidden border-t border-line bg-surface xl:block">
         <Container>
-          <nav className="flex h-12 items-center justify-center gap-8 2xl:gap-11" aria-label="Main navigation">
+          <nav className="flex h-12 items-center justify-center gap-6 2xl:gap-9" aria-label="Main navigation">
             <Link href="/" className={navLinkClass}>Home</Link>
             <Link href="/corporate-gifting" className={navLinkClass}>Corporate Gifts</Link>
             <CollectionsDropdown />
+            {newYearCampaign.active && <Link href={newYearCampaign.path} className={`${navLinkClass} whitespace-nowrap`}>New Year 2027</Link>}
             <Link href="/gifting/employee-onboarding" className={`${navLinkClass} whitespace-nowrap`}>Welcome Kits</Link>
             <Link href="/custom-gifts" className={navLinkClass}>Custom Gifts</Link>
             <Link href="/blog" className={navLinkClass}>Gifting Guides</Link>
