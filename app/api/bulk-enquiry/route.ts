@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { bulkQuoteSchema } from "@/lib/validations/quote";
 import { buildWhatsAppUrl } from "@/lib/config/store";
 import { sendBulkEnquiryEmail } from "@/lib/email/service";
+import { pushLeadToCrm } from "@/lib/crm";
 
 export async function POST(request: Request) {
   const payload = await request.json();
@@ -43,7 +44,23 @@ export async function POST(request: Request) {
     },
   });
 
-  await sendBulkEnquiryEmail(enquiry.id);
+  await Promise.all([
+    sendBulkEnquiryEmail(enquiry.id),
+    pushLeadToCrm({
+      name: data.fullName,
+      company: data.companyName,
+      email: data.email,
+      phone: data.phone,
+      requirements: [
+        data.message,
+        data.productInterest && `Product: ${data.productInterest}`,
+        data.quantity && `Quantity: ${data.quantity}`,
+        data.budgetRange && `Budget: ${data.budgetRange}`,
+        data.occasion && `Occasion: ${data.occasion}`,
+        "Source: Bulk enquiry",
+      ].filter(Boolean).join(" | "),
+    }),
+  ]);
 
   return NextResponse.json({
     id: enquiry.id,

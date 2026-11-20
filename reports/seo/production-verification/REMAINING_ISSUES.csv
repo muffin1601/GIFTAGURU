@@ -1,0 +1,6 @@
+"Severity","Issue","Evidence","State","Action"
+"High","Six legacy category redirects remain in production sitemap","6 of 99 sitemap URLs return 308","Fixed locally; not deployed","Deploy existing sitemap change, recrawl, then submit sitemap if needed"
+"High","Twelve active products absent from canonical category grids","12 of 36 products have no link from four canonical category pages","Fixed locally using catalog category relation; not deployed","Deploy and verify all product links from live category pages"
+"Medium","Broken technology-category internal link","/categories/tech-electronics returns 404 from two content templates","Fixed locally; not deployed","Deploy and verify both links target /gifting/tech-corporate-gifts"
+"Medium","Current Google indexing and selected canonicals unavailable","September export has 43 historical exclusions","Unverified","Obtain current GSC Page Indexing, Sitemaps and URL Inspection data"
+"Medium","Current organic and Core Web Vitals data unavailable","Saved performance export ends 18 October 2026","Unverified","Export current 28/90-day GSC data and run field/lab performance checks"

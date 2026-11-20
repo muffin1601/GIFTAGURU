@@ -3,6 +3,7 @@ import { isDatabaseConfigured } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { leadSchema } from "@/lib/validations/lead";
 import { sendLeadEmails } from "@/lib/email/service";
+import { pushLeadToCrm } from "@/lib/crm";
 import { clientKey, consume, tooManyRequests } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
@@ -74,7 +75,25 @@ export async function POST(request: Request) {
     });
   }
 
-  await sendLeadEmails(lead.id);
+  await Promise.all([
+    sendLeadEmails(lead.id),
+    pushLeadToCrm({
+      name: parsed.data.name,
+      company: parsed.data.company,
+      email: parsed.data.email,
+      phone: parsed.data.phone,
+      location: parsed.data.deliveryLocation,
+      productCode: parsed.data.productCode,
+      requirements: [
+        parsed.data.message,
+        parsed.data.productName && `Product: ${parsed.data.productName}`,
+        parsed.data.collectionName && `Collection: ${parsed.data.collectionName}`,
+        parsed.data.quantity && `Quantity: ${parsed.data.quantity}`,
+        parsed.data.budget && `Budget: ${parsed.data.budget}`,
+        `Source: ${parsed.data.source}`,
+      ].filter(Boolean).join(" | "),
+    }),
+  ]);
 
   return NextResponse.json({ id: lead.id, message: "Thanks. We received your enquiry." });
 }

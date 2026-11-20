@@ -1,0 +1,7 @@
+# Production URL crawl
+
+Checked 7 November 2026 against https://www.giftaguru.com. The production sitemap contained 99 unique URLs. 93 returned 200 and 6 returned 308. The six redirects are the retired category URLs listed in SITEMAP_VERIFICATION.md. The crawl also requested URLs from the saved September exclusion export; PRODUCTION_URL_CRAWL.csv contains 112 distinct request URLs and their status, canonical, title, description, robots meta, H1, main-word count and link counts.
+
+All 93 sitemap URLs returning 200 had a self canonical, title, meta description, one H1, and no noindex directive. No 403, 404 or 5xx occurred among sitemap URLs. No page matched the simple soft-404 screen/very-low-content heuristic. These checks do not establish Google indexing or content quality. The 36 live product URLs had parseable Product JSON-LD in the fetched HTML. The category and product page content was server-rendered in the response.
+
+The crawl checked 105 distinct internal link targets from the 93 direct-200 sitemap pages. One target returned 404: /categories/tech-electronics. It is linked from the technology-gifting blog article and a location page in the codebase. Both links are corrected locally to /gifting/tech-corporate-gifts. No other target returned 4xx; /account redirects to login as expected. Redirect sources from the sitemap were not found as internal href targets on fetched sitemap pages. See INTERNAL_LINK_TARGETS.csv.

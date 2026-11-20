@@ -10,6 +10,7 @@ import { getFeaturedCollectionsAsCategories } from "@/lib/data/collections";
 import { getFeaturedProducts, getProductsBySlugs } from "@/lib/data/products";
 import { expandProductSlugs } from "@/lib/seo/content/products";
 import type { BlogPost } from "@/lib/blog/types";
+import { newYearCampaign } from "@/lib/campaign/new-year";
 
 const occasions = [
   { title: "Employee Welcome Kits", eyebrow: "New beginnings", href: "/gifting/employee-onboarding", image: "/images/editorial/employee-welcome-workspace.webp", alt: "Notebooks, pen and coffee arranged on a modern workspace", className: "sm:col-span-2 lg:col-span-7" },
@@ -141,6 +142,7 @@ export default async function CorporateHomepage() {
   const resources = posts.slice(0, 3);
 
   return <div className="homepage-premium overflow-hidden">
+    {newYearCampaign.active && <section className="bg-cream-200" aria-label="New Year 2027 corporate gift collection"><Link href={newYearCampaign.path} className="block"><Image src={newYearCampaign.bannerImage} alt="New Year 2027 corporate gift kits for teams, clients and partners. Explore gift kits." width={2048} height={768} sizes="100vw" preload className="h-auto w-full" /></Link><div className="px-5 py-5 text-center sm:hidden"><h2 className="font-display text-2xl text-navy-950">New Year 2027 Corporate Gift Collection</h2><Link href={newYearCampaign.path} className="mt-2 inline-block text-sm font-semibold underline">Explore the collection</Link></div></section>}
     <CorporateHeroSlider />
 
     <section aria-label="Gifta Guru service benefits" className="border-b border-line bg-navy-950 text-cream-100"><Container><ul className="grid grid-cols-2 lg:grid-cols-4">{servicePoints.map(({ label, icon: Icon }) => <li key={label} className="flex min-h-24 items-center gap-3 border-r border-cream-100/15 px-3 py-5 last:border-r-0 sm:px-6"><Icon className="h-5 w-5 shrink-0 text-gold-300" strokeWidth={1.4} aria-hidden="true" /><span className="text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-cream-100/80">{label}</span></li>)}</ul></Container></section>

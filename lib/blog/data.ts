@@ -78,7 +78,7 @@ const techDiwaliPost: BlogPost = {
     { question: "Can branded electronics gifts work for Diwali?", answer: "Yes, when branding is appropriately restrained and the item suits the employee or client recipient group." },
   ],
   relatedLinks: [
-    { label: "Tech and electronics gifts", href: "/categories/tech-electronics" },
+    { label: "Corporate tech gifts", href: "/gifting/tech-corporate-gifts" },
     { label: "Corporate Diwali gifts", href: "/diwali-2026" },
     { label: "Request a corporate gifting quote", href: "/bulk-enquiry" },
   ],

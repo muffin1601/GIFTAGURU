@@ -1,0 +1,7 @@
+"Priority","Task","Evidence","Owner","Timing"
+"Critical","Investigate any current 5xx, robots blockage or sitemap URL returning 4xx after deployment","Current production crawl unavailable","Engineering","Immediate"
+"High","Deploy fixes and recrawl production sitemap, category and product URLs","Local changes only","Engineering","Within 7 days"
+"High","Export current GSC Page Indexing, Sitemaps and URL Inspection for affected URLs","Saved export is from 4 September 2026","Search Console property owner","Within 7 days"
+"Medium","Run PageSpeed Insights on representative mobile and desktop templates","No current field or lab data","SEO/engineering","Within 30 days"
+"Medium","Review empty collection publication and root-layout personalization cost","Template and architecture review","Engineering","Within 30 days"
+"Low","Refresh 28- and 90-day GSC/GA4 reporting and review content opportunities","Saved performance workbook covers only 49 days","SEO","Ongoing"

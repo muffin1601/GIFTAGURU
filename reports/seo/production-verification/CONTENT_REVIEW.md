@@ -1,0 +1,7 @@
+# Product and category content review
+
+Production crawl: 36 product URLs and four canonical category URLs returned 200. Each had one H1, a unique title and meta description within its template group, and visible server-rendered main content. Product main content ranged from 345 to 574 extracted words; category content ranged from 336 to 482. All 36 products emitted parseable Product JSON-LD. Word counts include shared template text and do not prove originality or usefulness.
+
+For the 30 historically excluded URLs that are currently eligible, `CONTENT_SIMILARITY.csv` compares five-word sequences in the rendered main content across 435 page pairs. The highest overlap is 0.406 of the smaller page's sequences, between `/products/client-appreciation-desk-set` and `/products/corporate-gift-set-with-notebook`. Shared purchase UI, related-product cards and template copy contribute to this measure. This pair is an editorial review candidate, not a proven duplicate or indexing cause. Review product-specific descriptions, features and imagery against actual catalog facts before changing copy.
+
+Production category grids linked to 24 of 36 active product URLs. The local code now includes the products' existing catalog category relation in the four canonical grids; the post-change local build linked all 36. This adds crawlable links without inventing product details. Product breadcrumbs already link through `/shop`; category grids provide the more specific discovery path.

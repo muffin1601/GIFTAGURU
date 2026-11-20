@@ -1,0 +1,5 @@
+# Changes and validation
+
+The production verification crawl discovered the six already-fixed sitemap redirect entries and a broken technology category link. This turn changed lib/data/products.ts to include products under the four canonical collection grids using their existing catalog category, lib/blog/data.ts and app/locations/[slug]/page.tsx to replace the 404 link, and added reusable production crawl/report scripts. Existing app/sitemap.ts and category noindex changes from the prior audit remain local. No deployment or database write was performed.
+
+The Next.js production build, lint and 59/59 tests passed after these changes. The SEO validator checked 75 authored pages and 185 links with zero errors/warnings. A local production build crawl found 93/93 sitemap URLs returning 200 with no canonical, noindex or H1 issue. All four canonical category pages returned 200; their combined grids link to all 36 product URLs in the local sitemap. The technology blog article now links to the 200 /gifting/tech-corporate-gifts page. Production still serves the older sitemap, so none of these current-turn changes is marked resolved there.

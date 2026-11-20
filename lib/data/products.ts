@@ -299,10 +299,23 @@ export async function getMostGiftedProducts(limit = 8): Promise<Product[]> {
 
 export async function getProductsByCollection(collectionSlug: string): Promise<Product[]> {
   if (isDatabaseConfigured()) {
+    // Core storefront collections are broader than the legacy mapping table.
+    // Include products from their factual catalog category so active products
+    // mapped only to retired collections remain discoverable from a live grid.
+    const categoryForCollection: Record<string, string> = {
+      "eco-gifts": "eco-gift-sets",
+      "joining-gifts": "office-stationery",
+      "luxury-gifts": "luxury-gift-sets",
+      "premium-gifts": "premium-gift-sets",
+    };
+    const categorySlug = categoryForCollection[collectionSlug];
     const products = await prisma.product.findMany({
       where: {
         status: "active",
-        collections: { some: { collection: { slug: collectionSlug } } },
+        OR: [
+          { collections: { some: { collection: { slug: collectionSlug } } } },
+          ...(categorySlug ? [{ category: { slug: categorySlug } }] : []),
+        ],
       },
       orderBy: { createdAt: "desc" },
       include: {
@@ -311,7 +324,9 @@ export async function getProductsByCollection(collectionSlug: string): Promise<P
         variants: { where: { isDefault: true }, select: { sku: true }, take: 1 },
       },
     });
-    if (products.length > 0) return products.map(mapPrismaListProduct);
+    // An empty published collection is genuinely empty. Legacy fixtures are
+    // unrelated to the live product mappings and must not fill it in.
+    return products.map(mapPrismaListProduct);
   }
 
   if (!isSupabaseConfigured()) return getFallbackProductsByCollection(collectionSlug);

@@ -7,12 +7,16 @@ import { allLandingHubPaths, allLandingPages } from "@/lib/seo/content";
 import { seasonalHubs } from "@/lib/seo/content/seasonal";
 import { getPublishedBlogPosts } from "@/lib/blog/data";
 import { getProductSeoContent } from "@/lib/seo/content/products";
+import { products as fallbackProducts } from "@/data/products";
+import { legacySeoRedirects } from "@/lib/seo/legacy-redirects";
 
 export const revalidate = 3600;
 
 function absoluteUrl(url: string, base: string) {
   return new URL(url, `${base}/`).toString();
 }
+
+const redirectSources = new Set<string>(legacySeoRedirects.map((redirect) => redirect.source));
 
 /**
  * Database-driven. The previous version listed URLs from data/products.ts
@@ -34,6 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
     "",
     "/shop",
+    "/new-year-2027",
     "/corporate-gifting",
     "/categories",
     "/custom-gifts",
@@ -90,12 +95,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...staticEntries,
       ...seasonalEntries,
       ...landingEntries,
-      ...fallbackCategories.map((category) => ({
+      ...fallbackCategories.filter((category) => !redirectSources.has(`/categories/${category.slug}`)).map((category) => ({
         url: `${base}/categories/${category.slug}`,
         changeFrequency: "weekly" as const,
         priority: 0.7,
       })),
-      ...posts.map((post) => ({
+      ...fallbackProducts.map((product) => ({
+        url: `${base}/products/${getProductSeoContent(product.slug)?.slug ?? product.slug}`,
+        changeFrequency: "weekly" as const,
+        priority: 0.6,
+      })),
+      ...posts.filter((post) => !post.canonicalUrl || post.canonicalUrl === `${base}/blog/${post.slug}`).map((post) => ({
         url: `${base}/blog/${post.slug}`,
         lastModified: post.updatedAt,
         changeFrequency: "monthly" as const,
@@ -124,19 +134,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...staticEntries,
     ...seasonalEntries,
     ...landingEntries,
-    ...collections.map((collection) => ({
+    ...collections.filter((collection) => !redirectSources.has(`/categories/${collection.slug}`)).map((collection) => ({
       url: `${base}/categories/${collection.slug}`,
       lastModified: collection.updatedAt,
       changeFrequency: "weekly" as const,
       priority: 0.7,
     })),
-    ...products.map((product) => ({
+    ...products.filter((product, index, all) => all.findIndex((item) => (getProductSeoContent(item.slug)?.slug ?? item.slug) === (getProductSeoContent(product.slug)?.slug ?? product.slug)) === index).map((product) => ({
       url: `${base}/products/${getProductSeoContent(product.slug)?.slug ?? product.slug}`,
       lastModified: product.updatedAt,
       changeFrequency: "weekly" as const,
       priority: 0.6,
     })),
-    ...posts.map((post) => ({
+    ...posts.filter((post) => !post.canonicalUrl || post.canonicalUrl === `${base}/blog/${post.slug}`).map((post) => ({
       url: `${base}/blog/${post.slug}`,
       lastModified: post.updatedAt,
       changeFrequency: "monthly" as const,

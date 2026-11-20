@@ -1,0 +1,3 @@
+# Organic performance comparison
+
+The latest available performance workbook covers 31 August–18 October 2026 (49 days): 40 clicks, 951 impressions, 4.21% CTR and impression-weighted average position 15.20. Its first 24 days had 24 clicks and 526 impressions; its last 25 days had 16 clicks and 425 impressions. These are uneven windows and cannot substitute for current 28-day or 90-day comparisons. Device, country, query and page breakdowns are in ../GSC_PERFORMANCE_ANALYSIS.md. Current Search Console and GA4 data are unavailable; no current organic change or Core Web Vitals improvement is claimed.
