@@ -12,13 +12,21 @@ import { formatPrice } from "@/lib/utils";
 import type { Product } from "@/types";
 
 export const dynamic = "force-dynamic";
-export const metadata = pageMetadata({
+const shareImage = `${siteUrl()}/new-year-2027-share.jpg`;
+const pageSeo = pageMetadata({
   title: "New Year 2027 Corporate Gifts & Calendars | Giftaguru",
   description: "Explore New Year 2027 corporate gifts, customized calendars, diaries, pens and premium gift kits at Giftaguru. Request a quote for bulk gifting.",
   path: "/new-year-2027",
-  image: newYearCampaign.bannerImage,
+  image: shareImage,
   imageAlt: "New Year 2027 corporate gifting collection",
 });
+export const metadata = {
+  ...pageSeo,
+  openGraph: {
+    ...pageSeo.openGraph,
+    images: [{ url: shareImage, width: 1200, height: 630, type: "image/jpeg", alt: "New Year 2027 corporate gifting collection" }],
+  },
+};
 
 const quote = (subject: string) => `/bulk-enquiry?collection=${encodeURIComponent(subject)}`;
 const button = "inline-flex items-center justify-center bg-navy-950 px-6 py-4 text-sm font-semibold text-white transition-colors hover:bg-navy-800";
