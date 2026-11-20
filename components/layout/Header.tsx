@@ -6,14 +6,11 @@ import MobileNav from "@/components/layout/MobileNav";
 import CartLink from "@/components/cart/CartLink";
 import CollectionsDropdown from "@/components/layout/CollectionsDropdown";
 import { STORE_CONTACT } from "@/lib/config/store";
-import { newYearCampaign } from "@/lib/campaign/new-year";
 
 const mobileLinks = [
   { label: "Home", href: "/" },
   { label: "Shop", href: "/shop" },
   { label: "Collections", href: "/categories" },
-  ...(newYearCampaign.active ? [{ label: "New Year 2027", href: newYearCampaign.path }] : []),
-  { label: "Diwali 2026", href: "/diwali-2026" },
   { label: "Corporate Gifting", href: "/corporate-gifting" },
   { label: "Custom Branding", href: "/custom-gifts" },
   { label: "Bulk Orders", href: "/bulk-enquiry" },
@@ -41,7 +38,6 @@ const quickLinks = [
 export default function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-canvas">
-      {newYearCampaign.active && <div className="bg-gold-400 px-4 py-2 text-center text-xs font-medium text-navy-950">New Year 2027 Corporate Gifting Collection — Explore Calendars, Diaries &amp; Premium Gift Sets <Link href={newYearCampaign.path} className="ml-2 font-bold underline">Shop Now</Link></div>}
       <div className="hidden bg-navy-950 text-cream-100/80 lg:block">
         <Container className="flex h-9 items-center justify-between text-xs tracking-wide">
           <nav aria-label="Quick links" className="flex items-center gap-3">
@@ -121,8 +117,6 @@ export default function Header() {
             <Link href="/" className={navLinkClass}>Home</Link>
             <Link href="/corporate-gifting" className={navLinkClass}>Corporate Gifts</Link>
             <CollectionsDropdown />
-            {newYearCampaign.active && <Link href={newYearCampaign.path} className={`${navLinkClass} whitespace-nowrap`}>New Year 2027</Link>}
-            <Link href="/diwali-2026" className={`${navLinkClass} whitespace-nowrap`}>Diwali 2026</Link>
             <Link href="/gifting/employee-onboarding" className={`${navLinkClass} whitespace-nowrap`}>Welcome Kits</Link>
             <Link href="/custom-gifts" className={navLinkClass}>Custom Gifts</Link>
             <Link href="/blog" className={navLinkClass}>Gifting Guides</Link>

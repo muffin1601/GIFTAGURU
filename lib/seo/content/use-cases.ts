@@ -688,7 +688,7 @@ export const useCasePages: LandingPageContent[] = [
       "black-gold-premium-notebook-set",
     ],
     relatedLinks: [
-      { label: "corporate Diwali gift kits", href: "/diwali-2026" },
+      { label: "corporate Diwali gift kits", href: "/occasions/diwali-corporate-gifts" },
       { label: "employee welcome kits", href: "/gifting/employee-onboarding" },
       { label: "bulk corporate gifting", href: "/gifting/bulk-corporate-gifting" },
       { label: "custom branded gifts", href: "/custom-gifts" },

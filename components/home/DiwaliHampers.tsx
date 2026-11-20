@@ -26,7 +26,7 @@ export default async function DiwaliHampers() {
             title="Highlighted Diwali Hampers"
             description="Three curated festive hampers for employee, client and leadership gifting."
           />
-          <Button href="/diwali-2026" variant="primary" className="shrink-0">
+          <Button href="/occasions/diwali-corporate-gifts" variant="primary" className="shrink-0">
             Explore Diwali Gifts
           </Button>
         </div>

@@ -64,7 +64,7 @@ export default async function ServiceAreaPage({ params }: { params: Promise<{ sl
           <section className="hanna-card mt-14 grid gap-8 border border-line bg-surface p-7 sm:p-10 lg:grid-cols-[1fr_auto] lg:items-center">
             <div><p className="type-eyebrow">Continue planning</p><h2 className="type-h2 mt-3">Explore Diwali corporate gifts</h2><p className="type-body mt-4 max-w-2xl">Compare festive gift options, branded technology kits and practical planning advice before sharing your recipient list.</p></div>
             <ul className="space-y-3 lg:min-w-80">
-              {[["Corporate Diwali gifts and hampers", "/diwali-2026"], ["Branded technology gifts", "/gifting/tech-corporate-gifts"], ["Corporate tech gifting guide", "/blog/tech-corporate-gifting-kits"]].map(([label, href]) => (
+              {[["Corporate Diwali gifts and hampers", "/occasions/diwali-corporate-gifts"], ["Branded technology gifts", "/gifting/tech-corporate-gifts"], ["Corporate tech gifting guide", "/blog/tech-corporate-gifting-kits"]].map(([label, href]) => (
                 <li key={href}><Link href={href} className="group flex items-center justify-between gap-4 border-b border-line py-3 text-sm font-semibold text-navy-950"><span>{label}</span><ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" /></Link></li>
               ))}
             </ul>

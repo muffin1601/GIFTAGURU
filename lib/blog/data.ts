@@ -79,7 +79,7 @@ const techDiwaliPost: BlogPost = {
   ],
   relatedLinks: [
     { label: "Corporate tech gifts", href: "/gifting/tech-corporate-gifts" },
-    { label: "Corporate Diwali gifts", href: "/diwali-2026" },
+    { label: "Corporate Diwali gifts", href: "/occasions/diwali-corporate-gifts" },
     { label: "Request a corporate gifting quote", href: "/bulk-enquiry" },
   ],
   recommendedProductSlugs: [],

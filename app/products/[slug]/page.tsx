@@ -21,7 +21,6 @@ import { getProductSeoContent } from "@/lib/seo/content/products";
 import { productClusterLinks } from "@/lib/seo/content/clusters";
 import type { Product } from "@/types";
 import ViewItemTracker from "@/components/analytics/ViewItemTracker";
-import { newYearCampaign } from "@/lib/campaign/new-year";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -430,7 +429,6 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           </>
         ) : null}
 
-        {newYearCampaign.active && /diary|journal|notebook|planner|calendar|pen|stationery/i.test(`${product.name} ${product.categorySlug ?? ""}`) && <aside className="mt-12 border border-line bg-cream-200 p-6"><h2 className="font-display text-2xl">Perfect for New Year 2027 Corporate Gifting</h2><Link href={newYearCampaign.path} className="mt-3 inline-block text-sm font-semibold underline">Explore the New Year collection</Link></aside>}
         <section className="mt-16 border-t border-line pt-10">
           <h2 className="type-h2">Related products</h2>
           <div className="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">

@@ -535,7 +535,7 @@ export const guidePages: LandingPageContent[] = [
       "complete-stationery-gift-set",
     ],
     relatedLinks: [
-      { label: "Diwali gift kits and gift sets", href: "/diwali-2026" },
+      { label: "Diwali gift kits and gift sets", href: "/occasions/diwali-corporate-gifts" },
       { label: "Diwali corporate gifts", href: "/occasions/diwali-corporate-gifts" },
       { label: "gifting through the festive quarter", href: "/occasions/festive-corporate-gifting" },
       { label: "client gifting guide", href: "/blog/client-gifting-guide" },

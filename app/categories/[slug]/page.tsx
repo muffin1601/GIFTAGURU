@@ -12,7 +12,6 @@ import { getProductsByCollection } from "@/lib/data/products";
 import { pageMetadata, truncateDescription } from "@/lib/seo/metadata";
 import { breadcrumbSchema, faqPageSchema, itemListSchema } from "@/lib/seo/schema";
 import { getCollectionSeoContent } from "@/lib/seo/content/collections";
-import { newYearCampaign } from "@/lib/campaign/new-year";
 
 export const dynamic = "force-dynamic";
 
@@ -127,7 +126,6 @@ export default async function CategoryPage({
 
       <section className="section">
         <Container>
-          {newYearCampaign.active && /stationery|gift-sets|corporate|pen|diar|calendar/i.test(`${category.slug} ${category.name}`) && <aside className="mb-8 border border-line bg-cream-200 p-6"><p className="font-display text-2xl">Planning New Year 2027 gifts?</p><Link href={newYearCampaign.path} className="mt-3 inline-block text-sm font-semibold underline">Explore the New Year collection</Link></aside>}
           {products.length > 0 ? (
             <div className="catalogue-grid grid sm:grid-cols-2 lg:grid-cols-4">
               {products.map((product) => (

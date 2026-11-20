@@ -63,7 +63,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // the routes render from, so a hub cannot exist without being listed here.
   // Crawled more often than an evergreen page because demand for these is
   // concentrated into a few weeks.
-  const seasonalEntries: MetadataRoute.Sitemap = seasonalHubs.map((hub) => ({
+  const seasonalEntries: MetadataRoute.Sitemap = seasonalHubs.filter((hub) => hub.slug !== "diwali-2026").map((hub) => ({
     url: `${base}/${hub.slug}`,
     changeFrequency: "weekly" as const,
     priority: 0.8,

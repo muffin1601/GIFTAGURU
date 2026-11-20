@@ -21,7 +21,7 @@ const nextConfig: NextConfig = {
   // query strings while telling search engines to transfer any signals to the
   // replacement URL.
   async redirects() {
-    return legacySeoRedirects.map((redirect) => ({ ...redirect, permanent: true }));
+    return [...legacySeoRedirects.map((redirect) => ({ ...redirect, permanent: true })), { source: "/diwali-2026", destination: "/occasions/diwali-corporate-gifts", permanent: true }];
   },
 
   /**

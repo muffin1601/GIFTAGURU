@@ -94,7 +94,7 @@ export const occasionPages: LandingPageContent[] = [
       "luxury-planner-gift-box",
     ],
     relatedLinks: [
-      { label: "Diwali gift kits and gift sets for 2026", href: "/diwali-2026" },
+      { label: "Diwali gift kits and gift sets for 2026", href: "/occasions/diwali-corporate-gifts" },
       { label: "seasonal gifting for the festive quarter", href: "/occasions/festive-corporate-gifting" },
       { label: "corporate gifts for clients", href: "/gifting/client-appreciation" },
       { label: "the luxury and executive range", href: "/categories/luxury-gifts" },

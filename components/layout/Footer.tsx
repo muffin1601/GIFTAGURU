@@ -14,7 +14,6 @@ export default function Footer() {
         <div className="lg:pr-8">
           <Image src="/SBanners/SBanners/NEW LOGO.png" alt="Gifta Guru" width={225} height={100} className="h-auto w-48" />
           <p className="mt-6 max-w-sm text-sm leading-7 text-ink-700">A premium corporate gifting partner helping businesses across India curate, customise and deliver thoughtful gifts at scale.</p>
-          <Link href="/new-year-2027" className="mt-4 inline-block text-sm font-semibold underline">New Year 2027 Corporate Gifts</Link>
           <ul className="mt-7 space-y-4 text-sm text-ink-700">
             <li><a href={`tel:${STORE_CONTACT.phoneHref}`} className="inline-flex items-center gap-3 hover:text-navy-950"><Phone className="h-4 w-4 text-gold-600" strokeWidth={1.5} aria-hidden="true" />+91 {STORE_CONTACT.phone}</a></li>
             <li><a href={`mailto:${STORE_CONTACT.email}`} className="inline-flex items-center gap-3 hover:text-navy-950"><Mail className="h-4 w-4 text-gold-600" strokeWidth={1.5} aria-hidden="true" />{STORE_CONTACT.email}</a></li>
