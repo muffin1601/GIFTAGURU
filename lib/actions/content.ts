@@ -8,6 +8,7 @@ import { logAdminAction } from "@/lib/audit";
 import { isSupabaseAdminConfigured } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { formBoolean } from "@/lib/validations/form-boolean";
 
 type ActionState = { error?: string; success?: string };
 
@@ -19,7 +20,7 @@ const faqSchema = z.object({
   question: z.string().trim().min(4).max(300),
   answer: z.string().trim().min(4).max(2000),
   sortOrder: z.coerce.number().int().min(0).default(0),
-  isPublished: z.coerce.boolean().default(true),
+  isPublished: formBoolean,
 });
 
 export async function createFaqAction(_state: ActionState, formData: FormData): Promise<ActionState> {
@@ -82,7 +83,7 @@ const testimonialSchema = z.object({
   quote: z.string().trim().min(10).max(1000),
   imageUrl: z.string().trim().max(500).optional(),
   sortOrder: z.coerce.number().int().min(0).default(0),
-  isPublished: z.coerce.boolean().default(true),
+  isPublished: formBoolean,
 });
 
 export async function createTestimonialAction(_state: ActionState, formData: FormData): Promise<ActionState> {

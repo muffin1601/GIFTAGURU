@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Bodoni_Moda, Dancing_Script, Inter } from "next/font/google";
+import localFont from "next/font/local";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { CartProvider } from "@/components/cart/CartProvider";
@@ -15,22 +15,30 @@ import JsonLd from "@/components/seo/JsonLd";
 import AuthHashErrorWatcher from "@/components/auth/AuthHashErrorWatcher";
 import "./globals.css";
 
-const bodoniModa = Bodoni_Moda({
+// Fonts are self-hosted from the @fontsource-variable packages rather than
+// loaded with next/font/google. next/font/google downloads the files from
+// Google at build time, and a failed download fails the whole Vercel build
+// ("Can't resolve '@vercel/turbopack-next/internal/font/google/font'").
+// Each file is a Latin variable font covering every weight the site uses.
+const bodoniModa = localFont({
   variable: "--font-bodoni-moda",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  src: "../node_modules/@fontsource-variable/bodoni-moda/files/bodoni-moda-latin-wght-normal.woff2",
+  weight: "400 900",
+  display: "swap",
 });
 
-const inter = Inter({
+const inter = localFont({
   variable: "--font-inter",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  src: "../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2",
+  weight: "100 900",
+  display: "swap",
 });
 
-const dancingScript = Dancing_Script({
+const dancingScript = localFont({
   variable: "--font-dancing-script",
-  subsets: ["latin"],
-  weight: ["500", "600"],
+  src: "../node_modules/@fontsource-variable/dancing-script/files/dancing-script-latin-wght-normal.woff2",
+  weight: "400 700",
+  display: "swap",
 });
 
 // Deliberately NOT using Next's title `template` option: every page in this

@@ -10,6 +10,7 @@ import { isSupabaseAdminConfigured } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { slugify } from "@/lib/utils";
+import { formBoolean } from "@/lib/validations/form-boolean";
 import { MIN_ORDER_QUANTITY } from "@/lib/config/store";
 import { productContentFromFormData } from "@/lib/product-content";
 import {
@@ -114,7 +115,7 @@ const categoryIdSchema = z.object({ id: z.string().uuid() });
 
 export async function setCategoryActiveAction(_state: ActionState, formData: FormData): Promise<ActionState> {
   const admin = await requireAdmin();
-  const parsed = categoryIdSchema.extend({ isActive: z.coerce.boolean() }).safeParse(Object.fromEntries(formData));
+  const parsed = categoryIdSchema.extend({ isActive: formBoolean }).safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { error: "Invalid category." };
 
   const category = await prisma.category.update({
@@ -234,7 +235,7 @@ const collectionIdSchema = z.object({ id: z.string().uuid() });
 
 export async function setCollectionPublishedAction(_state: ActionState, formData: FormData): Promise<ActionState> {
   const admin = await requireAdmin();
-  const parsed = collectionIdSchema.extend({ isPublished: z.coerce.boolean() }).safeParse(Object.fromEntries(formData));
+  const parsed = collectionIdSchema.extend({ isPublished: formBoolean }).safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { error: "Invalid collection." };
 
   const collection = await prisma.collection.update({
@@ -276,7 +277,7 @@ export async function deleteCollectionAction(_state: ActionState, formData: Form
 const toggleCollectionMemberSchema = z.object({
   collectionId: z.string().uuid(),
   productId: z.string().uuid(),
-  member: z.coerce.boolean(),
+  member: formBoolean,
 });
 
 export async function toggleCollectionMemberAction(_state: ActionState, formData: FormData): Promise<ActionState> {
