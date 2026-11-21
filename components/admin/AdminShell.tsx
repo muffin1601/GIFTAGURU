@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, Boxes, ChevronDown, CircleDollarSign, ClipboardList, FolderTree, Gift, Home, LogOut, Mail, MessageSquareQuote, PackageCheck, Settings, ShoppingBag, Store, TicketPercent, UsersRound } from "lucide-react";
+import { BarChart3, Boxes, ChevronDown, CircleDollarSign, ClipboardList, FolderTree, Gift, Home, Images, LogOut, Mail, MessageSquareQuote, PackageCheck, Settings, ShoppingBag, Store, TicketPercent, UsersRound } from "lucide-react";
 import { useState } from "react";
 import { logoutAction } from "@/lib/actions/auth";
 
@@ -50,6 +50,7 @@ const sections = [
   {
     title: "Content",
     links: [
+      { label: "Homepage Banners", href: "/admin/banners", Icon: Images },
       { label: "FAQs", href: "/admin/faqs", Icon: ClipboardList },
       { label: "Testimonials", href: "/admin/testimonials", Icon: MessageSquareQuote },
       { label: "Blog", href: "/admin/blog", Icon: ClipboardList },

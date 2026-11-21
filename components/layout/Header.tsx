@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Phone, Search, UserRound } from "lucide-react";
+import { Mail, Phone, Search, UserRound } from "lucide-react";
+import SocialIcon from "@/components/ui/SocialIcon";
 import Container from "@/components/ui/Container";
 import MobileNav from "@/components/layout/MobileNav";
 import CartLink from "@/components/cart/CartLink";
@@ -13,14 +14,10 @@ const mobileLinks = [
   { label: "Shop", href: "/shop" },
   { label: "Collections", href: "/categories" },
   ...(newYearCampaign.active ? [{ label: "New Year 2027", href: newYearCampaign.path }] : []),
-  { label: "Corporate Gifting", href: "/corporate-gifting" },
   { label: "Custom Branding", href: "/custom-gifts" },
   { label: "Bulk Orders", href: "/bulk-enquiry" },
   { label: "Corporate Gifting Blog", href: "/blog" },
   { label: "Locations", href: "/locations" },
-  { label: "Request a Quote", href: "/bulk-enquiry" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
 ];
 
 const navLinkClass =
@@ -35,15 +32,14 @@ const quickLinks = [
   { label: "Gifting Guides", href: "/blog" },
   { label: "Track Order", href: "/track-order" },
   { label: "Bulk Enquiry", href: "/bulk-enquiry" },
-  { label: "Contact", href: "/contact" },
 ];
 
 export default function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-canvas">
-      <div className="hidden bg-navy-950 text-cream-100/80 lg:block">
-        <Container className="flex h-9 items-center justify-between text-xs tracking-wide">
-          <nav aria-label="Quick links" className="flex items-center gap-3">
+      <div className="bg-navy-950 text-cream-100/80">
+        <Container className="flex min-h-9 items-center justify-center px-2 text-xs lg:justify-between">
+          <nav aria-label="Quick links" className="hidden items-center gap-3 lg:flex">
             <span className="text-cream-100/50">Important links</span>
             {quickLinks.map((link) => (
               <Link
@@ -55,13 +51,21 @@ export default function Header() {
               </Link>
             ))}
           </nav>
-          <a
-            href={`tel:${STORE_CONTACT.phoneHref}`}
-            className="inline-flex items-center gap-1.5 transition-colors duration-200 hover:text-gold-300"
-          >
-            <Phone className="h-3.5 w-3.5" aria-hidden="true" strokeWidth={1.5} />
-            {STORE_CONTACT.phone}
-          </a>
+          <div className="flex flex-wrap items-center justify-center gap-x-3">
+            <a href={`mailto:${STORE_CONTACT.email}`} className="inline-flex items-center gap-1.5 py-2 hover:text-gold-300">
+              <Mail className="size-3.5" aria-hidden="true" />
+              {STORE_CONTACT.email}
+            </a>
+            <div className="flex items-center gap-1">
+              <a href={`tel:${STORE_CONTACT.phoneHref}`} className="inline-flex items-center gap-1.5 py-2 hover:text-gold-300">
+                <Phone className="size-3.5" aria-hidden="true" />
+                {STORE_CONTACT.phone}
+              </a>
+              <a href={`https://wa.me/${STORE_CONTACT.whatsappNumber}`} aria-label="Chat with Gifta Guru on WhatsApp" className="inline-flex p-1.5 text-[#25D366] hover:text-white">
+                <SocialIcon platform="whatsapp" className="size-4" />
+              </a>
+            </div>
+          </div>
         </Container>
       </div>
 
@@ -118,14 +122,11 @@ export default function Header() {
         <Container>
           <nav className="flex h-12 items-center justify-center gap-6 2xl:gap-9" aria-label="Main navigation">
             <Link href="/" className={navLinkClass}>Home</Link>
-            <Link href="/corporate-gifting" className={navLinkClass}>Corporate Gifts</Link>
             <CollectionsDropdown />
             {newYearCampaign.active && <Link href={newYearCampaign.path} className={`${navLinkClass} whitespace-nowrap`}>New Year 2027</Link>}
             <Link href="/gifting/employee-onboarding" className={`${navLinkClass} whitespace-nowrap`}>Welcome Kits</Link>
             <Link href="/custom-gifts" className={navLinkClass}>Custom Gifts</Link>
             <Link href="/blog" className={navLinkClass}>Gifting Guides</Link>
-            <Link href="/about" className={navLinkClass}>About</Link>
-            <Link href="/contact" className={navLinkClass}>Contact</Link>
           </nav>
         </Container>
       </div>

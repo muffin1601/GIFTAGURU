@@ -16,6 +16,13 @@ const nextConfig: NextConfig = {
       : [],
   },
 
+  // Admin image uploads (homepage banners, product images) go through Server
+  // Actions, which reject bodies over 1MB by default. 5MB sits just above
+  // Vercel's own 4.5MB request cap, which is the real ceiling in production.
+  experimental: {
+    serverActions: { bodySizeLimit: "5mb" },
+  },
+
   // Consolidate the former storefront's discovered URLs into the current
   // canonical content. `permanent: true` produces an HTTP 308, preserving
   // query strings while telling search engines to transfer any signals to the

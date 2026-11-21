@@ -1,190 +1,91 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowDown, ArrowLeft, ArrowRight, Pause, Play } from "lucide-react";
+import { ArrowLeft, ArrowRight, Pause, Play } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Container from "@/components/ui/Container";
-import { cn } from "@/lib/utils";
 
-const visualSlides = [
-  {
-    label: "Executive gifting",
-    left: {
-      src: "/Gifta Guru/Set 21/1 (1).png",
-      alt: "Black executive corporate gift set",
-      background: "bg-[#dde5e1]",
-    },
-    right: {
-      src: "/Hampers/set 3/1 (1).webp",
-      alt: "Premium curated corporate hamper",
-      background: "bg-[#eadfd3]",
-    },
-  },
-  {
-    label: "Branded essentials",
-    left: {
-      src: "/Gifta Guru/Set 16/1 (1).png",
-      alt: "Wood-finish branded stationery gift set",
-      background: "bg-[#e6e0d5]",
-    },
-    right: {
-      src: "/Gifta Guru/Set 3/1 (1).png",
-      alt: "Compact black corporate essentials gift set",
-      background: "bg-[#dce3e1]",
-    },
-  },
-  {
-    label: "Festive appreciation",
-    left: {
-      src: "/Diwali kits/Set 8/Primary_1.webp",
-      alt: "Corporate Diwali appreciation hamper",
-      background: "bg-[#e8ddd3]",
-    },
-    right: {
-      src: "/Gifta Guru/Set 12/1 (1).png",
-      alt: "Premium tan executive corporate gift set",
-      background: "bg-[#e3e5dc]",
-    },
-  },
-] as const;
+export type HeroSlide = { id: string; label: string; src: string; href: string };
 
-/** Hanna-inspired hero with a carousel confined to the paired product artwork. */
-export default function CorporateHeroSlider() {
+const AUTOPLAY_MS = 5000;
+const controlClass = "inline-flex size-9 items-center justify-center rounded-full border border-line-strong text-navy-950 hover:border-navy-950";
+
+/**
+ * Auto-advancing homepage banner carousel. Slides come from /admin/banners.
+ *
+ * Autoplay only stops when the visitor presses Pause. Hovering or keyboard
+ * focus inside the carousel holds it temporarily; using the arrows or dots
+ * restarts the countdown instead of stopping rotation for good.
+ */
+export default function CorporateHeroSlider({ slides }: { slides: HeroSlide[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const count = slides.length;
+  const current = Math.min(activeIndex, Math.max(count - 1, 0));
 
   useEffect(() => {
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (paused || reducedMotion.matches) return;
+    if (count < 2 || paused || hovered || focused) return;
+    // A timeout keyed on the active slide (rather than an interval) means any
+    // manual navigation automatically restarts the full countdown.
+    const timer = window.setTimeout(() => setActiveIndex((index) => (index + 1) % count), AUTOPLAY_MS);
+    return () => window.clearTimeout(timer);
+  }, [current, count, paused, hovered, focused]);
 
-    const timer = window.setInterval(() => {
-      setActiveIndex((index) => (index + 1) % visualSlides.length);
-    }, 5500);
+  if (count === 0) return null;
 
-    return () => window.clearInterval(timer);
-  }, [paused]);
-
-  const goTo = (index: number) => {
-    setActiveIndex((index + visualSlides.length) % visualSlides.length);
-  };
+  function selectSlide(index: number) {
+    setActiveIndex((index + count) % count);
+  }
 
   return (
-    <section className="border-b border-line bg-[#eeefec]">
-      <Container className="grid min-h-[34rem] items-center gap-9 py-10 lg:grid-cols-[0.78fr_1.22fr] lg:gap-10 lg:py-12">
-        <div className="max-w-lg">
-          <p className="type-eyebrow">Premium corporate gifting</p>
-          <h1 className="mt-3 max-w-[12ch] font-display text-[clamp(2.75rem,4vw,4.75rem)] font-bold leading-[0.92] tracking-[-0.035em] text-navy-950">
-            Thoughtful Gifts. Lasting Impressions.
-          </h1>
-          <p className="mt-4 max-w-md text-sm leading-6 text-ink-700 sm:text-[0.9375rem]">
-            Curated corporate gifts, employee welcome kits and custom-branded experiences that make every business relationship memorable.
-          </p>
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <Button href="/corporate-gifting">Explore Corporate Gifts <ArrowRight className="h-4 w-4" aria-hidden="true" /></Button>
-            <Button href="/bulk-enquiry" variant="secondary">Request a Custom Quote</Button>
-          </div>
-          <Link href="#business-moments" className="mt-7 inline-flex items-center gap-3 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-navy-950">
-            Discover more <ArrowDown className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
-          </Link>
-        </div>
-
-        <div
-          className="relative mx-auto w-full max-w-[43rem]"
-          role="region"
-          aria-roledescription="carousel"
-          aria-label="Featured corporate gift collections"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-        >
-          <div className="relative">
-            <div className="relative grid grid-cols-2 items-end gap-4 sm:gap-6">
-              {visualSlides.map((slide, index) => (
-                <div
-                  key={slide.label}
-                  className={cn(
-                    "col-span-2 grid grid-cols-2 items-end gap-4 transition-all duration-700 ease-out sm:gap-6",
-                    index === activeIndex
-                      ? "relative translate-x-0 opacity-100"
-                      : "pointer-events-none absolute inset-0 translate-x-5 opacity-0",
-                  )}
-                  aria-hidden={index !== activeIndex}
-                >
-                  <div className={cn("hanna-arch-frame relative aspect-[3/4] p-3 sm:p-5", slide.left.background)}>
-                    <div className="hanna-arch relative h-full w-full bg-surface">
-                      <Image
-                        src={slide.left.src}
-                        alt={index === activeIndex ? slide.left.alt : ""}
-                        fill
-                        priority={index === 0}
-                        sizes="(min-width: 1024px) 24vw, 45vw"
-                        className="object-contain p-2 sm:p-4"
-                      />
-                    </div>
-                  </div>
-                  <div className={cn("hanna-arch-frame relative mb-8 aspect-[3/4] p-3 sm:p-5", slide.right.background)}>
-                    <div className="hanna-arch relative h-full w-full bg-surface">
-                      <Image
-                        src={slide.right.src}
-                        alt={index === activeIndex ? slide.right.alt : ""}
-                        fill
-                        sizes="(min-width: 1024px) 24vw, 45vw"
-                        className="object-contain p-2 sm:p-4"
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="absolute -bottom-2 left-1/2 flex h-20 w-20 -translate-x-1/2 items-center justify-center rounded-full border border-gold-400 bg-navy-950 text-center text-[0.58rem] font-semibold uppercase leading-4 tracking-[0.12em] text-cream-100 shadow-[0_10px_40px_-5px_rgba(10,26,48,0.25)] sm:h-24 sm:w-24">
-              Curated<br />for your<br />brand
-            </div>
-
-            <button
-              type="button"
-              onClick={() => goTo(activeIndex - 1)}
-              className="absolute left-2 top-1/2 z-10 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-gold-400 bg-surface text-navy-950 transition-colors duration-200 hover:bg-navy-950 hover:text-cream-100 sm:h-11 sm:w-11"
-              aria-label="Previous gift collection"
-            >
-              <ArrowLeft className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              onClick={() => goTo(activeIndex + 1)}
-              className="absolute right-2 top-1/2 z-10 flex h-10 w-10 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-gold-400 bg-surface text-navy-950 transition-colors duration-200 hover:bg-navy-950 hover:text-cream-100 sm:h-11 sm:w-11"
-              aria-label="Next gift collection"
-            >
-              <ArrowRight className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
-            </button>
-          </div>
-
-          <div className="mt-7 flex items-center justify-end gap-3 pr-2 sm:pr-4">
-            <span className="mr-1 text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-ink-600" aria-live="polite">
-              {visualSlides[activeIndex].label}
-            </span>
-            {visualSlides.map((slide, index) => (
-              <button
-                key={slide.label}
-                type="button"
-                onClick={() => goTo(index)}
-                className={cn(
-                  "h-1.5 rounded-full transition-all duration-300",
-                  index === activeIndex ? "w-7 bg-gold-500" : "w-1.5 bg-navy-950/25 hover:bg-navy-950/60",
-                )}
-                aria-label={`Show ${slide.label}`}
-                aria-current={index === activeIndex}
-              />
+    <section className="border-b border-line bg-canvas">
+      <Container className="py-4 sm:py-6">
+        <div role="region" aria-roledescription="carousel" aria-label="Featured gift collections"
+          onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
+          onFocus={(event) => { if (event.target.matches(":focus-visible")) setFocused(true); }}
+          onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setFocused(false); }}>
+          <div className="relative aspect-[8/3] overflow-hidden rounded-xl bg-sunken sm:rounded-2xl">
+            {slides.map((slide, index) => (
+              <Link key={slide.id} href={slide.href} aria-label={`Explore ${slide.label}`}
+                aria-hidden={current !== index} tabIndex={current === index ? 0 : -1}
+                className={`absolute inset-0 focus-visible:outline-offset-[-4px] motion-safe:transition-opacity motion-safe:duration-500 ${current === index ? "z-10 opacity-100" : "pointer-events-none opacity-0"}`}>
+                <Image src={slide.src} alt="" fill preload={index === 0}
+                  sizes="(min-width: 84rem) 78rem, (min-width: 64rem) calc(100vw - 6rem), (min-width: 40rem) calc(100vw - 4rem), calc(100vw - 2.5rem)"
+                  className="object-contain" />
+              </Link>
             ))}
-            <button
-              type="button"
-              onClick={() => setPaused((value) => !value)}
-              className="ml-1 flex h-7 w-7 items-center justify-center rounded-full border border-line-strong text-navy-950 transition-colors duration-200 hover:border-navy-950"
-              aria-label={paused ? "Play gift carousel" : "Pause gift carousel"}
-            >
-              {paused ? <Play className="h-3 w-3" fill="currentColor" aria-hidden="true" /> : <Pause className="h-3 w-3" fill="currentColor" aria-hidden="true" />}
-            </button>
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line py-2">
+            <span className="text-sm font-semibold text-navy-950" aria-live={paused ? "polite" : "off"}>{slides[current].label}</span>
+            {count > 1 ? (
+              <div className="flex items-center gap-1">
+                <button type="button" className={controlClass} aria-label="Previous banner" onClick={() => selectSlide(current - 1)}><ArrowLeft size={16} /></button>
+                {slides.map((slide, index) => (
+                  <button key={slide.id} type="button" className="grid h-9 w-5 place-items-center" aria-label={`Show ${slide.label}`} aria-current={current === index} onClick={() => selectSlide(index)}>
+                    <span className={`h-1.5 rounded-full motion-safe:transition-all ${index === current ? "w-4 bg-gold-600" : "w-1.5 bg-navy-950/30"}`} />
+                  </button>
+                ))}
+                <button type="button" className={controlClass} aria-label="Next banner" onClick={() => selectSlide(current + 1)}><ArrowRight size={16} /></button>
+                <button type="button" className={controlClass} aria-label={paused ? "Play carousel" : "Pause carousel"} onClick={() => setPaused((value) => !value)}>
+                  {paused ? <Play size={15} /> : <Pause size={15} />}
+                </button>
+              </div>
+            ) : null}
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-5 py-5">
+          <div>
+            <p className="type-eyebrow">Premium corporate gifting</p>
+            <h1 className="mt-2 font-display text-3xl font-bold leading-tight text-navy-950 sm:text-4xl">Thoughtful Gifts. Lasting Impressions.</h1>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <Button href="/corporate-gifting">Explore Corporate Gifts</Button>
+            <Button href="/bulk-enquiry" variant="secondary">Request a Custom Quote</Button>
+            <Link href="#business-moments" className="link-underline text-sm font-semibold">Discover more</Link>
           </div>
         </div>
       </Container>

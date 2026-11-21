@@ -2,13 +2,10 @@ import type { NavLink } from "@/types";
 
 export const mainNav: NavLink[] = [
   { label: "Home", href: "/" },
-  { label: "Corporate Gifting", href: "/corporate-gifting" },
   { label: "Categories", href: "/categories" },
   { label: "Custom Gifts", href: "/custom-gifts" },
   { label: "Bulk Orders", href: "/bulk-enquiry" },
   { label: "Gifting Guides", href: "/blog" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
 ];
 
 export const footerCategoryLinks: NavLink[] = [
@@ -46,8 +43,7 @@ export const footerColumns: { heading: string; links: NavLink[] }[] = [
     links: [
       { label: "Corporate Gifting", href: "/corporate-gifting" },
       { label: "Custom Branding", href: "/custom-gifts" },
-      { label: "Bulk Orders", href: "/bulk-enquiry" },
-      { label: "Request a Quote", href: "/bulk-enquiry" },
+      { label: "Bulk Orders & Quotes", href: "/bulk-enquiry" },
       { label: "Gifting by Industry", href: "/industries" },
     ],
   },
@@ -81,7 +77,6 @@ export const footerColumns: { heading: string; links: NavLink[] }[] = [
     links: [
       { label: "About", href: "/about" },
       { label: "Corporate Gifting Blog", href: "/blog" },
-      { label: "Buying Guides", href: "/blog" },
       { label: "Locations & Delivery Areas", href: "/locations" },
       { label: "Privacy Policy", href: "/privacy-policy" },
       { label: "Terms and Conditions", href: "/terms-and-conditions" },

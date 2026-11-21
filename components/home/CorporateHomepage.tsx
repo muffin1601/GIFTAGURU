@@ -6,6 +6,8 @@ import Container from "@/components/ui/Container";
 import CorporateHeroSlider from "@/components/home/CorporateHeroSlider";
 import HomeProductCard from "@/components/home/HomeProductCard";
 import { getPublishedBlogPosts } from "@/lib/blog/data";
+import { newYearCampaign } from "@/lib/campaign/new-year";
+import { getHomeBanners } from "@/lib/data/content";
 import { getFeaturedCollectionsAsCategories } from "@/lib/data/collections";
 import { getFeaturedProducts, getProductsBySlugs } from "@/lib/data/products";
 import { expandProductSlugs } from "@/lib/seo/content/products";
@@ -132,15 +134,22 @@ function BlogHighlights({ resources }: { resources: BlogPost[] }) {
 }
 
 export default async function CorporateHomepage() {
-  const [collections, products, galleryProducts, posts] = await Promise.all([
+  const [collections, products, galleryProducts, posts, banners] = await Promise.all([
     getFeaturedCollectionsAsCategories(), getFeaturedProducts(4),
     getProductsBySlugs(expandProductSlugs(gallerySlugs)),
     getPublishedBlogPosts(),
+    getHomeBanners(),
   ]);
   const resources = posts.slice(0, 3);
+  // The time-boxed campaign banner is code-driven (lib/campaign/new-year.ts)
+  // and leads the admin-managed banners while it is active.
+  const heroSlides = [
+    ...(newYearCampaign.active ? [{ id: "new-year-campaign", label: "New Year 2027", src: newYearCampaign.bannerImage, href: newYearCampaign.path }] : []),
+    ...banners,
+  ];
 
   return <div className="homepage-premium overflow-hidden">
-    <CorporateHeroSlider />
+    <CorporateHeroSlider slides={heroSlides} />
 
     <section aria-label="Gifta Guru service benefits" className="border-b border-line bg-navy-950 text-cream-100"><Container><ul className="grid grid-cols-2 lg:grid-cols-4">{servicePoints.map(({ label, icon: Icon }) => <li key={label} className="flex min-h-24 items-center gap-3 border-r border-cream-100/15 px-3 py-5 last:border-r-0 sm:px-6"><Icon className="h-5 w-5 shrink-0 text-gold-300" strokeWidth={1.4} aria-hidden="true" /><span className="text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-cream-100/80">{label}</span></li>)}</ul></Container></section>
 

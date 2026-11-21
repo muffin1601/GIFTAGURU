@@ -34,6 +34,32 @@ export async function getFaqs(): Promise<Faq[]> {
   }
 }
 
+export type HomeBannerSlide = { id: string; label: string; src: string; href: string };
+
+/** Shown when the database is unreachable, the 0022 migration has not run yet,
+ * or every banner has been unpublished -- the hero must never render empty. */
+export const fallbackHomeBanners: HomeBannerSlide[] = [
+  { id: "joining", label: "Joining gifts", src: "/BANNERS/JOINING.png", href: "/categories/joining-gifts" },
+  { id: "premium", label: "Premium gifts", src: "/BANNERS/PREMIUM.png", href: "/categories/premium-gifts" },
+  { id: "luxury", label: "Luxury gifts", src: "/BANNERS/LUXURY.png", href: "/categories/luxury-gifts" },
+  { id: "eco", label: "Eco-friendly gifts", src: "/BANNERS/ECO.png", href: "/categories/eco-gifts" },
+];
+
+export async function getHomeBanners(): Promise<HomeBannerSlide[]> {
+  if (!isDatabaseConfigured()) return fallbackHomeBanners;
+
+  try {
+    const rows = await prisma.homeBanner.findMany({
+      where: { isPublished: true },
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+    });
+    if (rows.length === 0) return fallbackHomeBanners;
+    return rows.map((row) => ({ id: row.id, label: row.label, src: row.imageUrl, href: row.linkUrl }));
+  } catch {
+    return fallbackHomeBanners;
+  }
+}
+
 export async function getTestimonials(): Promise<Testimonial[]> {
   if (!isDatabaseConfigured()) return [];
 

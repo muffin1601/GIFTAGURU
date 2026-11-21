@@ -288,6 +288,20 @@ model Testimonial {
   @@map("testimonials")
 }
 
+/// Homepage hero slider banners, managed from /admin/banners.
+model HomeBanner {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  label       String
+  imageUrl    String   @map("image_url")
+  linkUrl     String   @default("/") @map("link_url")
+  sortOrder   Int      @default(0) @map("sort_order")
+  isPublished Boolean  @default(true) @map("is_published")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("home_banners")
+}
+
 /// Editorial posts use a JSON document instead of raw HTML. This keeps the
 /// public renderer free from arbitrary markup while still allowing sections,
 /// FAQs and contextual links to be managed in the existing admin.
