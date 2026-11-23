@@ -13,7 +13,7 @@ import { occasionPages } from "../lib/seo/content/occasions.ts";
 import { giftSetPages } from "../lib/seo/content/gift-sets.ts";
 import { guidePages } from "../lib/seo/content/guides.ts";
 import { seasonalHubs } from "../lib/seo/content/seasonal.ts";
-import { products as catalogProducts } from "../data/products.ts";
+import { products as catalogProducts, archivedSeasonalProductSlugs } from "../data/products.ts";
 
 /**
  * Guards the SEO keyword architecture at the level that actually breaks.
@@ -88,8 +88,10 @@ test("SEO content exists for every catalog product, and only for real products",
     [],
     "catalog products with no SEO content",
   );
+  // Archived seasonal products keep their SEO copy for the next campaign.
+  const archivedSlugs = new Set(archivedSeasonalProductSlugs);
   assert.deepEqual(
-    [...seoSlugs].filter((slug) => !catalogSlugs.has(slug)),
+    [...seoSlugs].filter((slug) => !catalogSlugs.has(slug) && !archivedSlugs.has(slug)),
     [],
     "SEO content referencing products that do not exist",
   );

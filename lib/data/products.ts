@@ -32,30 +32,8 @@ const emptyProductContent = {
   seoDescription: null,
 };
 
-// The database stores a complete gallery for every hamper. Keep the local
-// catalog equally useful when no database is configured, so each dedicated
-// product page still shows all of the images in its public/Hampers folder.
-const fallbackProductGalleries: Record<string, string[]> = {
-  "diwali-signature-hamper": [
-    "/Hampers/set 1/1 (1).webp",
-    "/Hampers/set 1/1 (2).webp",
-    "/Hampers/set 1/1 (3).webp",
-  ],
-  "diwali-celebration-hamper": [
-    "/Hampers/set 2/1 (1).webp",
-    "/Hampers/set 2/1 (2).webp",
-    "/Hampers/set 2/1 (3).webp",
-    "/Hampers/set 2/1 (4).webp",
-  ],
-  "diwali-grand-hamper": [
-    "/Hampers/set 3/1 (1).webp",
-    "/Hampers/set 3/1 (2).webp",
-    "/Hampers/set 3/1 (3).webp",
-  ],
-};
-
 function fallbackGallery(product: Product): { url: string; alt: string }[] {
-  const images = fallbackProductGalleries[product.slug] ?? (product.image ? [product.image] : []);
+  const images = product.image ? [product.image] : [];
   return images.map((url, index) => ({ url, alt: `${product.name} image ${index + 1}` }));
 }
 

@@ -63,6 +63,12 @@ const productMeta = {
   24: ["Grey Planner Corporate Set", "office-stationery", ["corporate-gifts", "employee-appreciation-gifts"], 1299, 30],
 };
 
+// Diwali hampers and kits are seasonal. They are seeded as archived so a
+// reseed never puts them back on the storefront; set this to "active" to
+// relaunch them for the next Diwali campaign.
+const SEASONAL_DIWALI_STATUS = "archived";
+const SEASONAL_DIWALI_FEATURED = SEASONAL_DIWALI_STATUS === "active";
+
 const hamperMeta = [
   ["set 1", "diwali-signature-hamper", "Utsav-on-the-go Hamper", "premium-gift-sets", ["corporate-gifts", "premium-gifts", "festive-corporate-gifts", "gift-sets-hampers"], 1999, 5, "GG-HAMP-01-STD"],
   ["set 2", "diwali-celebration-hamper", "The Diwali Delight Box", "premium-gift-sets", ["corporate-gifts", "premium-gifts", "festive-corporate-gifts", "gift-sets-hampers"], 2999, 5, "GG-HAMP-02-STD"],
@@ -222,7 +228,7 @@ async function seedHampers() {
        (slug, name, description, category_id, base_price, compare_at_price, is_customizable,
         min_order_quantity, occasion_tags, status, is_featured, avg_rating, review_count,
         long_description, key_features, specifications, package_includes, content_source, last_verified_at)
-       values ($1, $2, $3, $4, $5, $6, true, $7, $8, 'active', true, 0, 0, $9, $10::jsonb, $11::jsonb, $12::jsonb, $13, now())
+       values ($1, $2, $3, $4, $5, $6, true, $7, $8, $14::public.product_status, $15, 0, 0, $9, $10::jsonb, $11::jsonb, $12::jsonb, $13, now())
        on conflict (slug) do update set name = excluded.name, description = excluded.description,
        category_id = excluded.category_id, base_price = excluded.base_price,
        compare_at_price = excluded.compare_at_price, min_order_quantity = excluded.min_order_quantity,
@@ -231,7 +237,7 @@ async function seedHampers() {
        specifications = excluded.specifications, package_includes = excluded.package_includes,
        content_source = excluded.content_source, last_verified_at = excluded.last_verified_at
        returning id`,
-      [slug, name, structured.description ?? `${name} curated for corporate Diwali gifting, custom branding, and bulk festive orders.`, category.id, price, Math.round(price * 1.18), minOrderQuantity, collectionSlugs, structured.longDescription, JSON.stringify(structured.keyFeatures), JSON.stringify(structured.specifications), JSON.stringify(structured.packageIncludes), "User-provided Diwali hamper references"],
+      [slug, name, structured.description ?? `${name} curated for corporate Diwali gifting, custom branding, and bulk festive orders.`, category.id, price, Math.round(price * 1.18), minOrderQuantity, collectionSlugs, structured.longDescription, JSON.stringify(structured.keyFeatures), JSON.stringify(structured.specifications), JSON.stringify(structured.packageIncludes), "User-provided Diwali hamper references", SEASONAL_DIWALI_STATUS, SEASONAL_DIWALI_FEATURED],
     );
     const variant = await one(
       `insert into public.product_variants (product_id, name, sku, is_default)
@@ -275,10 +281,10 @@ async function seedDiwaliKits() {
     const slug = slugify(name);
     const product = await one(
       `insert into public.products (slug, name, description, category_id, base_price, compare_at_price, is_customizable, min_order_quantity, occasion_tags, status, is_featured, avg_rating, review_count)
-       values ($1, $2, $3, $4, $5, $6, true, 5, $7, 'active', true, 0, 0)
+       values ($1, $2, $3, $4, $5, $6, true, 5, $7, $8::public.product_status, $9, 0, 0)
        on conflict (slug) do update set name = excluded.name, description = excluded.description, category_id = excluded.category_id, base_price = excluded.base_price, compare_at_price = excluded.compare_at_price, status = excluded.status, is_featured = excluded.is_featured
        returning id`,
-      [slug, name, `${name} for corporate Diwali gifts, employee gifting and client festive campaigns.`, category.id, price, Math.round(price * 1.18), ["corporate-gifts", "festive-corporate-gifts", "gift-sets-hampers"]],
+      [slug, name, `${name} for corporate Diwali gifts, employee gifting and client festive campaigns.`, category.id, price, Math.round(price * 1.18), ["corporate-gifts", "festive-corporate-gifts", "gift-sets-hampers"], SEASONAL_DIWALI_STATUS, SEASONAL_DIWALI_FEATURED],
     );
     const variant = await one(`insert into public.product_variants (product_id, name, sku, is_default) values ($1, 'Standard', $2, true) on conflict (sku) do update set product_id = excluded.product_id, name = excluded.name, is_default = excluded.is_default returning id`, [product.id, `GG-DIWALI-${folder.replace("set ", "").padStart(2, "0")}-STD`]);
     await one(`insert into public.inventory (variant_id, quantity_available, quantity_reserved) values ($1, 500, 0) on conflict (variant_id) do update set quantity_available = excluded.quantity_available, quantity_reserved = 0`, [variant.id]);

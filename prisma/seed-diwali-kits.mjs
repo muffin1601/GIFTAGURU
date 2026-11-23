@@ -7,6 +7,10 @@ import { Pool } from "pg";
 const connectionString = process.env.DIRECT_URL || process.env.DATABASE_URL;
 if (!connectionString) throw new Error("Set DIRECT_URL or DATABASE_URL before seeding Diwali kits.");
 
+// Diwali kits are seasonal and currently off the storefront. Set this to
+// "active" to relaunch them for the next Diwali campaign.
+const SEASONAL_STATUS = "archived";
+
 const kits = [
   ["White Festive Flask & Tumbler Hamper", "premium-gift-sets", 1899],
   ["Tan Executive Diary & Flask Gift Set", "premium-gift-sets", 2499],
@@ -30,10 +34,10 @@ try {
     if (!category.rows[0]) throw new Error(`Missing category: ${categorySlug}`);
     const product = await pool.query(
       `insert into public.products (slug, name, description, category_id, base_price, compare_at_price, is_customizable, min_order_quantity, occasion_tags, status, is_featured, avg_rating, review_count)
-       values ($1, $2, $3, $4, $5, $6, true, 5, $7, 'active', true, 0, 0)
+       values ($1, $2, $3, $4, $5, $6, true, 5, $7, $8::public.product_status, $9, 0, 0)
        on conflict (slug) do update set name = excluded.name, description = excluded.description, category_id = excluded.category_id, base_price = excluded.base_price, compare_at_price = excluded.compare_at_price, status = excluded.status, is_featured = excluded.is_featured
        returning id`,
-      [slug, name, `${name} for corporate Diwali gifts, employee gifting and client festive campaigns.`, category.rows[0].id, price, Math.round(price * 1.18), ["corporate-gifts", "festive-corporate-gifts", "gift-sets-hampers"]],
+      [slug, name, `${name} for corporate Diwali gifts, employee gifting and client festive campaigns.`, category.rows[0].id, price, Math.round(price * 1.18), ["corporate-gifts", "festive-corporate-gifts", "gift-sets-hampers"], SEASONAL_STATUS, SEASONAL_STATUS === "active"],
     );
     const variant = await pool.query(
       `insert into public.product_variants (product_id, name, sku, is_default) values ($1, 'Standard', $2, true)
