@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import ActionForm, { AdminInput } from "@/components/admin/ActionForm";
 import { createHomeBannerAction, deleteHomeBannerAction, updateCategoryBannerAction, updateHomeBannerAction } from "@/lib/actions/content";
 import { getCategoryBanner } from "@/lib/data/category-banner";
@@ -6,11 +7,14 @@ import { prisma } from "@/lib/prisma";
 
 const imageHint = "PNG, JPG or WEBP, up to 4MB. Recommended 2400 × 900 px (8:3) so nothing is letterboxed.";
 
-export default async function AdminBannersPage() {
-  const [banners, categoryBanner] = await Promise.all([
+export default async function AdminBannersPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
+  const { category } = await searchParams;
+  const [banners, collections] = await Promise.all([
     prisma.homeBanner.findMany({ orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] }),
-    getCategoryBanner(),
+    prisma.collection.findMany({ orderBy: { name: "asc" }, select: { slug: true, name: true, imageUrl: true } }),
   ]);
+  const selected = collections.find((collection) => collection.slug === category);
+  const categoryBanner = await getCategoryBanner(selected);
   const publishedCount = banners.filter((banner) => banner.isPublished).length;
 
   return (
@@ -22,11 +26,18 @@ export default async function AdminBannersPage() {
 
       <section className="panel p-5">
         <h2 className="font-display text-xl text-navy-950">Category page banner</h2>
-        <p className="mt-1 text-sm text-ink-600">One banner appears on the category listing and every individual category page.</p>
-        <div className="relative mt-3 aspect-[8/3] max-w-xl overflow-hidden rounded-lg bg-sunken">
+        <nav aria-label="Choose a page banner" className="my-4 flex flex-wrap gap-3 text-sm">
+          <Link href="/admin/banners" aria-current={!selected ? "page" : undefined} className="underline aria-[current=page]:font-bold">Category listing</Link>
+          {collections.map((collection) => (
+            <Link key={collection.slug} href={`/admin/banners?category=${encodeURIComponent(collection.slug)}`} aria-current={selected?.slug === collection.slug ? "page" : undefined} className="underline aria-[current=page]:font-bold">{collection.name}</Link>
+          ))}
+        </nav>
+        <h3 className="font-semibold">{selected?.name ?? "Category listing"}</h3>
+        {categoryBanner.imageUrl && <div className="relative mt-3 aspect-[8/3] max-w-xl overflow-hidden rounded-lg bg-sunken">
           <Image src={categoryBanner.imageUrl} alt={categoryBanner.label} fill sizes="(min-width: 640px) 36rem, 90vw" className="object-contain" />
-        </div>
-        <ActionForm action={updateCategoryBannerAction} submitLabel="Save category banner" className="mt-4 grid gap-3 sm:grid-cols-2">
+        </div>}
+        <ActionForm key={selected?.slug ?? ""} action={updateCategoryBannerAction} submitLabel="Save category banner" className="mt-4 grid gap-3 sm:grid-cols-2">
+          <input type="hidden" name="categorySlug" value={selected?.slug ?? ""} />
           <label className="space-y-1 text-sm font-medium text-navy-950">
             Banner description
             <AdminInput name="label" required defaultValue={categoryBanner.label} />
@@ -42,7 +53,7 @@ export default async function AdminBannersPage() {
           </label>
           <label className="flex items-center gap-2 text-sm font-medium text-navy-950">
             <input type="checkbox" name="isPublished" value="true" defaultChecked={categoryBanner.isPublished} className="h-4 w-4 accent-navy-950" />
-            Published on category pages
+            Published on this page
           </label>
         </ActionForm>
       </section>

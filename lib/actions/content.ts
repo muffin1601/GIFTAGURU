@@ -9,7 +9,7 @@ import { isSupabaseAdminConfigured } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { formBoolean } from "@/lib/validations/form-boolean";
-import { categoryBannerKey, defaultCategoryBanner, getCategoryBanner } from "@/lib/data/category-banner";
+import { categoryBannerKey, getCategoryBanner } from "@/lib/data/category-banner";
 
 type ActionState = { error?: string; success?: string };
 
@@ -211,15 +211,20 @@ export async function updateCategoryBannerAction(_state: ActionState, formData: 
   const parsed = bannerSchema.pick({ label: true, linkUrl: true }).safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid banner." };
 
-  const before = await getCategoryBanner();
+  const slug = formData.get("categorySlug");
+  const category = typeof slug === "string" && slug
+    ? await prisma.collection.findUnique({ where: { slug }, select: { slug: true, name: true, imageUrl: true } })
+    : undefined;
+  if (slug && !category) return { error: "Category no longer exists." };
+  const before = await getCategoryBanner(category ?? undefined);
   const upload = await uploadBannerImage(formData.get("file"));
   if (upload.error) return { error: upload.error };
   const value = { ...parsed.data, imageUrl: upload.url ?? before.imageUrl, isPublished: formData.get("isPublished") === "true" };
+  if (value.isPublished && !value.imageUrl) return { error: "Choose a banner image before publishing." };
   const saved = await prisma.$transaction(async (tx) => {
-    const key = categoryBannerKey;
+    const key = categoryBannerKey(category?.slug);
     const updated = await tx.storeSetting.updateMany({ where: { key, value: { equals: before } }, data: { value } });
     if (updated.count) return true;
-    if (before !== defaultCategoryBanner) return false;
     const created = await tx.storeSetting.createMany({ data: [{ key, value }], skipDuplicates: true });
     return created.count === 1;
   });

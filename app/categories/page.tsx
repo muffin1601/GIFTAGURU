@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import CategoryBanner from "@/components/content/CategoryBanner";
 import PageHeader from "@/components/ui/PageHeader";
 import Container from "@/components/ui/Container";
 import CategoryCard from "@/components/ui/CategoryCard";
@@ -19,6 +20,7 @@ export default async function CategoriesPage() {
 
   return (
     <>
+      <CategoryBanner />
       <PageHeader
         eyebrow="Categories"
         title="Explore our gifting collections"

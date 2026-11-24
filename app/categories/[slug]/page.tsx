@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import CategoryBanner from "@/components/content/CategoryBanner";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -67,6 +68,7 @@ export default async function CategoryPage({
 
   return (
     <>
+      <CategoryBanner category={{ slug: category.slug, name: category.name, imageUrl: category.image }} />
       <JsonLd
         data={[
           breadcrumbSchema([
@@ -124,7 +126,7 @@ export default async function CategoryPage({
         </Container>
       </section>
 
-      <section className="section">
+      <section id="products" className="section">
         <Container>
           {products.length > 0 ? (
             <div className="catalogue-grid grid sm:grid-cols-2 lg:grid-cols-4">
