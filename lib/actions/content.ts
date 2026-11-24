@@ -9,6 +9,7 @@ import { isSupabaseAdminConfigured } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { formBoolean } from "@/lib/validations/form-boolean";
+import { categoryBannerKey, defaultCategoryBanner, getCategoryBanner } from "@/lib/data/category-banner";
 
 type ActionState = { error?: string; success?: string };
 
@@ -203,6 +204,34 @@ async function removeBannerImage(url: string) {
   if (index === -1 || !isSupabaseAdminConfigured()) return;
   const path = url.slice(index + `/storage/v1/object/public/${BANNER_BUCKET}/`.length);
   await createAdminClient().storage.from(BANNER_BUCKET).remove([path]).catch(() => undefined);
+}
+
+export async function updateCategoryBannerAction(_state: ActionState, formData: FormData): Promise<ActionState> {
+  const admin = await requireAdmin();
+  const parsed = bannerSchema.pick({ label: true, linkUrl: true }).safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid banner." };
+
+  const before = await getCategoryBanner();
+  const upload = await uploadBannerImage(formData.get("file"));
+  if (upload.error) return { error: upload.error };
+  const value = { ...parsed.data, imageUrl: upload.url ?? before.imageUrl, isPublished: formData.get("isPublished") === "true" };
+  const saved = await prisma.$transaction(async (tx) => {
+    const key = categoryBannerKey;
+    const updated = await tx.storeSetting.updateMany({ where: { key, value: { equals: before } }, data: { value } });
+    if (updated.count) return true;
+    if (before !== defaultCategoryBanner) return false;
+    const created = await tx.storeSetting.createMany({ data: [{ key, value }], skipDuplicates: true });
+    return created.count === 1;
+  });
+  if (!saved) {
+    if (upload.url) await removeBannerImage(upload.url);
+    return { error: "The category banner changed during this save. Refresh and try again." };
+  }
+  if (upload.url) await removeBannerImage(before.imageUrl);
+  await logAdminAction(admin, { action: "category_banner.updated", entityType: "store_setting", before, after: value });
+  revalidatePath("/admin/banners");
+  revalidatePath("/categories", "layout");
+  return { success: "Category banner saved." };
 }
 
 export async function createHomeBannerAction(_state: ActionState, formData: FormData): Promise<ActionState> {

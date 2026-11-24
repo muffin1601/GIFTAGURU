@@ -50,7 +50,7 @@ const sections = [
   {
     title: "Content",
     links: [
-      { label: "Homepage Banners", href: "/admin/banners", Icon: Images },
+      { label: "Banners", href: "/admin/banners", Icon: Images },
       { label: "FAQs", href: "/admin/faqs", Icon: ClipboardList },
       { label: "Testimonials", href: "/admin/testimonials", Icon: MessageSquareQuote },
       { label: "Blog", href: "/admin/blog", Icon: ClipboardList },

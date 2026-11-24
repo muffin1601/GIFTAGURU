@@ -1,19 +1,54 @@
 import Image from "next/image";
 import ActionForm, { AdminInput } from "@/components/admin/ActionForm";
-import { createHomeBannerAction, deleteHomeBannerAction, updateHomeBannerAction } from "@/lib/actions/content";
+import { createHomeBannerAction, deleteHomeBannerAction, updateCategoryBannerAction, updateHomeBannerAction } from "@/lib/actions/content";
+import { getCategoryBanner } from "@/lib/data/category-banner";
 import { prisma } from "@/lib/prisma";
 
 const imageHint = "PNG, JPG or WEBP, up to 4MB. Recommended 2400 × 900 px (8:3) so nothing is letterboxed.";
 
 export default async function AdminBannersPage() {
-  const banners = await prisma.homeBanner.findMany({ orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] });
+  const [banners, categoryBanner] = await Promise.all([
+    prisma.homeBanner.findMany({ orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] }),
+    getCategoryBanner(),
+  ]);
   const publishedCount = banners.filter((banner) => banner.isPublished).length;
 
   return (
     <div className="space-y-8">
       <div>
         <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">Content</p>
-        <h1 className="mt-2 font-display text-4xl text-navy-950">Homepage banners</h1>
+        <h1 className="mt-2 font-display text-4xl text-navy-950">Banners</h1>
+      </div>
+
+      <section className="panel p-5">
+        <h2 className="font-display text-xl text-navy-950">Category page banner</h2>
+        <p className="mt-1 text-sm text-ink-600">One banner appears on the category listing and every individual category page.</p>
+        <div className="relative mt-3 aspect-[8/3] max-w-xl overflow-hidden rounded-lg bg-sunken">
+          <Image src={categoryBanner.imageUrl} alt={categoryBanner.label} fill sizes="(min-width: 640px) 36rem, 90vw" className="object-contain" />
+        </div>
+        <ActionForm action={updateCategoryBannerAction} submitLabel="Save category banner" className="mt-4 grid gap-3 sm:grid-cols-2">
+          <label className="space-y-1 text-sm font-medium text-navy-950">
+            Banner description
+            <AdminInput name="label" required defaultValue={categoryBanner.label} />
+          </label>
+          <label className="space-y-1 text-sm font-medium text-navy-950">
+            Link
+            <AdminInput name="linkUrl" required defaultValue={categoryBanner.linkUrl} />
+          </label>
+          <label className="space-y-1 text-sm font-medium text-navy-950 sm:col-span-2">
+            Replace image (optional)
+            <input type="file" name="file" accept=".png,.jpg,.jpeg,.webp" className="field-input text-sm" />
+            <span className="block text-xs font-normal text-ink-600">{imageHint}</span>
+          </label>
+          <label className="flex items-center gap-2 text-sm font-medium text-navy-950">
+            <input type="checkbox" name="isPublished" value="true" defaultChecked={categoryBanner.isPublished} className="h-4 w-4 accent-navy-950" />
+            Published on category pages
+          </label>
+        </ActionForm>
+      </section>
+
+      <div>
+        <h2 className="font-display text-2xl text-navy-950">Homepage banners</h2>
         <p className="mt-2 max-w-3xl text-sm text-ink-600">
           Published banners rotate automatically in the homepage hero, lowest display order first, every 5 seconds.
           Each banner links to the page you set. If no banner is published, the four default collection banners are shown so the hero is never empty.
