@@ -85,7 +85,37 @@ const techDiwaliPost: BlogPost = {
   recommendedProductSlugs: [],
 };
 
-const builtInPosts: BlogPost[] = [techDiwaliPost, ...guidePosts];
+const newYearPost: BlogPost = {
+  slug: "new-year-corporate-gifting-guide-2027",
+  title: "New Year 2027 Gifts for Employees and Clients",
+  excerpt: "A desk calendar, a pocket diary or a planner and pen? Match the gift to the way your recipients work, then plan the details for January delivery.",
+  category: "New Year Gifting",
+  featuredImageUrl: "/CALENDERS 2027/1/Initial.webp",
+  featuredImageAlt: "Desk calendar from the Gifta Guru 2027 collection",
+  authorName: "Gifta Guru Team",
+  seoTitle: "New Year 2027 Corporate Gift Guide",
+  metaDescription: "Choose calendars, diaries and planner sets for employees and clients, with practical advice on personalisation and delivery for New Year 2027.",
+  focusKeyword: "New Year corporate gifts",
+  isFeatured: true,
+  publishedAt: new Date("2026-11-24"),
+  updatedAt: new Date("2026-11-24"),
+  sections: [
+    { heading: "Start with the recipient’s working day", body: ["A desk calendar gives an office team a quick way to check dates during calls. For someone who travels between client sites, a diary that slips into a bag may get more use. If colleagues already keep their schedules online, consider an undated notebook for meeting notes."] },
+    { heading: "Make a client gift personal", body: ["Pair a planner with a pen and tuck a signed note inside the cover. Mention a project you enjoyed working on together. If you personalise the cover, confirm the spelling of the recipient’s name and review a proof at the actual print size."] },
+    { heading: "Work back from the first week of January", bullets: ["Pick the day you want the gifts in hand and confirm when each office reopens.", "Count gifts by delivery address and keep personalised pieces matched to the packing list.", "Approve a sample and agree on dispatch dates before confirming the full order."] },
+  ],
+  faqs: [],
+  relatedLinks: [{ label: "Explore the New Year 2027 collection", href: "/new-year-2027" }],
+  recommendedProductSlugs: ["grey-planner-corporate-set", "journal-matching-pen-set"],
+};
+
+const builtInPosts: BlogPost[] = [newYearPost, techDiwaliPost, ...guidePosts];
+
+export function homepageBlogHighlights(posts: BlogPost[]) {
+  const priority = [newYearPost.slug, techDiwaliPost.slug];
+  const featured = priority.flatMap((slug) => posts.filter((post) => post.slug === slug));
+  return [...featured, ...posts.filter((post) => !priority.includes(post.slug))].slice(0, 3);
+}
 
 function stringArray(value: unknown): string[] {
   return Array.isArray(value) && value.every((item) => typeof item === "string") ? value : [];

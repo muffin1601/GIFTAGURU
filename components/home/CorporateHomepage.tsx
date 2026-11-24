@@ -5,7 +5,7 @@ import Button from "@/components/ui/Button";
 import Container from "@/components/ui/Container";
 import CorporateHeroSlider from "@/components/home/CorporateHeroSlider";
 import HomeProductCard from "@/components/home/HomeProductCard";
-import { getPublishedBlogPosts } from "@/lib/blog/data";
+import { getPublishedBlogPosts, homepageBlogHighlights } from "@/lib/blog/data";
 import { getHomeBanners } from "@/lib/data/content";
 import { getFeaturedCollectionsAsCategories } from "@/lib/data/collections";
 import { getFeaturedProducts, getProductsBySlugs } from "@/lib/data/products";
@@ -52,6 +52,11 @@ const gallerySlugs = [
   "sage-green-sustainable-gift-set",
   "brown-luxury-stationery-set",
 ];
+
+const galleryPhotoBySlug: Readonly<Partial<Record<string, string>>> = {
+  "diwali-signature-hamper": "/Hampers/set 1/1 (2).webp",
+  "copper-celebration-hamper": "/Diwali kits/Set 5/2.webp",
+};
 
 function ArrowLink({ href, children, light = false }: { href: string; children: React.ReactNode; light?: boolean }) {
   return <Link href={href} className={`group inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] ${light ? "text-cream-100" : "text-navy-950"}`}><span className="link-underline">{children}</span><ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" strokeWidth={1.5} aria-hidden="true" /></Link>;
@@ -139,7 +144,7 @@ export default async function CorporateHomepage() {
     getPublishedBlogPosts(),
     getHomeBanners(),
   ]);
-  const resources = posts.slice(0, 3);
+  const resources = homepageBlogHighlights(posts);
 
   return <div className="homepage-premium overflow-hidden">
     <CorporateHeroSlider slides={banners} />
@@ -153,11 +158,11 @@ export default async function CorporateHomepage() {
         <div className="hanna-card overflow-hidden border border-line bg-navy-950 lg:grid lg:grid-cols-[0.92fr_1.08fr]">
           <div className="relative min-h-[24rem] overflow-hidden bg-[#e5e2d8] sm:min-h-[30rem] lg:min-h-[32rem]">
             <Image
-              src="/Hampers/set 1/1 (1).webp"
-              alt="Curated corporate hamper with drinkware, snacks and cookies"
+              src="/images/editorial/premium-corporate-gifting.webp"
+              alt="Blue and sage gift boxes wrapped with white ribbon"
               fill
               sizes="(min-width: 1024px) 45vw, 100vw"
-              className="object-contain p-7 sm:p-10"
+              className="object-cover object-center"
             />
             <div className="absolute bottom-5 left-5 max-w-52 border border-navy-950/10 bg-surface/95 px-4 py-3 backdrop-blur-sm sm:bottom-7 sm:left-7">
               <p className="text-[0.62rem] font-semibold uppercase tracking-[0.15em] text-gold-700">The Gifta Guru edit</p>
@@ -236,6 +241,7 @@ export default async function CorporateHomepage() {
 
           <div className="mt-8 grid auto-rows-[12rem] grid-cols-2 gap-3 sm:auto-rows-[14rem] md:grid-cols-12 md:gap-4">
             {galleryProducts.slice(0, 8).map((product, index) => {
+              const photo = galleryPhotoBySlug[product.slug] ?? product.image;
               const layout = index === 0
                 ? "col-span-2 row-span-2 md:col-span-6"
                 : index === 3
@@ -248,9 +254,9 @@ export default async function CorporateHomepage() {
                   href={`/products/${product.slug}`}
                   className={`hanna-soft group relative overflow-hidden border border-line bg-surface ${layout}`}
                 >
-                  {product.image ? (
+                  {photo ? (
                     <Image
-                      src={product.image}
+                      src={photo}
                       alt={product.name}
                       fill
                       sizes={index === 0 ? "(min-width: 768px) 50vw, 100vw" : "(min-width: 768px) 25vw, 50vw"}

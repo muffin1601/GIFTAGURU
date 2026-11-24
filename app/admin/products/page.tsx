@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import ActionForm, { AdminInput } from "@/components/admin/ActionForm";
 import { bulkUpdateProductPricingAction } from "@/lib/actions/catalog";
@@ -39,7 +40,7 @@ export default async function AdminProductsPage({
       include: {
         category: true,
         variants: { include: { inventory: true }, orderBy: { createdAt: "asc" } },
-        images: { orderBy: { sortOrder: "asc" }, take: 1 },
+        images: { orderBy: { sortOrder: "asc" }, take: 1, select: { url: true } },
       },
     }),
     prisma.product.count({ where }),
@@ -139,6 +140,7 @@ export default async function AdminProductsPage({
           </thead>
           <tbody className="divide-y divide-line">
             {products.map((product) => {
+              const imageUrl = product.images[0]?.url;
               const stock = product.variants.reduce((sum, variant) => sum + (variant.inventory?.quantityAvailable ?? 0), 0);
               return (
                 <tr key={product.id} className="hover:bg-sunken">
@@ -153,10 +155,19 @@ export default async function AdminProductsPage({
                     />
                   </td>
                   <td className="px-4 py-3">
-                    <Link href={`/admin/products/${product.id}`} className="font-semibold text-navy-950 hover:text-gold-700">
-                      {product.name}
+                    <Link href={`/admin/products/${product.id}`} className="flex items-center gap-3 text-navy-950 hover:text-gold-700">
+                      <span className="grid size-14 shrink-0 place-items-center overflow-hidden rounded-md border border-line bg-surface">
+                        {imageUrl ? (
+                          <Image src={imageUrl} alt="" width={56} height={56} className="size-full object-contain" />
+                        ) : (
+                          <span className="text-center text-xs text-ink-500">No image</span>
+                        )}
+                      </span>
+                      <span>
+                        <span className="block font-semibold">{product.name}</span>
+                        <span className="block text-ink-500">{product.slug}</span>
+                      </span>
                     </Link>
-                    <p className="text-ink-500">{product.slug}</p>
                   </td>
                   <td className="px-4 py-3">{product.category?.name ?? "Uncategorized"}</td>
                   <td className="px-4 py-3 text-ink-600">{product.variants.find((variant) => variant.isDefault)?.sku ?? product.variants[0]?.sku ?? "—"}</td>
