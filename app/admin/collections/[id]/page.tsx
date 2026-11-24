@@ -1,3 +1,4 @@
+import CategoryBannerEditor from "@/components/admin/CategoryBannerEditor";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ActionForm, { AdminInput, AdminTextarea } from "@/components/admin/ActionForm";
@@ -35,6 +36,11 @@ export default async function AdminCollectionDetailPage({ params }: { params: Pr
         <h1 className="mt-2 font-display text-4xl text-navy-950">{collection.name}</h1>
       </div>
 
+      <section className="panel p-5">
+        <h2 className="font-display text-xl text-navy-950">Category page banner</h2>
+        <CategoryBannerEditor category={collection} />
+      </section>
+
       <div className="grid gap-6 lg:grid-cols-3">
         <section className="panel p-5 lg:col-span-2">
           <h2 className="font-display text-xl text-navy-950">Edit collection</h2>
@@ -57,7 +63,7 @@ export default async function AdminCollectionDetailPage({ params }: { params: Pr
               <AdminTextarea name="description" rows={3} defaultValue={collection.description ?? ""} />
             </label>
             <label className="space-y-1 text-sm font-medium text-navy-950">
-              Image URL
+              Collection cover image URL
               <AdminInput name="imageUrl" defaultValue={collection.imageUrl ?? ""} />
             </label>
             <label className="space-y-1 text-sm font-medium text-navy-950">

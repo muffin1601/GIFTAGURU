@@ -16,7 +16,8 @@ export default async function AdminCategoriesPage() {
         <h1 className="mt-2 font-display text-4xl text-navy-950">Categories</h1>
         <p className="mt-2 text-sm text-ink-600">
           Categories classify products for filtering and reporting. Storefront collections (the
-          curated pages customers browse) are managed separately under Collections.
+          curated pages customers browse) are managed separately under Collections.{" "}
+          <Link href="/admin/banners" className="underline">Upload a storefront category banner</Link>
         </p>
       </div>
 
