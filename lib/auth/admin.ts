@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { isSupabaseConfigured } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
+import { roleCan, type Permission } from "@/lib/auth/permissions";
 
 export type AdminSession = {
   id: string;
@@ -40,5 +41,23 @@ export async function getAdminSession(): Promise<AdminSession | null> {
 export async function requireAdmin(): Promise<AdminSession> {
   const admin = await getAdminSession();
   if (!admin) redirect("/login?next=/admin");
+  return admin;
+}
+
+export class PermissionError extends Error {
+  constructor(public permission: Permission) {
+    super("You do not have permission to perform this action.");
+    this.name = "PermissionError";
+  }
+}
+
+/**
+ * Server-side authorization gate. Throws (rather than redirecting) when a
+ * signed-in admin lacks the capability, so callers can turn it into a
+ * user-facing error instead of a silent bounce to the login page.
+ */
+export async function requirePermission(permission: Permission): Promise<AdminSession> {
+  const admin = await requireAdmin();
+  if (!roleCan(admin.role, permission)) throw new PermissionError(permission);
   return admin;
 }

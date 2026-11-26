@@ -9,6 +9,10 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  await requireAdmin();
-  return <AdminShell>{children}</AdminShell>;
+  const admin = await requireAdmin();
+  return (
+    <AdminShell user={{ name: admin.fullName || admin.email.split("@")[0], email: admin.email, role: admin.role }}>
+      {children}
+    </AdminShell>
+  );
 }
