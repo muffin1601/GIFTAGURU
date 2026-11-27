@@ -41,7 +41,11 @@ export default async function AdminCollectionsPage() {
             <AdminInput name="tagline" placeholder="Seasonal gifting, done right." />
           </label>
           <label className="space-y-1 text-sm font-medium text-navy-950">
-            Image URL
+            Cover image
+            <input type="file" name="coverFile" accept=".png,.jpg,.jpeg,.webp" className="field-input text-sm" />
+          </label>
+          <label className="space-y-1 text-sm font-medium text-navy-950">
+            or cover image URL
             <AdminInput name="imageUrl" placeholder="/SBanners/..." />
           </label>
           <label className="space-y-1 text-sm font-medium text-navy-950 sm:col-span-2">

@@ -164,6 +164,38 @@ const collectionSchema = z.object({
   sortOrder: z.coerce.number().int().min(0).default(0),
 });
 
+const COVER_BUCKET = "product-images";
+const COVER_PREFIX = "collection-covers/";
+// Server actions cap request bodies at 5MB (next.config.ts), so stay under it.
+const MAX_COVER_BYTES = 4 * 1024 * 1024;
+const ALLOWED_COVER_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
+
+/** Uploads an optional cover image from the `coverFile` field. */
+async function uploadCollectionCover(file: FormDataEntryValue | null): Promise<{ url?: string; error?: string }> {
+  if (!(file instanceof File) || file.size === 0) return {};
+  if (!ALLOWED_COVER_TYPES.includes(file.type)) return { error: "Upload a PNG, JPG or WEBP image." };
+  if (file.size > MAX_COVER_BYTES) return { error: "Cover image must be 4MB or smaller. Export it as WEBP or JPG to reduce the size." };
+  if (!isSupabaseAdminConfigured()) return { error: "Image storage is not configured on this environment." };
+
+  const supabase = createAdminClient();
+  const extension = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+  const path = `${COVER_PREFIX}${randomUUID()}.${extension}`;
+  const { error } = await supabase.storage.from(COVER_BUCKET).upload(path, file, { contentType: file.type, upsert: false });
+  if (error) return { error: `Upload failed: ${error.message}` };
+  return { url: supabase.storage.from(COVER_BUCKET).getPublicUrl(path).data.publicUrl };
+}
+
+/** Best-effort removal of a cover this feature uploaded; bundled /public
+ * images and anything outside the cover prefix are left alone. */
+async function removeCollectionCover(url: string | null | undefined) {
+  const marker = `/storage/v1/object/public/${COVER_BUCKET}/`;
+  const index = url?.indexOf(marker) ?? -1;
+  if (!url || index === -1) return;
+  const path = url.slice(index + marker.length);
+  if (!path.startsWith(COVER_PREFIX)) return;
+  await createAdminClient().storage.from(COVER_BUCKET).remove([path]).catch(() => undefined);
+}
+
 export async function createCollectionAction(_state: ActionState, formData: FormData): Promise<ActionState> {
   const admin = await requireAdmin();
   const parsed = collectionSchema.safeParse(Object.fromEntries(formData));
@@ -175,13 +207,16 @@ export async function createCollectionAction(_state: ActionState, formData: Form
   const existing = await prisma.collection.findUnique({ where: { slug } });
   if (existing) return { error: `A collection with the slug "${slug}" already exists.` };
 
+  const cover = await uploadCollectionCover(formData.get("coverFile"));
+  if (cover.error) return { error: cover.error };
+
   const collection = await prisma.collection.create({
     data: {
       name: parsed.data.name,
       slug,
       tagline: parsed.data.tagline || null,
       description: parsed.data.description || null,
-      imageUrl: parsed.data.imageUrl || null,
+      imageUrl: cover.url ?? (parsed.data.imageUrl || null),
       isFeatured: parsed.data.isFeatured,
       sortOrder: parsed.data.sortOrder,
     },
@@ -210,6 +245,10 @@ export async function updateCollectionAction(_state: ActionState, formData: Form
     if (clash) return { error: `A collection with the slug "${slug}" already exists.` };
   }
 
+  const cover = await uploadCollectionCover(formData.get("coverFile"));
+  if (cover.error) return { error: cover.error };
+  const imageUrl = cover.url ?? (parsed.data.imageUrl || null);
+
   const collection = await prisma.collection.update({
     where: { id: parsed.data.id },
     data: {
@@ -217,11 +256,12 @@ export async function updateCollectionAction(_state: ActionState, formData: Form
       slug,
       tagline: parsed.data.tagline || null,
       description: parsed.data.description || null,
-      imageUrl: parsed.data.imageUrl || null,
+      imageUrl,
       isFeatured: parsed.data.isFeatured,
       sortOrder: parsed.data.sortOrder,
     },
   });
+  if (before.imageUrl && before.imageUrl !== imageUrl) await removeCollectionCover(before.imageUrl);
 
   await logAdminAction(admin, { action: "collection.updated", entityType: "collection", entityId: collection.id, before, after: collection });
   revalidatePath("/admin/collections");
@@ -267,6 +307,7 @@ export async function deleteCollectionAction(_state: ActionState, formData: Form
 
   const collection = await prisma.collection.delete({ where: { id: parsed.data.id } }).catch(() => null);
   if (!collection) return { error: "Collection not found." };
+  await removeCollectionCover(collection.imageUrl);
 
   await logAdminAction(admin, { action: "collection.deleted", entityType: "collection", entityId: collection.id, before: collection });
   revalidatePath("/admin/collections");

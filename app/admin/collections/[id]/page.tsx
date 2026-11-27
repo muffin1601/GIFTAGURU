@@ -62,10 +62,27 @@ export default async function AdminCollectionDetailPage({ params }: { params: Pr
               Description
               <AdminTextarea name="description" rows={3} defaultValue={collection.description ?? ""} />
             </label>
-            <label className="space-y-1 text-sm font-medium text-navy-950">
-              Collection cover image URL
-              <AdminInput name="imageUrl" defaultValue={collection.imageUrl ?? ""} />
-            </label>
+            <div className="space-y-2 text-sm font-medium text-navy-950 sm:col-span-2">
+              Collection cover image
+              <div className="flex flex-wrap items-start gap-4">
+                {collection.imageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- admin preview of an arbitrary URL
+                  <img src={collection.imageUrl} alt="Current cover" className="h-24 w-32 shrink-0 rounded-lg border border-line bg-sunken object-cover" />
+                ) : (
+                  <span className="grid h-24 w-32 shrink-0 place-items-center rounded-lg border border-dashed border-line text-xs font-normal text-ink-500">No cover</span>
+                )}
+                <div className="min-w-0 flex-1 space-y-2">
+                  <label className="block space-y-1">
+                    <span className="text-xs font-normal text-ink-600">Upload a new cover (PNG, JPG or WebP, up to 4 MB)</span>
+                    <input type="file" name="coverFile" accept=".png,.jpg,.jpeg,.webp" className="field-input text-sm" />
+                  </label>
+                  <label className="block space-y-1">
+                    <span className="text-xs font-normal text-ink-600">or paste an image URL / path (an upload replaces this)</span>
+                    <AdminInput name="imageUrl" defaultValue={collection.imageUrl ?? ""} />
+                  </label>
+                </div>
+              </div>
+            </div>
             <label className="space-y-1 text-sm font-medium text-navy-950">
               Display order
               <AdminInput name="sortOrder" type="number" min={0} defaultValue={collection.sortOrder} />
