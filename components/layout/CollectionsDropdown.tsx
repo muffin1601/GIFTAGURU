@@ -6,14 +6,6 @@ import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { categories } from "@/data/categories";
 
-/** Square product shots for the menu thumbnails, one real gift set per collection. */
-const menuThumbnails: Record<string, string> = {
-  "eco-gifts": "/Gifta Guru/Set 19/1 (1).png",
-  "joining-gifts": "/Gifta Guru/Set 14/1 (1).png",
-  "luxury-gifts": "/Gifta Guru/Set 21/1 (1).png",
-  "premium-gifts": "/Gifta Guru/Set 8/1 (1).png",
-};
-
 export default function CollectionsDropdown() {
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -61,10 +53,10 @@ export default function CollectionsDropdown() {
             >
               <span className="relative aspect-square overflow-hidden rounded-lg border border-line bg-sunken">
                 <Image
-                  src={menuThumbnails[category.slug] ?? category.image}
+                  src={category.image}
                   alt=""
                   fill
-                  className={`transition-transform duration-200 group-hover:scale-105 ${menuThumbnails[category.slug] ? "object-contain p-1.5" : "object-cover"}`}
+                  className="object-contain p-1.5 transition-transform duration-200 group-hover:scale-105"
                   sizes="76px"
                 />
               </span>

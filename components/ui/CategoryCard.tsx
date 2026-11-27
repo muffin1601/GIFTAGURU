@@ -12,7 +12,7 @@ export default function CategoryCard({ category }: { category: Category }) {
           alt=""
           fill
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-          className="object-cover transition-opacity duration-300 group-hover:opacity-90"
+          className="object-contain p-5 transition-opacity duration-300 group-hover:opacity-90"
         />
       </div>
 

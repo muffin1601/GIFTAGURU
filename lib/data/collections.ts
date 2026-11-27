@@ -19,7 +19,10 @@ const editorialImageByCollectionSlug = new Map(
   fallbackFeaturedCollections.map((collection) => [collection.slug, collection.image]),
 );
 
+/** A cover uploaded in Admin → Collections always wins; otherwise the curated
+ * product photo for the core collections, then whatever URL is stored. */
 function getEditorialCollectionImage(slug: string, fallback: string): string {
+  if (fallback.includes("/collection-covers/")) return fallback;
   return editorialImageByCollectionSlug.get(slug) ?? fallback;
 }
 
