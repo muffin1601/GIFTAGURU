@@ -6,6 +6,14 @@ import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { categories } from "@/data/categories";
 
+/** Square product shots for the menu thumbnails, one real gift set per collection. */
+const menuThumbnails: Record<string, string> = {
+  "eco-gifts": "/Gifta Guru/Set 19/1 (1).png",
+  "joining-gifts": "/Gifta Guru/Set 14/1 (1).png",
+  "luxury-gifts": "/Gifta Guru/Set 21/1 (1).png",
+  "premium-gifts": "/Gifta Guru/Set 8/1 (1).png",
+};
+
 export default function CollectionsDropdown() {
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -49,15 +57,15 @@ export default function CollectionsDropdown() {
               key={category.slug}
               href={`/categories/${category.slug}`}
               onClick={() => setOpen(false)}
-              className="group grid grid-cols-[84px_1fr] gap-4"
+              className="group grid grid-cols-[76px_1fr] items-center gap-4"
             >
-              <span className="relative aspect-[4/3] overflow-hidden border border-line bg-sunken">
+              <span className="relative aspect-square overflow-hidden rounded-lg border border-line bg-sunken">
                 <Image
-                  src={category.image}
+                  src={menuThumbnails[category.slug] ?? category.image}
                   alt=""
                   fill
-                  className="object-cover transition-opacity duration-200 group-hover:opacity-90"
-                  sizes="84px"
+                  className={`transition-transform duration-200 group-hover:scale-105 ${menuThumbnails[category.slug] ? "object-contain p-1.5" : "object-cover"}`}
+                  sizes="76px"
                 />
               </span>
               <span className="min-w-0">
