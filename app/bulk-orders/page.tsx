@@ -27,6 +27,7 @@ export default async function BulkOrdersPage({
         eyebrow="Bulk Orders"
         title="Corporate gifting at scale, without the hassle"
         description="Tell us your occasion, quantity, and budget. We'll take care of curation, branding, and delivery."
+        image="/images/brand/corporate-gifting-made-extraordinary.webp"
       />
       <section className="py-14 sm:py-16">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">

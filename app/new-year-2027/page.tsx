@@ -64,7 +64,7 @@ export default async function NewYearPage() {
   }
   const kits = kitSlugs.map(slug => products.find(p => p.slug === slug)).filter((p): p is Product => Boolean(p));
   const categories = [
-    { title: "Calendars 2027", description: "Designs for a year of new beginnings", image: calendarGallery[0].images[0], href: "#calendars" },
+    { title: "Calendars 2027", description: "Designs for a year of new beginnings", image: "/images/brand/customised-corporate-calendars.webp", href: "#calendars" },
     ...[
       { title: "Diaries & planners", description: "A considered companion for every workday", match: /diary|planner|journal/i },
       { title: "Notebooks & pens", description: "Everyday essentials, thoughtfully paired", match: /notebook|pen/i },
@@ -115,7 +115,7 @@ export default async function NewYearPage() {
           {categories.map(category => (
             <Link key={category.title} href={category.href} className="page-card group flex flex-col p-4">
               <div className="relative aspect-[4/3] overflow-hidden rounded-[18px] bg-sunken">
-                <Image src={category.image} alt="" fill sizes="(min-width: 1024px) 24vw, (min-width: 640px) 48vw, 90vw" className="object-contain p-4 transition-transform duration-300 group-hover:scale-[1.03]" />
+                <Image src={category.image} alt={category.image.startsWith("/images/brand/") ? "Customised corporate desk calendars on a stand" : ""} fill sizes="(min-width: 1024px) 24vw, (min-width: 640px) 48vw, 90vw" className={`object-contain transition-transform duration-300 group-hover:scale-[1.03] ${category.image.startsWith("/images/brand/") ? "" : "p-4"}`} />
               </div>
               <h3 className="mt-5 font-display text-xl font-semibold text-navy-950">{category.title}</h3>
               <p className="type-body mt-2 mb-4">{category.description}</p>

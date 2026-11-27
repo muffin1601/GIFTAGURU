@@ -18,6 +18,7 @@ export default function CustomGiftsPage() {
         eyebrow="Custom Gifts"
         title="Design a gifting experience around your brand"
         description="Add your logo, choose packaging, personalize messages, and select products to build a gift set your recipients will remember."
+        image="/images/brand/corporate-gifting-made-extraordinary.webp"
       />
       {/* Already on /custom-gifts, so the CTA sends visitors to the enquiry
           form rather than back to this page. */}

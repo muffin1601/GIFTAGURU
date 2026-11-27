@@ -11,7 +11,16 @@ function headerImage(eyebrow: string | undefined, title: string) {
   return "/images/editorial/premium-corporate-gifting.webp";
 }
 
+/** Square brand artwork with wording baked in: shown whole, never cropped. */
+const squareArtwork: Record<string, string> = {
+  "/images/brand/corporate-gifting-relationships.webp": "Corporate Gifting: build stronger business relationships. Notebook, bottle, pen and polo in a gift box",
+  "/images/brand/corporate-gifting-made-extraordinary.webp": "Corporate gifting, made extraordinary. Logo-branded boxes, diaries, mugs and pens",
+  "/images/brand/thoughtful-corporate-gifts.webp": "Thoughtful corporate gifts, lasting impressions. Gold gift box with black satin ribbon",
+  "/images/brand/customised-corporate-calendars.webp": "Customised corporate desk calendars on a stand",
+};
+
 function headerImageAlt(image: string) {
+  if (squareArtwork[image]) return squareArtwork[image];
   if (image.includes("employee-welcome-workspace")) return "Notebooks, pen and coffee arranged on a modern workspace";
   if (image.includes("custom-gift-preparation")) return "Hands carefully finishing a deep green gift box";
   if (image.includes("luxury-gift-packaging")) return "Luxury green gift box finished with gold and ivory ribbon";
@@ -36,6 +45,7 @@ export default function PageHeader({
   image?: string;
 }) {
   const image = imageOverride ?? headerImage(eyebrow, title);
+  const square = image in squareArtwork;
 
   return (
     <section className="page-hero border-b border-line bg-sunken">
@@ -58,13 +68,15 @@ export default function PageHeader({
           {description && <p className="type-lead">{description}</p>}
           {actions ? <div className="mt-3 flex flex-wrap gap-3">{actions}</div> : null}
         </div>
-        <div className="relative order-first mx-auto w-full max-w-[36rem] lg:order-none">
-          <div className="hanna-arch-frame relative aspect-[4/3] bg-surface">
+        <div className={`relative order-first mx-auto w-full lg:order-none ${square ? "max-w-[30rem]" : "max-w-[36rem]"}`}>
+          <div className={`hanna-arch-frame relative bg-surface ${square ? "aspect-square" : "aspect-[4/3]"}`}>
             <Image src={image} alt={headerImageAlt(image)} fill preload sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover object-center" />
           </div>
-          <div className="absolute -bottom-5 -left-3 flex h-24 w-24 items-center justify-center rounded-full border border-gold-400 bg-navy-950 px-3 text-center font-script text-base leading-tight text-cream-100 shadow-[0_10px_40px_-5px_rgba(10,26,48,0.25)] sm:h-28 sm:w-28">
-            Curated for business
-          </div>
+          {square ? null : (
+            <div className="absolute -bottom-5 -left-3 flex h-24 w-24 items-center justify-center rounded-full border border-gold-400 bg-navy-950 px-3 text-center font-script text-base leading-tight text-cream-100 shadow-[0_10px_40px_-5px_rgba(10,26,48,0.25)] sm:h-28 sm:w-28">
+              Curated for business
+            </div>
+          )}
         </div>
       </Container>
     </section>

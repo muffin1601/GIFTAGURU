@@ -19,6 +19,7 @@ export default function CorporateGiftingPage() {
         eyebrow="Corporate Gifting"
         title="Corporate gifting solutions for teams, clients and business events"
         description="Gifta Guru helps HR, procurement, admin and marketing teams plan branded corporate gifts, employee welcome kits and bulk gifting programmes across India."
+        image="/images/brand/corporate-gifting-relationships.webp"
       />
       <CorporateSolutions />
       <section className="site-section section border-t border-line bg-canvas">

@@ -156,18 +156,14 @@ export default async function CorporateHomepage() {
     <section className="border-y border-line bg-surface">
       <Container className="py-10 lg:py-14">
         <div className="hanna-card overflow-hidden border border-line bg-navy-950 lg:grid lg:grid-cols-[0.92fr_1.08fr]">
-          <div className="relative min-h-[24rem] overflow-hidden bg-[#e5e2d8] sm:min-h-[30rem] lg:min-h-[32rem]">
+          <div className="relative aspect-square overflow-hidden bg-navy-950 lg:aspect-auto lg:min-h-[32rem]">
             <Image
-              src="/images/editorial/premium-corporate-gifting.webp"
-              alt="Blue and sage gift boxes wrapped with white ribbon"
+              src="/images/brand/thoughtful-corporate-gifts.webp"
+              alt="Thoughtful corporate gifts, lasting impressions. Gold gift box with black satin ribbon"
               fill
               sizes="(min-width: 1024px) 45vw, 100vw"
-              className="object-cover object-center"
+              className="object-contain"
             />
-            <div className="absolute bottom-5 left-5 max-w-52 border border-navy-950/10 bg-surface/95 px-4 py-3 backdrop-blur-sm sm:bottom-7 sm:left-7">
-              <p className="text-[0.62rem] font-semibold uppercase tracking-[0.15em] text-gold-700">The Gifta Guru edit</p>
-              <p className="mt-1 font-display text-lg leading-snug text-navy-950">Useful gifts, beautifully considered.</p>
-            </div>
           </div>
 
           <div className="flex flex-col justify-center p-7 sm:p-10 lg:p-12 xl:p-16">

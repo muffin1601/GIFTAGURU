@@ -21,6 +21,15 @@ const schema = z.object({
   isPublished: z.boolean(),
 });
 
+/** Default artwork per collection, used until an admin uploads a banner
+ * (an upload is stored in store_settings and always wins). */
+const defaultCollectionBanners: Record<string, string> = {
+  "joining-gifts": "/BANNERS/collections/joining.webp",
+  "premium-gifts": "/BANNERS/collections/premium.webp",
+  "luxury-gifts": "/BANNERS/collections/luxury.webp",
+  "eco-gifts": "/BANNERS/collections/eco.webp",
+};
+
 export type BannerCategory = { slug: string; name: string; imageUrl: string | null };
 
 export async function getCategoryBanner(category?: BannerCategory) {
@@ -31,6 +40,6 @@ export async function getCategoryBanner(category?: BannerCategory) {
   }
   if (!category) return defaultCategoryBanner;
   const artwork = fallbackHomeBanners.find((slide) => slide.href === `/categories/${category.slug}`);
-  const imageUrl = artwork?.src ?? category.imageUrl ?? "/images/editorial/premium-corporate-gifting.webp";
+  const imageUrl = defaultCollectionBanners[category.slug] ?? artwork?.src ?? category.imageUrl ?? "/images/editorial/premium-corporate-gifting.webp";
   return { imageUrl, label: category.name, linkUrl: `/categories/${category.slug}#products`, isPublished: Boolean(imageUrl) };
 }

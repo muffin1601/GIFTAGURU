@@ -18,6 +18,7 @@ export default function AboutPage() {
         eyebrow="About Gifta Guru"
         title="Unboxing culture, one thoughtful gift at a time"
         description="We partner with HR teams, founders, and businesses to design corporate gifting that reflects their brand and values, from onboarding kits to leadership gifts."
+        image="/images/brand/thoughtful-corporate-gifts.webp"
       />
       <WhyChooseUs />
       <BusinessBuyerGuide
