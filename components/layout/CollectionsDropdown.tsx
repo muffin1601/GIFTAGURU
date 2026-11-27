@@ -43,21 +43,21 @@ export default function CollectionsDropdown() {
 
       {open ? (
         // A hairline border defines the overlay instead of a drop shadow.
-        <div className="absolute left-1/2 top-full z-50 mt-6 grid w-[560px] -translate-x-1/2 grid-cols-2 gap-x-8 gap-y-6 border border-line bg-surface p-7">
+        <div className="absolute left-1/2 top-full z-50 mt-6 grid w-[620px] -translate-x-1/2 grid-cols-2 gap-x-8 gap-y-6 border border-line bg-surface p-7">
           {categories.map((category) => (
             <Link
               key={category.slug}
               href={`/categories/${category.slug}`}
               onClick={() => setOpen(false)}
-              className="group grid grid-cols-[76px_1fr] items-center gap-4"
+              className="group grid grid-cols-[112px_1fr] items-center gap-4"
             >
-              <span className="relative aspect-square overflow-hidden rounded-lg border border-line bg-sunken">
+              <span className="relative aspect-[2/1] overflow-hidden rounded-md border border-line bg-sunken">
                 <Image
                   src={category.image}
                   alt=""
                   fill
-                  className="object-contain p-1.5 transition-transform duration-200 group-hover:scale-105"
-                  sizes="76px"
+                  className="object-cover transition-transform duration-200 group-hover:scale-105"
+                  sizes="112px"
                 />
               </span>
               <span className="min-w-0">

@@ -6,7 +6,7 @@ export const categories: Category[] = [
     name: "Eco Gifts",
     tagline: "Gifts That Care. For People & Planet.",
     description: "Sustainable gift sets crafted from natural materials, for teams who value responsible choices.",
-    image: "/Gifta Guru/Set 19/1 (1).png",
+    image: "/BANNERS/collections/eco.webp",
     ctaLabel: "Explore Eco Gifts",
   },
   {
@@ -14,7 +14,7 @@ export const categories: Category[] = [
     name: "Joining Gifts",
     tagline: "Welcome to New Beginnings.",
     description: "Thoughtfully curated onboarding kits that make a new hire's first day feel like a celebration.",
-    image: "/Gifta Guru/Set 14/1 (1).png",
+    image: "/BANNERS/collections/joining.webp",
     ctaLabel: "Explore Joining Kits",
   },
   {
@@ -22,7 +22,7 @@ export const categories: Category[] = [
     name: "Luxury Gifts",
     tagline: "Luxury Gifts. Timeless Impressions.",
     description: "Exquisite gift sets for leadership moments and clients who expect nothing but the finest.",
-    image: "/Gifta Guru/Set 21/1 (1).png",
+    image: "/BANNERS/collections/luxury.webp",
     ctaLabel: "Explore Luxury Gifts",
   },
   {
@@ -30,7 +30,7 @@ export const categories: Category[] = [
     name: "Premium Gifts",
     tagline: "Thoughtful Gifts. Stronger Relationships.",
     description: "Premium gift kits for every corporate occasion, designed to leave a lasting impression.",
-    image: "/Gifta Guru/Set 8/1 (1).png",
+    image: "/BANNERS/collections/premium.webp",
     ctaLabel: "Explore Collection",
   },
 ];

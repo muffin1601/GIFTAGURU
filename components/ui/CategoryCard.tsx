@@ -6,13 +6,13 @@ import type { Category } from "@/types";
 export default function CategoryCard({ category }: { category: Category }) {
   return (
     <Link href={`/categories/${category.slug}`} className="group block rounded-[30px] bg-surface p-3 pb-7 shadow-[0_10px_40px_-5px_rgba(10,26,48,0.1)]">
-      <div className="relative aspect-[4/3] overflow-hidden rounded-[18px] border border-line bg-sunken">
+      <div className="relative aspect-[2/1] overflow-hidden rounded-[18px] border border-line bg-sunken">
         <Image
           src={category.image}
           alt=""
           fill
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-          className="object-contain p-5 transition-opacity duration-300 group-hover:opacity-90"
+          className="object-cover transition-opacity duration-300 group-hover:opacity-90"
         />
       </div>
 
