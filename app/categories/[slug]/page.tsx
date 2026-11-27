@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import CategoryBanner from "@/components/content/CategoryBanner";
-import Image from "next/image";
+import CollectionHero from "@/components/content/CollectionHero";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Container from "@/components/ui/Container";
@@ -68,7 +67,6 @@ export default async function CategoryPage({
 
   return (
     <>
-      <CategoryBanner category={{ slug: category.slug, name: category.name, imageUrl: category.image }} />
       <JsonLd
         data={[
           breadcrumbSchema([
@@ -81,47 +79,30 @@ export default async function CategoryPage({
           faqPageSchema(seo?.faqs ?? []),
         ]}
       />
-      <section className="page-hero border-b border-line bg-sunken">
-        <Container className="pt-6 sm:pt-8">
-          <nav className="type-meta flex flex-wrap items-center gap-2" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-navy-950">Home</Link>
-            <span aria-hidden="true">/</span>
-            <Link href="/categories" className="hover:text-navy-950">Categories</Link>
-            <span aria-hidden="true">/</span>
-            <span className="text-navy-950">{category.name}</span>
-          </nav>
-        </Container>
-        <Container className="grid items-center gap-12 pb-16 pt-8 sm:pb-20 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-          <div className="max-w-2xl">
-            <span className="type-eyebrow">{category.name}</span>
-            <h1 className="type-h1 mt-4">{seo?.h1 ?? category.tagline}</h1>
-            {seo ? (
-              seo.intro.map((paragraph) => (
-                <p key={paragraph} className="type-lead mt-5">{paragraph}</p>
-              ))
-            ) : (
-              <p className="type-lead mt-5">{category.description}</p>
-            )}
-            <Button
-              href={`/bulk-enquiry?collection=${encodeURIComponent(category.name)}`}
-              variant="primary"
-              className="mt-8"
-            >
+      <CollectionHero
+        category={{ slug: category.slug, name: category.name, imageUrl: category.image }}
+        title={seo?.h1 || category.tagline || category.name}
+        actions={
+          <>
+            <Button href={`/bulk-enquiry?collection=${encodeURIComponent(category.name)}`} variant="primary">
               Request a Custom Quote
             </Button>
-          </div>
-
-          {/* A small accent image rather than a full-bleed banner -- the
-              product grid below is the real content on this page. */}
-          <div className="hanna-arch-frame relative order-first aspect-[4/3] w-full shrink-0 bg-surface lg:order-none lg:block">
-            <Image
-              src={category.image}
-              alt=""
-              fill
-              sizes="(min-width: 1024px) 50vw, 100vw"
-              className="object-cover"
-              priority
-            />
+            <Link href="#products" className="link-underline text-sm font-semibold">
+              Browse the collection
+            </Link>
+          </>
+        }
+      />
+      <section className="border-b border-line bg-sunken">
+        <Container className="py-10 sm:py-12">
+          <div className="max-w-3xl">
+            {seo ? (
+              seo.intro.map((paragraph) => (
+                <p key={paragraph} className="type-lead mt-4 first:mt-0">{paragraph}</p>
+              ))
+            ) : (
+              <p className="type-lead">{category.description}</p>
+            )}
           </div>
         </Container>
       </section>
